@@ -5,6 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { EmpresasModule } from './components/empresas/empresas.module';
 import { FuncionariosModule } from './components/funcionarios/funcionarios.module';
+import { MenusModule } from './components/menus/menus.module';
+import { EmpresasButtonComponent } from './components/empresas/empresas-button/empresas-button.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +16,8 @@ import { FuncionariosModule } from './components/funcionarios/funcionarios.modul
     BrowserModule,
     AppRoutingModule,
     EmpresasModule,
-    FuncionariosModule
+    FuncionariosModule,
+    MenusModule
   ],
   providers: [],
   bootstrap: [AppComponent]
