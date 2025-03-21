@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { LucideAngularModule } from 'lucide-angular';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,6 +14,7 @@ import { EmpresasButtonComponent } from './components/empresas/empresas-button/e
     AppComponent
   ],
   imports: [
+    LucideAngularModule,
     BrowserModule,
     AppRoutingModule,
     EmpresasModule,
