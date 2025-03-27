@@ -1,0 +1,11 @@
+.header-content{
+    display: flex;
+    position: fixed;
+    background-color: #e2e2e2d4;
+    right: 10px;
+    width: 1340px;
+    height: 55px;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    border-radius: 5px;
+}
