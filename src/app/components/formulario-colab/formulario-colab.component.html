@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>Adicionar Informações</h2>
+<mat-dialog-content>
+  <form #form="ngForm">
+    <mat-form-field>
+      <input matInput placeholder="Nome" name="nome" [(ngModel)]="dados.nome" required>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="CPF" name="cpf" [(ngModel)]="dados.cpf" required>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Cargo" name="cargo" [(ngModel)]="dados.cargo" required>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Empresa" name="empresa" [(ngModel)]="dados.empresa" required>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Horário de Entrada" name="entrada" [(ngModel)]="dados.entrada" required>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Horário de Saída" name="saida" [(ngModel)]="dados.saida" required>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancelar()">Cancelar</button>
+  <button mat-button [disabled]="form.invalid" (click)="onSalvar()">Salvar</button>
+</mat-dialog-actions>

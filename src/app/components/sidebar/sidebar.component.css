@@ -2,17 +2,46 @@
     display: flex;
     align-items: center;
     width: 40px;
-    background-color: #e2e2e2d4;
+    background-color: #ffffff;
     padding: 20px 10px;
     height: calc(100vh - 55px);
     position: fixed;
     transition: width 0.3s ease;
     overflow: hidden;
     border-radius: 5px;
+    right: 1375px;
+    z-index: 1;
 }
 
 .sidebar:hover {
-    width: 150px;
+    width: 135px;
+}
+
+.sidebar-info{
+    display: flex;
+    align-items: center;
+    width: 62px;
+    background-color: #ffffff;
+    overflow: hidden;
+    border-radius: 5px;
+    padding: 20px 10px;
+    position: fixed;
+    transition: width 0.3s ease;
+    height: calc(100vh - 400px);
+}
+
+.sidebar-info2{
+    display: flex;
+    align-items: center;
+    width: 62px;
+    background-color: #ffffff;
+    overflow: hidden;
+    border-radius: 5px;
+    padding: 20px 10px;
+    top: 350px;
+    position: fixed;
+    transition: width 0.3s ease;
+    height: calc(100vh - 400px);
 }
 
 .sidebar .title {

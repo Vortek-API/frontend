@@ -1,0 +1,19 @@
+.container {
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    width: 1355px;
+    height: 590px;
+    transition: width 0.3s ease;
+    margin-left: 63px;
+    margin-top: 68px;
+    border-radius: 5px;
+}
+
+.popup-colab {
+    position: absolute;
+    bottom: 20px;  
+    right: 20px;   
+  }

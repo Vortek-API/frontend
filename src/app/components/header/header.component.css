@@ -1,11 +1,22 @@
 .header-content{
     display: flex;
     position: fixed;
-    background-color: #e2e2e2d4;
+    background-color: #FFFFFF;
     right: 10px;
-    width: 1340px;
-    height: 55px;
+    width: 1355px;
+    height: 80px;
     transition: width 0.3s ease;
     overflow: hidden;
     border-radius: 5px;
+}
+
+.img-content img{
+    padding-top: 15px;
+    padding-left: 30px;
+}
+
+.user-content img{
+    padding-top: 22px;
+    padding-left: 780px;
+    height: 30px;
 }
