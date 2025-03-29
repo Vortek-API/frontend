@@ -9,14 +9,16 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,  
+  imports: [
+    RouterOutlet,  
     MatDialogModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    FormsModule,],
+    FormsModule,
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'Vortek';

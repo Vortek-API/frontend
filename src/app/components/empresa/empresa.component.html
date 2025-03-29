@@ -1,3 +1,40 @@
 <div class="container">
-    <span>Empresas</span>
-     </div>
+  <span>Empresas</span>
+</div>
+
+<div class="container">
+  <div class="header-actions">
+    <h1>Funcionários</h1>
+    
+    <div class="actions-container">
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="Pesquisar funcionário...">
+        <span class="search-icon"></span>
+      </div>
+
+      <input type="date" class="date-picker">
+
+      <select class="filter-dropdown">
+        <option value="empresa">Empresa</option>
+        <option value="funcionario">Funcionário</option>
+      </select>
+
+      <button class="add-empresa-btn">Add Empresa</button>
+    </div>
+  </div>
+
+  <div class="empresa-list">
+    <div class="empresa-button" *ngFor="let empresa of empresas">
+      <div class="empresa-info">
+        <h1>{{ empresa.colab_count || 0 }}</h1>
+        <h2>{{ empresa.nome }}</h2>
+        <p>
+          <span class="icon"></span> {{ empresa.cnpj }}
+        </p>
+      </div>
+      <div class="icon-container">
+        <i class="user-icon"></i>
+      </div>
+    </div>
+  </div>
+</div>
