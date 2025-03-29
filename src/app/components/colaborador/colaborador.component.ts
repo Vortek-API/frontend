@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatButtonModule
   ],
   templateUrl: './colaborador.component.html',
-  styleUrls:  ['./colaborador.component.css']
+  styleUrls: ['./colaborador.component.css']
 })
 export class ColaboradorComponent {
   constructor(public dialog: MatDialog) { }
@@ -29,7 +29,6 @@ export class ColaboradorComponent {
 
   }
 
-  // Função para abrir o popup/modal de cadastro
   abrirModalCadastro() {
     this.dialog.open(ModalCadastroComponent, {
       width: '400px'
@@ -43,4 +42,3 @@ export class ColaboradorComponent {
   }
 
 }
-
