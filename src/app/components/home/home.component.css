@@ -4,11 +4,11 @@
     align-items: center;
     justify-content: center;
     position: fixed;
-    width: 1355px;
-    height: 590px;
+    width: 86%;
+    height: 86%;
     transition: width 0.3s ease;
     overflow: hidden;
-    margin-left: 63px;
-    margin-top: 68px;
-    border-radius: 5px;
+    top: 15%;
+    border-radius: 0.5rem;
+    right: 1%;    
 }

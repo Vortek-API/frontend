@@ -1,22 +1,28 @@
-.header-content{
+.header-content {
+    top: 1%;
     display: flex;
     position: fixed;
     background-color: #FFFFFF;
-    right: 10px;
-    width: 1355px;
-    height: 80px;
+    right: 1%;
+    width: 86%;
+    height: 12%;
     transition: width 0.3s ease;
     overflow: hidden;
-    border-radius: 5px;
+    border-radius: 0.5rem;
 }
 
-.img-content img{
-    padding-top: 15px;
-    padding-left: 30px;
+.img-content img {
+    position: absolute;
+    left: 1%;
+    top: 23%;
+    width: 15rem;
 }
 
-.user-content img{
-    padding-top: 22px;
-    padding-left: 780px;
-    height: 30px;
+.user-content img {
+    position: absolute;
+    top: 35%;
+    right: 5%;
+    width: 2rem;
+    border: 0.1rem solid #000000;
+    border-radius: 0.1rem;
 }

@@ -1,7 +1,7 @@
-/* Definição das variáveis */
 @import url('https://fonts.googleapis.com/css2?family=Rounded+Mplus+1c:wght@300;400;500;700&display=swap');
 :root {
-    --primary-color: #0D47A1; /* Azul escuro elegante */
+    --primary-color: #0D47A1;
+    /* Azul escuro elegante */
     --primary-hover: #1565C0;
     --background-color: #ffffff;
     --active-color: #42A5F5;
@@ -11,34 +11,64 @@
     --border-radius: 12px;
     --transition: all 0.3s ease-in-out;
 }
+
 /* Estilização das células da tabela */
 .attendance-table td {
     padding: 1rem;
     text-align: left;
     border-bottom: 1px solid #ddd7d7;
     white-space: nowrap;
-    color: var(--text-secondary); /* Cinza para os demais */
+    color: var(--text-secondary);
+    /* Cinza para os demais */
 }
 
-/* CPF e Nome com cor principal */
-.attendance-table td:nth-child(1),  /* Nome */
-.attendance-table td:nth-child(2) { /* CPF */
-    color: var(--text-color); /* Cor principal */
-    font-weight: 600;
+.container {
+    background-color: #FFFFFF;
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+    position: fixed;
+    width: 86%;
+    height: 86%;
+    transition: width 0.3s ease;
+    overflow: auto; 
+    top: 15%;
+    border-radius: 0.5rem;
+    right: 1%;
+    box-shadow: var(--shadow);
+    flex-direction: column;
 }
+
+
+/* CPF e Nome com cor principal */
+.attendance-table td:nth-child(1),
+/* Nome */
+.attendance-table td:nth-child(2) {
+    /* CPF */
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
 /* Cargo, Empresa e Data com cinza clarinho */
 .attendance-table td:nth-child(3),
 .attendance-table td:nth-child(5),
 .attendance-table td:nth-child(4) {
-    color: #B0B3B8; /* Cinza clarinho */
-    font-weight: 500;
+    color: #70757e;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
 }
+
 /* Reset de estilos */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Rounded Mplus 1c', sans-serif; /* Aplica a nova fonte */
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    /* Aplica a nova fonte */
 }
 
 /* Corpo do site */
@@ -48,30 +78,23 @@ body {
     padding: 1rem;
 }
 
-/* Container principal */
-.container {
-    width: 85%;
-    max-width: 1400px;
-    margin: 20px auto;
-    padding: 2rem;
-    background: #fff;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    margin-left: 240px;
-    height: 80vh; /* Cresce de forma mais equilibrada */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
 
 /* Aumenta o espaçamento entre as linhas da tabela */
 .attendance-table tbody tr {
-    height: 13vh; /* Ajuste a altura das linhas */
+    height: 13vh;
+    /* Ajuste a altura das linhas */
 }
+
 /* Alinha o status no centro da célula */
 .attendance-table td.status {
     width: 123.29744720458984;
-    border-radius: 2.98px;    
+    border-radius: 2.98px;
+}
+
+h1{
+    font-size: 1.5rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
 }
 
 
@@ -88,10 +111,11 @@ body {
     display: flex;
     align-items: center;
     background: white;
-    border: 1px solid #ddd7d7;
+    border: 0.05rem solid #ddd7d7;
     border-radius: var(--border-radius);
-    padding: 8px;
-    width: 400px;
+    left: -2%;
+    padding: 0.5rem;
+    width: 35%;
     position: relative;
 }
 
@@ -101,6 +125,9 @@ body {
     padding: 5px 10px;
     font-size: 1rem;
     width: 100%;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 200;
 }
 
 .search-icon {
@@ -111,7 +138,8 @@ body {
     background-image: url('/public/search.svg');
     background-size: contain;
     background-repeat: no-repeat;
-    filter: grayscale(100%) brightness(60%); /* Transforma em cinza */
+    filter: grayscale(100%) brightness(60%);
+    /* Transforma em cinza */
 }
 
 /* Campo de data */
@@ -119,39 +147,48 @@ body {
     border: 1px solid #ddd7d7;
     border-radius: var(--border-radius);
     padding: 8px;
+    height: 3rem;
+    margin-left: -5%;
     font-size: 1rem;
-    margin-left: 10px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 200;
 }
 
 /* Container do dropdown */
 .filter-dropdown {
+    width: 12%;
+    height: 3rem;
     display: flex;
     align-items: center;
-    gap: 8px; /* Espaço entre o ícone e o select */
+    gap: 8px;
+    /* Espaço entre o ícone e o select */
     border: 1px solid #ddd7d7;
     border-radius: var(--border-radius);
     padding: 8px 12px;
     font-size: 1rem;
-    margin-left: 10px;
     background: #0660C3;
     color: rgb(255, 255, 255);
     cursor: pointer;
     position: relative;
+    margin-left: 1rem;
 }
 
 .add-employee-btn {
+    height: 3rem;
     display: flex;
     align-items: center;
-    gap: 8px; /* Espaçamento entre o ícone e o texto */
+    gap: 8px;
+    /* Espaçamento entre o ícone e o texto */
     background: #0660C3;
     color: white;
     border: none;
     border-radius: var(--border-radius);
     padding: 10px 18px;
     font-size: 1rem;
-    margin-left: 10px;
     cursor: pointer;
     transition: var(--transition);
+    right: 0%;
+    position: relative;
 }
 
 .add-employee-btn {
@@ -160,14 +197,17 @@ body {
 
 /* Ícone do botão */
 .add-employee-btn::before {
-    content: "+"; /* Pode ser substituído por um SVG */
+    content: "+";
+    /* Pode ser substituído por um SVG */
     font-size: 1.2rem;
 }
 
 /* Estilização da tabela */
 .attendance-table {
+    text-align: center;
     width: 100%;
-    border-collapse: collapse; /* Remove espaçamentos extras */
+    border-collapse: collapse;
+    /* Remove espaçamentos extras */
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
     padding: 1rem;
@@ -175,19 +215,23 @@ body {
 
 /* Estilização do cabeçalho da tabela */
 .attendance-table thead th {
-    border-top: 2px solid rgb(219, 216, 216); /* Linha acima */
-    border-bottom: 2px solid rgb(219, 216, 216); /* Linha abaixo */
+    border-top: 2px solid rgb(219, 216, 216);
+    /* Linha acima */
+    border-bottom: 2px solid rgb(219, 216, 216);
+    /* Linha abaixo */
     font-weight: bold;
     color: var(--text-color);
     padding: 2rem;
-    text-align: 10px;
+    text-align: center;
 }
 
-th, td {
+th,
+td {
     padding: 1rem;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #ddd7d7;
     white-space: nowrap;
+
 }
 
 th {
@@ -202,7 +246,8 @@ th {
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
     text-align: center;
-    display: inline-block;
+    display: inline-flex;
+    margin-top: 1.5rem;
 }
 
 .status.active {
@@ -218,6 +263,20 @@ th {
 .status.late {
     background-color: #fef3c7;
     color: var(--late-color);
+}
+
+#btn-add{
+    display: flex;
+    position: absolute;
+    top: 90%;
+    right: 15%;
+}
+
+#btn-edit{
+    display: flex;
+    position: absolute;
+    top: 90%;
+    right: 5%
 }
 
 /* Responsividade */
@@ -240,12 +299,13 @@ th {
         gap: 10px;
     }
 }
+
 .popup-colab {
     position: absolute;
-    bottom: 20px;  
-    right: 20px;   
-  }
+    bottom: 20px;
+    right: 20px;
+}
 
 .modal-colab-crud {
-    margin: 25px;  
-  }
+    margin: 25px;
+}
