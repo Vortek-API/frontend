@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { FormularioColabComponent } from '../formulario-colab/formulario-colab.component';
+import { ModalCadastroComponent } from '../colaborador/modais/modal-cadastro/modal-cadastro.component';
+import { ModalEditarDeletarComponent } from '../colaborador/modais/modal-editar-deletar/modal-editar-deletar.component';
 import { MatButtonModule } from '@angular/material/button';
+
 
 @Component({
   selector: 'app-colaborador',
@@ -25,4 +28,19 @@ export class ColaboradorComponent {
     });
 
   }
+
+  // Função para abrir o popup/modal de cadastro
+  abrirModalCadastro() {
+    this.dialog.open(ModalCadastroComponent, {
+      width: '400px'
+    });
+  }
+
+  abrirModalEditarDeletar() {
+    this.dialog.open(ModalEditarDeletarComponent, {
+      width: '400px'
+    });
+  }
+
 }
+

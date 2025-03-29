@@ -1,8 +1,19 @@
 
 <section class="container">
-    <span>Colaboradores</span>
+    <div class="titulo-colab-lst col-12">
+        <span>Colaboradores</span>
+    </div>
     <div class="popup-colab">
         <button mat-raised-button color="primary" (click)="abrirDialog()">Teste</button>
     </div>
+
+    <div class="modal-colab-crud">
+        <!-- Botoes para abrir os modais de Cadastro -->
+        <button mat-raised-button color="primary" (click)="abrirModalCadastro()">Cadastrar Colaborador</button>
+        <button mat-raised-button color="accent" (click)="abrirModalEditarDeletar()">
+        Editar/Deletar
+      </button>
+    </div>
+
 </section>
 
