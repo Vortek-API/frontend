@@ -7,7 +7,7 @@ export interface Empresa {
     id: number;
     nome: string;
     cnpj: string;
-    // colaboradores: number;
+    colaboradores: number;
 }
 
 @Injectable({

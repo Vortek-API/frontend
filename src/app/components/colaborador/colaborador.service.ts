@@ -13,7 +13,11 @@ export interface Colaborador {
     hora_ent: string;
     hora_sai: string;
     status: boolean;
-    empresa: Empresa,
+    empresa: {
+        id: number;
+        nome: string;
+        cnpj: string;
+    },
 }
 
 @Injectable({
@@ -21,7 +25,7 @@ export interface Colaborador {
 })
 export class ColaboradorService {
 
-    private colaborador: Colaborador | undefined;
+    private colaboradorDataTransfer: Colaborador | undefined;
 
     private apiUrl = `${environment.apiUrl}/colaborador`
 
@@ -41,7 +45,7 @@ export class ColaboradorService {
                 'Content-Type': 'application/json'
             }
         }));
-    }    
+    }
 
     async update(id: number, colaborador: Colaborador): Promise<Colaborador> {
         return firstValueFrom(this.http.put<Colaborador>(`${this.apiUrl}/${id}`, colaborador));
@@ -52,13 +56,13 @@ export class ColaboradorService {
     }
 
     setData(colaborador: Colaborador) {
-        this.colaborador = colaborador;
+        this.colaboradorDataTransfer = colaborador;
     }
-    getData() : Colaborador | undefined {
-        const colabRet = this.colaborador;
-        this.colaborador = undefined;
-        
-        
+    getData(): Colaborador | undefined {
+        const colabRet = this.colaboradorDataTransfer;
+        this.colaboradorDataTransfer = undefined;
+
+
         return colabRet;
     }
 }

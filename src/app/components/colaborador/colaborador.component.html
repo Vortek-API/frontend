@@ -38,7 +38,9 @@
                 <td>{{colaborador.cargo}}</td>
                 <td>{{colaborador.empresa.nome}}</td>
                 <!-- <td>{{colaborador.data}}</td> -->
-                <td class="status active">{{ colaborador.status ? "Ativo" : "Inativo"}}</td>
+                <td [ngClass]="colaborador.status ? 'status active' : 'status inactive'">
+                    {{ colaborador.status ? "Ativo" : "Inativo" }}
+                  </td>                  
                 <td>{{ colaborador.hora_ent }}</td>
                 <td>{{ colaborador.hora_sai }}</td>
             </tr>

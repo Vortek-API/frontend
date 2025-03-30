@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './modal-editar-deletar.component.html',
   styleUrl: './modal-editar-deletar.component.css'
 })
-export class ModalEditarDeletarComponent implements OnInit, OnDestroy  {
+export class ModalEditarDeletarComponent implements OnInit  {
   colaborador = {
     id: 0,
     cpf: '', 
@@ -44,21 +44,33 @@ export class ModalEditarDeletarComponent implements OnInit, OnDestroy  {
   }
 
   save(): void {
-    this.colaboradorService.add(this.colaborador);
+    const colaboradorEnviado = {
+      ...this.colaborador,
+      empresa: {
+        id: Number(this.colaborador.empresa.id),
+        nome: this.colaborador.empresa.nome,
+        cnpj: this.colaborador.empresa.cnpj
+      }
+    };
+
+    console.log('Enviando para API:', JSON.stringify(colaboradorEnviado));
+  
+    this.colaboradorService.update(colaboradorEnviado.id, colaboradorEnviado);
     this.close();
   }
+  
+
+  
+  
   deletar(): void {
     this.colaboradorService.delete(this.colaborador.id);
     this.close();
   }
   loadEditData() {
-    console.log('recebeu')
     const colab = this.colaboradorService.getData(); 
+    console.log('Colaborador carregado:', colab);
     if(colab != undefined) {
       this.colaborador = colab;
     }
-  }
-  ngOnDestroy(): void {
-    this.close();
   }
 }
