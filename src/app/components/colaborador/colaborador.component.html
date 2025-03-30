@@ -9,10 +9,12 @@
 
         <input type="date" class="date-picker">
 
-        <select class="filter-dropdown">
-            <option value="empresa">Empresa</option>
-            <option value="funcionario">Funcionário</option>
-        </select>
+        <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
+            <option [ngValue]="null">Todas</option>
+            <option *ngFor="let empresa of empresas" [value]="empresa.id">
+              {{ empresa.nome }}
+            </option>
+          </select>
 
         <button class="add-employee-btn" (click)='abrirModalCadastro()'> Add Funcionário</button>
     </div>
@@ -32,19 +34,22 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let colaborador of colaboradores" (click)="clickRow(colaborador)" style="cursor: pointer;">
+            <ng-container *ngFor="let colaborador of colaboradores">
+                <tr *ngIf="selectedEmpresa == null || selectedEmpresa == colaborador.empresa.id" 
+                (click)="clickRow(colaborador)" 
+                style="cursor: pointer;">
                 <td>{{colaborador.cpf}}</td>
                 <td>{{colaborador.nome}}</td>
                 <td>{{colaborador.cargo}}</td>
                 <td>{{colaborador.empresa.nome}}</td>
-                <!-- <td>{{colaborador.data}}</td> -->
                 <td [ngClass]="colaborador.status ? 'status active' : 'status inactive'">
                     {{ colaborador.status ? "Ativo" : "Inativo" }}
-                  </td>                  
+                </td>
                 <td>{{ colaborador.hora_ent }}</td>
                 <td>{{ colaborador.hora_sai }}</td>
-            </tr>
-        </tbody>
+            </tr>            
+            </ng-container>
+          </tbody>          
     </table>
 </div>
 
