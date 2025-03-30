@@ -41,20 +41,20 @@ colaborador: any;
 
   async abrirModalCadastro() {
     console.log(this.selectedEmpresa);
-    // this.dialog.open(ModalCadastroComponent, {
-    //   width: '400px',
-    //   height: '90%',
-    // });
+    this.dialog.open(ModalCadastroComponent, {
+      width: '400px',
+      height: '90%',
+    });
 
-    // this.dialog.afterAllClosed.subscribe(() => {
-    //   setTimeout(async () => {
-    //     await this.loadColaboradores();
-    //   }, 5000);
+    this.dialog.afterAllClosed.subscribe(() => {
+      setTimeout(async () => {
+        await this.loadColaboradores();
+      }, 5000);
 
-    //   setTimeout(async () => {
-    //     await this.loadColaboradores();
-    //   }, 30001);
-    // });
+      setTimeout(async () => {
+        await this.loadColaboradores();
+      }, 30001);
+    });
   }
   async abrirModalEditar() {
     this.dialog.open(ModalEditarDeletarComponent, {
