@@ -1,5 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+:root {
+    --primary-color: #0D47A1;
+    /* Azul escuro elegante */
+    --primary-hover: #1565C0;
+    --background-color: #ffffff;
+    --active-color: #42A5F5;
+    --inactive-color: #EF5350;
+    --late-color: #FFD54F;
+    --border-color: #ddd7d7;
+    --border-radius: 12px;
+    --transition: all 0.3s ease-in-out;
+}
 body {
     background-color: #F1F2F6;
     display: flex;
