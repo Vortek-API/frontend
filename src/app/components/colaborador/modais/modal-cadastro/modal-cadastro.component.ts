@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './modal-cadastro.component.html',
   styleUrl: './modal-cadastro.component.css'
 })
-export class ModalCadastroComponent implements OnInit, OnDestroy  {
+export class ModalCadastroComponent implements OnInit {
   colaborador = {
     id: 0,
     cpf: '', 
@@ -19,14 +19,14 @@ export class ModalCadastroComponent implements OnInit, OnDestroy  {
     cargo: '',
     empresa: {
       id: 0,
+      nome: '',
+      cnpj: '',
     },
     hora_ent: '',
     hora_sai: '',
     status: true,
   };
   empresas: Empresa[] = [];
-
-  isEdit: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<ModalCadastroComponent>,
@@ -35,8 +35,6 @@ export class ModalCadastroComponent implements OnInit, OnDestroy  {
   ) { }
 
   async ngOnInit() {
-    this.loadEditData();
-    console.log(this.isEdit)
     this.empresas = await this.empresaService.findAll();
   }
 
@@ -45,26 +43,7 @@ export class ModalCadastroComponent implements OnInit, OnDestroy  {
   }
 
   save(): void {
-    console.log(this.colaborador)
-    if (this.isEdit) {
-      this.isEdit = false;
-      this.colaboradorService.update(this.colaborador.id, this.colaborador);
-      return;
-    }
     this.colaboradorService.add(this.colaborador);
-    this.dialogRef.close(this.colaborador);
-  }
-  loadEditData() {
-    console.log('recebeu')
-    const colab = this.colaboradorService.getData(); 
-    if(colab != undefined) {
-      this.colaborador = colab;
-      this.isEdit = true;
-    }
-    else this.isEdit = false;
-  }
-  ngOnDestroy(): void {
-    this.close();
-    this.isEdit = false;
+    this.dialogRef.close();
   }
 }

@@ -1,6 +1,6 @@
 <div class="container modal-cadastro">
   <div class="cadastro-content">
-    <h3>Gerenciar Colaborador</h3>
+    <h3>Adicionar Colaborador</h3>
     <div class="avatar">
       <img src="assets/user-avatar.png" alt="Foto do usuário" class="avatar-img">
     </div>
@@ -49,8 +49,7 @@
     </form>
     <div class="actions">
       <button class="btn-primary" (click)="save()">Ok</button>
-      <button class="btn-secondary" *ngIf="isEdit" (click)="close()">Deletar</button>
-      <button class="btn-secondary" (click)="close()" [ngStyle]="{ 'background-color': isEdit ? '8a8a8a' : 'F43333' }">Cancelar</button>
+      <button class="btn-secondary" (click)="close()">Cancelar</button>
     </div>
   </div>
 </div>

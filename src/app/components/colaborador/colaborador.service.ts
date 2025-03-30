@@ -13,7 +13,7 @@ export interface Colaborador {
     hora_ent: string;
     hora_sai: string;
     status: boolean;
-    empresa: { id:  number},
+    empresa: Empresa,
 }
 
 @Injectable({

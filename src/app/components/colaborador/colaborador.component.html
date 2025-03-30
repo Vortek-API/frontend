@@ -28,20 +28,19 @@
                 <th>Status</th>
                 <th>Entrada</th>
                 <th>Saída</th>
-                <th>Horas trabalhadas</th>
+                <!-- <th>Horas trabalhadas</th> -->
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let colaborador of colaboradores" (click)="clickRow(colaborador)">
+            <tr *ngFor="let colaborador of colaboradores" (click)="clickRow(colaborador)" style="cursor: pointer;">
                 <td>{{colaborador.cpf}}</td>
                 <td>{{colaborador.nome}}</td>
                 <td>{{colaborador.cargo}}</td>
-                <td>{{colaborador.empresa}}</td>
+                <td>{{colaborador.empresa.nome}}</td>
                 <!-- <td>{{colaborador.data}}</td> -->
-                <td class="status active">Ativo</td>
-                <td>09:00</td>
-                <td>18:00</td>
-                <td>10h 2m</td>
+                <td class="status active">{{ colaborador.status ? "Ativo" : "Inativo"}}</td>
+                <td>{{ colaborador.hora_ent }}</td>
+                <td>{{ colaborador.hora_sai }}</td>
             </tr>
         </tbody>
     </table>
