@@ -40,7 +40,6 @@ colaborador: any;
   }
 
   async abrirModalCadastro() {
-    console.log(this.selectedEmpresa);
     this.dialog.open(ModalCadastroComponent, {
       width: '400px',
       height: '90%',
