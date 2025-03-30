@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { FormularioColabComponent } from '../formulario-colab/formulario-colab.component';
 import { ModalCadastroComponent } from '../colaborador/modais/modal-cadastro/modal-cadastro.component';
 import { ModalEditarDeletarComponent } from '../colaborador/modais/modal-editar-deletar/modal-editar-deletar.component';
 import { MatButtonModule } from '@angular/material/button';
+import { Colaborador, ColaboradorService } from './colaborador.service';
 
 
 @Component({
@@ -13,32 +13,34 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [
     CommonModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   templateUrl: './colaborador.component.html',
   styleUrls: ['./colaborador.component.css']
 })
-export class ColaboradorComponent {
-  constructor(public dialog: MatDialog) { }
+export class ColaboradorComponent implements OnInit {
+  colaboradores: Colaborador[] = [];
+  constructor(
+    public dialog: MatDialog,
+    private colaboradorService: ColaboradorService
+  ) { }
 
-  abrirDialog(): void {
-    const dialogRef = this.dialog.open(FormularioColabComponent, {
-      width: '400px',
-      panelClass: 'custom-dialog-container'
-    });
-
+  async ngOnInit() {
+    await this.loadColaboradores();
   }
 
   abrirModalCadastro() {
     this.dialog.open(ModalCadastroComponent, {
-      width: '400px'
+      width: '400px',
+      height: '90%',
     });
   }
-
-  abrirModalEditarDeletar() {
-    this.dialog.open(ModalEditarDeletarComponent, {
-      width: '400px'
-    });
+  async loadColaboradores() {
+    this.colaboradores = await this.colaboradorService.findAll();
   }
-
+  clickRow(colaborador: Colaborador){
+    console.log('enviou')
+    this.colaboradorService.setData(colaborador);
+    this.abrirModalCadastro();
+  }
 }

@@ -14,7 +14,7 @@
             <option value="funcionario">Funcionário</option>
         </select>
 
-        <button class="add-employee-btn" (click)="abrirDialog()"> Add Funcionário</button>
+        <button class="add-employee-btn" (click)='abrirModalCadastro()'> Add Funcionário</button>
     </div>
 
     <table class="attendance-table">
@@ -24,7 +24,7 @@
                 <th>Funcionário</th>
                 <th>Cargo</th>
                 <th>Empresa</th>
-                <th>Data</th>
+                <!-- <th>Data</th> -->
                 <th>Status</th>
                 <th>Entrada</th>
                 <th>Saída</th>
@@ -32,59 +32,19 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>2341421</td>
-                <td>Ahmed Rashdan</td>
-                <td>Help Desk Executive</td>
-                <td>Empresa A</td>
-                <td>29 July 2023</td>
+            <tr *ngFor="let colaborador of colaboradores" (click)="clickRow(colaborador)">
+                <td>{{colaborador.cpf}}</td>
+                <td>{{colaborador.nome}}</td>
+                <td>{{colaborador.cargo}}</td>
+                <td>{{colaborador.empresa}}</td>
+                <!-- <td>{{colaborador.data}}</td> -->
                 <td class="status active">Ativo</td>
                 <td>09:00</td>
                 <td>18:00</td>
                 <td>10h 2m</td>
-            </tr>
-            <tr>
-                <td>2341421</td>
-                <td>Ahmed Rashdan</td>
-                <td>Help Desk Executive</td>
-                <td>Empresa A</td>
-                <td>29 July 2023</td>
-                <td class="status active">Ativo</td>
-                <td>09:00</td>
-                <td>18:00</td>
-                <td>10h 2m</td>
-            </tr>
-            <tr>
-                <td>2341421</td>
-                <td>Ahmed Rashdan</td>
-                <td>Help Desk Executive</td>
-                <td>Empresa A</td>
-                <td>29 July 2023</td>
-                <td class="status active">Ativo</td>
-                <td>09:00</td>
-                <td>18:00</td>
-                <td>10h 2m</td>
-            </tr>
-            <tr>
-                <td>2341421</td>
-                <td>Ahmed Rashdan</td>
-                <td>Help Desk Executive</td>
-                <td>Empresa A</td>
-                <td>29 July 2023</td>
-                <td class="status active">Ativo</td>
-                <td>09:00</td>
-                <td>18:00</td>
-                <td>10h 2m</td>
-            </tr>
-            <tr>
             </tr>
         </tbody>
     </table>
 </div>
 
 <div class="modal-colab-crud">
-    <!-- Botoes para abrir os modais de Cadastro -->
-    <button id="btn-add"  mat-raised-button color="primary" (click)="abrirModalCadastro()">Cadastrar Colaborador</button>
-    <button id="btn-edit" mat-raised-button color="accent" (click)="abrirModalEditarDeletar()">
-        Editar/Deletar
-    </button>

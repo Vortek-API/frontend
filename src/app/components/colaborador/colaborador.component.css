@@ -1,3 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Rounded+Mplus+1c:wght@300;400;500;700&display=swap');
+:root {
+    --primary-color: #0D47A1;
+    /* Azul escuro elegante */
+    --primary-hover: #1565C0;
+    --background-color: #ffffff;
+    --active-color: #42A5F5;
+    --inactive-color: #EF5350;
+    --late-color: #FFD54F;
+    --border-color: #ddd7d7;
+    --border-radius: 12px;
+}
+
 /* Estilização das células da tabela */
 .attendance-table td {
     padding: 1rem;
@@ -11,18 +24,20 @@
 .container {
     background-color: #FFFFFF;
     display: flex;
-    justify-content: space-between;
     padding: 2rem;
     position: fixed;
     width: 86%;
     height: 86%;
-    transition: width 0.3s ease;
     overflow: auto; 
     top: 15%;
     border-radius: 0.5rem;
     right: 1%;
     box-shadow: var(--shadow);
     flex-direction: column;
+}
+
+.container * {
+    transform: scale(0.99);
 }
 
 
