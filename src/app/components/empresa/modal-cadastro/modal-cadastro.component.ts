@@ -1,64 +1,51 @@
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { EmpresaService } from '../empresa.service';
+import { ColaboradorService, Colaborador } from '../../colaborador/colaborador.service';
+import { Empresa, EmpresaService } from '../empresa.service';
 
 @Component({
-  selector: 'app-modal-empresa-cadastro',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  selector: 'app-modal-cadastro',
+  imports: [FormsModule, CommonModule],
   templateUrl: './modal-cadastro.component.html',
   styleUrl: './modal-cadastro.component.css'
 })
-export class ModalCadastroComponent  implements OnInit {
-  empresas: any[] = [];
-  empresaForm!: FormGroup;
-  mensagem = '';
-  editando = false;
-  idEditando: number | null = null;
+export class ModalCadastroComponent implements OnInit {
+  empresa = {
+    id: 0,
+    nome: '', 
+    cnpj: '',
+    colaboradores: [],
+  }
+  empresas: Empresa[] = [];
 
   constructor(
-    private fb: FormBuilder,
+    public dialogRef: MatDialogRef<ModalCadastroComponent>,
+    private colaboradorService: ColaboradorService,
     private empresaService: EmpresaService
-  ) {}
+  ) { }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    this.empresas = await this.empresaService.findAll();
   }
 
-
-  salvarEmpresa() {
-    if (this.empresaForm.invalid) {
-      this.mensagem = 'Preencha todos os campos obrigatórios!';
-      return;
-    }
-
-    const empresa = this.empresaForm.value;
-    if (this.editando && this.idEditando !== null) {
-      this.empresaService.update(this.idEditando, empresa)
-        this.mensagem = 'Empresa editada com sucesso!';
-        this.cancelarEdicao();
-    } else {
-      this.empresaService.add(empresa)
-        this.mensagem = 'Empresa adicionada com sucesso!';
-    }
-
-    this.empresaForm.reset();
+  close(): void {
+    this.dialogRef.close();
   }
 
-  editar(empresa: any) {
-    this.editando = true;
-    this.idEditando = empresa.id;
-    this.empresaForm.patchValue(empresa);
-  }
-
-  deletar(id: number) {
-    this.empresaService.delete(id)
-    this.mensagem = 'Empresa excluída com sucesso!';
-  }
-
-  cancelarEdicao() {
-    this.editando = false;
-    this.idEditando = null;
-    this.empresaForm.reset();
+  save(): void {
+    let colaboradores: Colaborador[] = [];
+    const empresaEnviado = {
+      ...this.empresa,
+      empresa: {
+        id: Number(this.empresa.id),
+        nome: this.empresa.nome,
+        cnpj: this.empresa.cnpj,
+        colaboradores: colaboradores
+      }
+    };
+    this.empresaService.add(empresaEnviado);
+    this.dialogRef.close();
   }
 }

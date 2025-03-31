@@ -1,25 +1,21 @@
-<div class="empresa-container">
-    <h2>Gerenciar Empresas</h2>
-    
-    <!-- Formulário para adicionar/editar empresa -->
-    <form [formGroup]="empresaForm" (ngSubmit)="salvarEmpresa()">
-      <input type="text" formControlName="nome" placeholder="Nome da empresa" required>
-      <input type="text" formControlName="cnpj" placeholder="CNPJ" required>
-      <input type="text" formControlName="telefone" placeholder="Telefone" required>
-      <input type="file" formControlName="foto" accept="image/*">
+<div class="container modal-cadastro">
+  <div class="cadastro-content">
+    <h3>Adicionar Empresa</h3>
+    </div>
+    <form>
+      <div class="form-group">
+        <label for="cnpj">CNPJ</label>
+        <input type="text" id="cnpj" [(ngModel)]="empresa.cnpj" name="cnpj">
+      </div>
       
-      <button type="submit">{{ editando ? 'Atualizar Empresa' : 'Adicionar Empresa' }}</button>
-      <button type="button" *ngIf="editando" (click)="cancelarEdicao()">Cancelar</button>
+      <div class="form-group">
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" [(ngModel)]="empresa.nome" name="nome">
+      </div>
+      
     </form>
-  
-    <!-- Lista de empresas -->
-    <ul>
-      <li *ngFor="let empresa of empresas">
-        <span>{{ empresa.nome }} - {{ empresa.cnpj }} - {{ empresa.telefone }}</span>
-        <button (click)="editar(empresa)">Editar</button>
-        <button (click)="deletar(empresa.id)">Excluir</button>
-      </li>
-    </ul>
-  
-    <p *ngIf="mensagem">{{ mensagem }}</p>
+    <div class="actions">
+      <button class="btn-primary" (click)="save()">Ok</button>
+      <button class="btn-secondary" (click)="close()">Cancelar</button>
+    </div>
   </div>

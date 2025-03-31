@@ -52,8 +52,6 @@ export class ModalEditarDeletarComponent implements OnInit  {
         cnpj: this.colaborador.empresa.cnpj
       }
     };
-
-    console.log('Enviando para API:', JSON.stringify(colaboradorEnviado));
   
     this.colaboradorService.update(colaboradorEnviado.id, colaboradorEnviado);
     this.close();
@@ -68,7 +66,6 @@ export class ModalEditarDeletarComponent implements OnInit  {
   }
   loadEditData() {
     const colab = this.colaboradorService.getData(); 
-    console.log('Colaborador carregado:', colab);
     if(colab != undefined) {
       this.colaborador = colab;
     }

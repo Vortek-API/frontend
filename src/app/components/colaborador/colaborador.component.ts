@@ -83,7 +83,6 @@ colaborador: any;
   }
 
   clickRow(colaborador: Colaborador) {
-    console.log('enviou')
     this.colaboradorService.setData(colaborador);
     this.abrirModalEditar();
   }
