@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="header-actions">
+    <h1 id="titleEmpresa">Empresas</h1>
+    
+    <div class="actions-container">
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="Pesquisar empresa...">
+        <span class="search-icon"></span>
+      </div>
+
+      <button class="add-empresa-btn" (click)="openModalCadastro()">Add Empresa</button>
+    </div>
+  </div>
+
+  <div class="empresa-list">
+    <div class="empresa-button" 
+    *ngFor="let empresa of empresas" 
+    (click)="clickRow(empresa)"
+    style="cursor: pointer;">
+      <div class="empresa-info">
+        <h1>{{ empresa.colaboradores.length }}</h1>
+        <h2>{{ empresa.nome }}</h2>
+        <p>
+          <span class="icon"></span> {{ empresa.cnpj }}
+        </p>
+      </div>
+      <div class="icon-container">
+        <i class="user-icon"></i>
+      </div>
+    </div>
+  </div>
+</div>

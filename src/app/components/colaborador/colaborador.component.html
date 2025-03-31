@@ -1,0 +1,56 @@
+<div class="container">
+    <div class="header-actions">
+        <h1 id="titleFunc">Funcionários</h1>
+
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Pesquisar funcionário...">
+            <span class="search-icon"></span>
+        </div>
+
+        <input type="date" class="date-picker">
+
+        <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
+            <option [ngValue]="null">Todas</option>
+            <option *ngFor="let empresa of empresas" [value]="empresa.id">
+              {{ empresa.nome }}
+            </option>
+          </select>
+
+        <button class="add-employee-btn" (click)='abrirModalCadastro()'> Add Funcionário</button>
+    </div>
+
+    <table class="attendance-table">
+        <thead>
+            <tr>
+                <th>CPF</th>
+                <th>Funcionário</th>
+                <th>Cargo</th>
+                <th>Empresa</th>
+                <!-- <th>Data</th> -->
+                <th>Status</th>
+                <th>Entrada</th>
+                <th>Saída</th>
+                <!-- <th>Horas trabalhadas</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let colaborador of colaboradores">
+                <tr *ngIf="selectedEmpresa == null || selectedEmpresa == colaborador.empresa.id" 
+                (click)="clickRow(colaborador)" 
+                style="cursor: pointer;">
+                <td>{{colaborador.cpf}}</td>
+                <td>{{colaborador.nome}}</td>
+                <td>{{colaborador.cargo}}</td>
+                <td>{{colaborador.empresa.nome}}</td>
+                <td [ngClass]="colaborador.status ? 'status active' : 'status inactive'">
+                    {{ colaborador.status ? "Ativo" : "Inativo" }}
+                </td>
+                <td>{{ colaborador.hora_ent }}</td>
+                <td>{{ colaborador.hora_sai }}</td>
+            </tr>            
+            </ng-container>
+          </tbody>          
+    </table>
+</div>
+
+<div class="modal-colab-crud">

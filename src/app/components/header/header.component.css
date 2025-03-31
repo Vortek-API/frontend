@@ -1,0 +1,28 @@
+.header-content {
+    top: 1%;
+    display: flex;
+    position: fixed;
+    background-color: #FFFFFF;
+    right: 1%;
+    width: 86%;
+    height: 12%;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    border-radius: 0.5rem;
+}
+
+.img-content img {
+    position: absolute;
+    left: 1%;
+    top: 23%;
+    width: 15rem;
+}
+
+.user-content img {
+    position: absolute;
+    top: 35%;
+    right: 5%;
+    width: 2rem;
+    border: 0.1rem solid #000000;
+    border-radius: 0.1rem;
+}

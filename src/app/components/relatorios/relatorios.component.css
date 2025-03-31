@@ -1,0 +1,14 @@
+.container {
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    width: 86%;
+    height: 86%;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    top: 15%;
+    border-radius: 0.5rem;
+    right: 1%;    
+}
