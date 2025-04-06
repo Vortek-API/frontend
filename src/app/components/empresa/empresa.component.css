@@ -1,5 +1,4 @@
 .container {
-  position: absolute;
   background-color: #FFFFFF;
   display: flex;
   justify-content: space-between;
@@ -9,7 +8,7 @@
   height: 86%;
   transition: width 0.3s ease;
   overflow: auto;
-  top: 15%;
+  top: 20%;
   border-radius: 0.5rem;
   right: 1%;
   box-shadow: var(--shadow);
@@ -131,43 +130,4 @@ h2{
 
 .add-empresa-btn {
   background: #1565C0;
-}
-
-
-/* Responsividade para telas pequenas */
-@media (max-width: 768px) {
-
-  .search-input,
-  .date-picker {
-    width: 50%;
-  }
-
-  .employee-table th,
-  .employee-table td {
-    padding: 1.5%;
-  }
-
-  .btn {
-    padding: 1.5% 2%;
-  }
-}
-
-/* Responsividade para telas muito pequenas */
-@media (max-width: 480px) {
-
-  .search-input,
-  .date-picker {
-    width: 100%;
-    margin-bottom: 1%;
-  }
-
-  .employee-table th,
-  .employee-table td {
-    padding: 1%;
-  }
-
-  .btn {
-    width: 100%;
-    padding: 1% 0;
-  }
 }
