@@ -3,7 +3,7 @@
                 <h2>Login</h2>
                 <form action="#">
                     <div class="input-box">
-                        <input id="cnpj" type="text" required placeholder="00.000.000/0000-00" maxlength="18">
+                        <input id="cnpj" type="text" required maxlength="18" (input)="formatCnpjInput($event)">
                         <label>CNPJ</label>
                     </div>
                     <div class="input-box">

@@ -50,14 +50,17 @@ h2 {
     border-bottom: 2px solid #1b3552;
     outline: none;
     font-size: 1rem;
-    padding-left: 3.5rem;
+    padding-left: 0.5rem;
     transition: 0.5s;
+    letter-spacing: 0.2rem;
+    font-weight: 700;
 }
 
 .input-box input:focus,
 .input-box input:valid {
     border-color: #1f8e00;
 }
+
 
 .input-box label {
     position: absolute;
