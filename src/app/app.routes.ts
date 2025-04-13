@@ -6,9 +6,12 @@ import { ColaboradorComponent } from './components/colaborador/colaborador.compo
 import { LoginComponent } from './components/login/login.component';
 import { NgModule } from '@angular/core';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
+import { authGuard } from './guards/auth/auth.guard';
 
 export const routes: Routes = [
-    {path: '', component: MainLayoutComponent, children: [
+    {path: '', component: MainLayoutComponent, 
+        canActivate: [authGuard],
+        children: [
         { path: 'home', component: HomeComponent },
         { path: 'relatorios', component: RelatoriosComponent },
         { path: 'empresa', component: EmpresaComponent },
