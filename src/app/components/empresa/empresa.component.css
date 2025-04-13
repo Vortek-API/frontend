@@ -105,7 +105,7 @@ h2{
   padding: 8px 12px;
   font-size: 1rem;
   margin-left: 10px;
-  background: #0660C3;
+  background: #0C6834;
   color: rgb(255, 255, 255);
   cursor: pointer;
   position: relative;
@@ -117,17 +117,17 @@ h2{
   margin-bottom: 5%;
   right: 3%;
   /* Espaçamento entre o ícone e o texto */
-  background: #0660C3;
+  background: #0C6834;
   color: white;
   border: none;
   padding: 0.8rem;
   font-size: 1rem;
   cursor: pointer;
   transition: var(--transition);
-  border: 0.05rem solid #ddd7d7;
+  border: 0.05rem solid #0C6834;
   border-radius: var(--border-radius);
 }
 
 .add-empresa-btn {
-  background: #1565C0;
+  background: #0C6834;
 }

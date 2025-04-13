@@ -43,7 +43,7 @@
   .form-group input, .form-group select {
     flex: 2;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #0C6834;
     border-radius: 8px;
     font-size: 16px;
   }
@@ -65,7 +65,7 @@
   }
   
   .btn-primary {
-    background-color: #3354F4;
+    background-color: #0C6834;
     color: white;
   }
   
