@@ -26,7 +26,7 @@ export class EmpresaComponent implements OnInit {
   openModalCadastro() {
     this.dialog.open(ModalCadastroComponent, {
       width: '400px',
-      height: '35%',
+      height: '28%',
     });
 
     this.dialog.afterAllClosed.subscribe(() => {
@@ -42,7 +42,7 @@ export class EmpresaComponent implements OnInit {
   openModalEditar() {
     this.dialog.open(ModalEditarDeletarComponent, {
       width: '500px',
-      height: '35%',
+      height: '28%',
     });
 
     this.dialog.afterAllClosed.subscribe(() => {
