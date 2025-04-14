@@ -26,7 +26,8 @@ export class ColaboradorComponent implements OnInit {
   colaboradores: Colaborador[] = [];
   empresas: Empresa[] = [];
   selectedEmpresa: number | null = null;
-colaborador: any;
+  colaborador: any;
+  searchTerm: string = '';
 
   constructor(
     public dialog: MatDialog,
@@ -73,10 +74,10 @@ colaborador: any;
   }
   async loadColaboradores() {
     this.colaboradores = await this.colaboradorService.findAll();
-    this.colaboradores.forEach(colaborador => {
-      colaborador.hora_ent = colaborador.hora_ent.substring(0, 5);
-      colaborador.hora_sai = colaborador.hora_sai.substring(0, 5);
-    });
+    // this.colaboradores.forEach(colaborador => {
+    //   colaborador.hora_ent = colaborador.hora_ent.substring(0, 5);
+    //   colaborador.hora_sai = colaborador.hora_sai.substring(0, 5);
+    // });
   }
   async loadEmpresas() {
     this.empresas = await this.empresaService.findAll();
@@ -85,5 +86,10 @@ colaborador: any;
   clickRow(colaborador: Colaborador) {
     this.colaboradorService.setData(colaborador);
     this.abrirModalEditar();
+  }
+  get colaboradoesFiltrados(): Colaborador[] {
+    return this.colaboradores.filter(colaborador =>
+      colaborador.nome.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
   }
 }
