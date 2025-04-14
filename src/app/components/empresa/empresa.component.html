@@ -9,11 +9,24 @@
       </div>
 
       <button class="add-empresa-btn" (click)="openModalCadastro()">Add Empresa</button>
+
+      <input *ngIf="ordenacao === 'cadastro'" type="date" class="date-picker" [(ngModel)]="selectedDate">
+
+      <select class="ordenar-btn" [(ngModel)]="ordenacao" (change)="handleOrdenacaoChange()">
+        <option *ngIf="!ordenacao" [ngValue]="null">Ordenar por</option>
+        <option *ngIf="ordenacao" [ngValue]="null">Limpar filtros</option>
+      
+        <option [ngValue]="'alfab'">Alfabética</option>
+        <option [ngValue]="'cadastro'">Data de cadastro</option>
+      </select>
+      
+
     </div>
   </div>
 
   <div class="empresa-list">
-    <div class="empresa-button" *ngFor="let empresa of empresasFiltradas" (click)="clickRow(empresa)" style="cursor: pointer;">
+    <div class="empresa-button" *ngFor="let empresa of empresasFiltradas" (click)="clickRow(empresa)"
+      style="cursor: pointer;">
       <div class="empresa-info">
         <!-- <h1>{{ empresa.colaboradores.length }}</h1> -->
         <h1>455</h1>

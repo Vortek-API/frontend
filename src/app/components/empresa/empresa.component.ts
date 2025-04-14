@@ -15,6 +15,9 @@ import { FormsModule } from '@angular/forms';
 export class EmpresaComponent implements OnInit {
   empresas: Empresa[] = [];
   searchTerm: string = '';
+  ordenacaoSelecionada: string | null = null;
+  selectedDate: string | null = null;
+  ordenacao: string | null = null;
 
 
   constructor(
@@ -66,9 +69,32 @@ export class EmpresaComponent implements OnInit {
     this.openModalEditar();
   }
   get empresasFiltradas(): Empresa[] {
-    return this.empresas.filter(empresa =>
+    let filtradas = this.empresas.filter(empresa =>
       empresa.nome.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
-  }
 
+    if (this.ordenacao === 'alfab') {
+      filtradas.sort((a, b) => a.nome.localeCompare(b.nome));
+    }
+
+    if (this.ordenacao === 'cadastro' && this.selectedDate) {
+      filtradas = filtradas.filter(empresa => {
+        const dataEmpresa = empresa.dataCadastro?.split('T')[0]; // pega só "2025-04-14"
+        return dataEmpresa === this.selectedDate;
+      });
+    }
+    return filtradas;
+  }
+  handleOrdenacaoChange() {
+    // Resetar data se saiu da ordenação por cadastro
+    if (this.ordenacao !== 'cadastro') {
+      this.selectedDate = null;
+    }
+  
+    // Se limpou os filtros
+    if (!this.ordenacao) {
+      this.selectedDate = null;
+      this.searchTerm = '';
+    }
+  }
 }
