@@ -2,9 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Empresa, EmpresaService } from '../empresa.service';
-import { Colaborador } from '../../colaborador/colaborador.service';
-
+import { Colaborador } from '../../../colaborador/colaborador.service';
+import { Empresa, EmpresaService } from '../../empresa.service';
 @Component({
   selector: 'app-modal-editar-deletar',
   imports: [FormsModule, CommonModule],
@@ -16,7 +15,7 @@ export class ModalEditarDeletarComponent implements OnInit  {
       id: 0,
       nome: '', 
       cnpj: '',
-      colaboradores: [],
+      dataCadastro: '',
     }
     empresas: Empresa[] = [];
   
@@ -45,7 +44,6 @@ export class ModalEditarDeletarComponent implements OnInit  {
           id: Number(this.empresa.id),
           nome: this.empresa.nome,
           cnpj: this.empresa.cnpj,
-          colaboradores: colaboradores
         }
       };
       this.empresaService.update(empresaEnviado.id, empresaEnviado);
