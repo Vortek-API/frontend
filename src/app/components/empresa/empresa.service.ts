@@ -8,6 +8,8 @@ export interface Empresa {
     id: number;
     nome: string;
     cnpj: string;
+    dataCadastro?: string;
+    colaboradores?: Colaborador[];
 }
 
 @Injectable({
@@ -34,18 +36,18 @@ export class EmpresaService {
         //     empresa.colaboradores = colaboradores.filter(c => c.empresa.id === empresa.id);
         //     const totalColaboradores = empresa.colaboradores.length;
         // });
+
+        console.log(empresas);
     
         return empresas;
     }
-    
-    
 
     async find(id: number): Promise<Empresa> {
         return firstValueFrom(this.http.get<Empresa>(`${this.apiUrl}/${id}`));
     }
 
     async add(empresa: Empresa): Promise<Empresa> {
-        return firstValueFrom(this.http.post<Empresa>(`${this.apiUrl}/cadastrar`, empresa));
+        return firstValueFrom(this.http.post<Empresa>(`${this.apiUrl}`, empresa));
     }
 
     async update(id: number, empresa: Empresa): Promise<Empresa> {

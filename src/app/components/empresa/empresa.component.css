@@ -36,6 +36,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 2.5rem;
+  width: 100%;
+  left: 2vw;
   /* Espaço entre os botões */
 }
 
@@ -68,7 +70,7 @@ h2{
   background: #fff;
   border-radius: 0.5rem;
   box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, 0.2);
-  width: 15%;
+  width: 12%;
 
 }
 

@@ -1,10 +1,10 @@
 <div class="container">
   <div class="header-actions">
     <h1 id="titleEmpresa">Empresas</h1>
-    
+
     <div class="actions-container">
       <div class="search-container">
-        <input type="text" class="search-input" placeholder="Pesquisar empresa...">
+        <input type="text" class="search-input" placeholder="Pesquisar empresa..." [(ngModel)]="searchTerm">
         <span class="search-icon"></span>
       </div>
 
@@ -13,10 +13,7 @@
   </div>
 
   <div class="empresa-list">
-    <div class="empresa-button" 
-    *ngFor="let empresa of empresas" 
-    (click)="clickRow(empresa)"
-    style="cursor: pointer;">
+    <div class="empresa-button" *ngFor="let empresa of empresasFiltradas" (click)="clickRow(empresa)" style="cursor: pointer;">
       <div class="empresa-info">
         <!-- <h1>{{ empresa.colaboradores.length }}</h1> -->
         <h1>455</h1>
