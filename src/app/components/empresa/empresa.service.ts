@@ -36,8 +36,6 @@ export class EmpresaService {
         //     empresa.colaboradores = colaboradores.filter(c => c.empresa.id === empresa.id);
         //     const totalColaboradores = empresa.colaboradores.length;
         // });
-
-        console.log(empresas);
     
         return empresas;
     }
