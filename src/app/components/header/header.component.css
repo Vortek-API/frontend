@@ -1,21 +1,29 @@
 .header-content {
-    top: 1%;
+    top: 3%;
     display: flex;
     position: fixed;
     background-color: #FFFFFF;
     right: 1%;
     width: 86%;
-    height: 12%;
+    height: 13%;
     transition: width 0.3s ease;
     overflow: hidden;
     border-radius: 0.5rem;
 }
 
-.img-content img {
+.content img {
     position: absolute;
     left: 1%;
-    top: 23%;
-    width: 15rem;
+    top: -0.5rem;
+    width: 7rem;
+}
+
+#title {
+    position: absolute;
+    left: 7.5rem;
+    top: 0.6rem;
+    font: 550 1.5rem 'Inter', sans-serif;
+    color: black;
 }
 
 .user-content img {
@@ -25,4 +33,69 @@
     width: 2rem;
     border: 0.1rem solid #000000;
     border-radius: 0.1rem;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .content img {
+        top: -0.7rem;
+        width: 7rem;
+    }
+
+    #title {
+        left: 7rem;
+        font-size: 1.3rem;
+        top: 1rem;
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1365px) {
+    .content img {
+        top: -0.7rem;
+        width: 7rem;
+    }
+
+    #title {
+        left: 7.2rem;
+        font-size: 1.3rem;
+        top: 1rem;
+    }
+}
+
+
+@media (min-width: 1366px) and (max-width: 1441px) {
+    .content img {
+        top: -0.9rem;
+        width: 8rem;
+    }
+
+    #title {
+        left: 8.5rem;
+        font-size: 2rem;
+        top: 0.1rem;
+    }
+}
+
+@media (min-width: 1920px) {
+    .content img {
+        top: -0.8rem;
+        width: 10rem;
+    }
+
+    #title {
+        left: 10.5rem;
+        font-size: 2rem;
+        top: 1rem;
+    }
+}
+
+@media (min-width: 2560px) {
+    .content img {      
+        width: 12rem;
+    }
+
+    #title {
+        left: 13rem;
+        font-size: 3rem;
+    }
+
 }

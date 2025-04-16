@@ -18,27 +18,12 @@
   }
   
   .cadastro-content {
-    width: 100%;
     padding: 10px;
     text-align: center;
     font-family: 'Arial', sans-serif;
     color: #4a4a4a;
   }
-  
-  .avatar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .avatar-img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #8a8a8a;
-  }
+
   
   .form-group {
     display: flex;
@@ -58,7 +43,7 @@
   .form-group input, .form-group select {
     flex: 2;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #0C6834;
     border-radius: 8px;
     font-size: 16px;
   }
@@ -80,16 +65,12 @@
   }
   
   .btn-primary {
-    background-color: #3354F4;
+    background-color: #0C6834;
     color: white;
   }
   
   .btn-secondary {
     background-color: #F43333;
-    color: white;
-  }
-  .btn-cancel {
-    background-color: #8a8a8a;
     color: white;
   }
   form{

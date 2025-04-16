@@ -1,5 +1,4 @@
 .container {
-  position: absolute;
   background-color: #FFFFFF;
   display: flex;
   justify-content: space-between;
@@ -9,7 +8,7 @@
   height: 86%;
   transition: width 0.3s ease;
   overflow: auto;
-  top: 15%;
+  top: 20%;
   border-radius: 0.5rem;
   right: 1%;
   box-shadow: var(--shadow);
@@ -33,28 +32,30 @@
 
 .empresa-list {
   position: absolute;
-  top:20%;
+  top: 20%;
   display: flex;
   flex-wrap: wrap;
   gap: 2.5rem;
+  width: 100%;
+  left: 2vw;
   /* Espaço entre os botões */
 }
 
 
-h1{
+h1 {
   font-size: 2rem;
   font-family: 'Inter', sans-serif;
   font-weight: 700;
 }
 
-h2{
+h2 {
   font-size: 1rem;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
 
 }
 
-.icon{
+.icon {
   font-size: 1rem;
   font-family: 'Inter', sans-serif;
   font-weight: 50;
@@ -69,7 +70,7 @@ h2{
   background: #fff;
   border-radius: 0.5rem;
   box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, 0.2);
-  width: 15%;
+  width: 12%;
 
 }
 
@@ -106,7 +107,7 @@ h2{
   padding: 8px 12px;
   font-size: 1rem;
   margin-left: 10px;
-  background: #0660C3;
+  background: #0C6834;
   color: rgb(255, 255, 255);
   cursor: pointer;
   position: relative;
@@ -118,56 +119,49 @@ h2{
   margin-bottom: 5%;
   right: 3%;
   /* Espaçamento entre o ícone e o texto */
-  background: #0660C3;
+  background: #0C6834;
   color: white;
   border: none;
   padding: 0.8rem;
   font-size: 1rem;
   cursor: pointer;
   transition: var(--transition);
-  border: 0.05rem solid #ddd7d7;
+  border: 0.05rem solid #0C6834;
   border-radius: var(--border-radius);
 }
 
+.ordenar-btn {
+  display: flex;
+  position: absolute;
+  margin-bottom: 5%;
+  right: 54%;
+  /* Espaçamento entre o ícone e o texto */
+  background: #0C6834;
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 0.05rem solid #0C6834;
+  border-radius: var(--border-radius);
+}
+
+.date-picker {
+  position: absolute;
+  display: flex;
+  margin-bottom: 5%;
+  border: 1px solid #ddd7d7;
+  border-radius: var(--border-radius);
+  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.1);
+  height: 3rem;
+  right: 44%;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 200;
+}
+
+
 .add-empresa-btn {
-  background: #1565C0;
-}
-
-
-/* Responsividade para telas pequenas */
-@media (max-width: 768px) {
-
-  .search-input,
-  .date-picker {
-    width: 50%;
-  }
-
-  .employee-table th,
-  .employee-table td {
-    padding: 1.5%;
-  }
-
-  .btn {
-    padding: 1.5% 2%;
-  }
-}
-
-/* Responsividade para telas muito pequenas */
-@media (max-width: 480px) {
-
-  .search-input,
-  .date-picker {
-    width: 100%;
-    margin-bottom: 1%;
-  }
-
-  .employee-table th,
-  .employee-table td {
-    padding: 1%;
-  }
-
-  .btn {
-    width: 100%;
-    padding: 1% 0;
-  }
+  background: #0C6834;
 }

@@ -2,9 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ColaboradorService, Colaborador } from '../../colaborador/colaborador.service';
-import { Empresa, EmpresaService } from '../empresa.service';
-
+import { ColaboradorService, Colaborador } from '../../../colaborador/colaborador.service';
+import { Empresa, EmpresaService } from '../../empresa.service';
 @Component({
   selector: 'app-modal-cadastro',
   imports: [FormsModule, CommonModule],
@@ -42,7 +41,6 @@ export class ModalCadastroComponent implements OnInit {
         id: Number(this.empresa.id),
         nome: this.empresa.nome,
         cnpj: this.empresa.cnpj,
-        colaboradores: colaboradores
       }
     };
     this.empresaService.add(empresaEnviado);

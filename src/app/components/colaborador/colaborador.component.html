@@ -3,7 +3,7 @@
         <h1 id="titleFunc">Funcionários</h1>
 
         <div class="search-container">
-            <input type="text" class="search-input" placeholder="Pesquisar funcionário...">
+            <input type="text" class="search-input" placeholder="Pesquisar colaborador..." [(ngModel)]="searchTerm">
             <span class="search-icon"></span>
         </div>
 
@@ -25,7 +25,7 @@
                 <th>CPF</th>
                 <th>Funcionário</th>
                 <th>Cargo</th>
-                <th>Empresa</th>
+                <!-- <th>Empresa</th> -->
                 <!-- <th>Data</th> -->
                 <th>Status</th>
                 <th>Entrada</th>
@@ -34,14 +34,14 @@
             </tr>
         </thead>
         <tbody>
-            <ng-container *ngFor="let colaborador of colaboradores">
+            <ng-container *ngFor="let colaborador of colaboradoesFiltrados">
                 <tr *ngIf="selectedEmpresa == null || selectedEmpresa == colaborador.empresa.id" 
                 (click)="clickRow(colaborador)" 
                 style="cursor: pointer;">
                 <td>{{colaborador.cpf}}</td>
                 <td>{{colaborador.nome}}</td>
                 <td>{{colaborador.cargo}}</td>
-                <td>{{colaborador.empresa.nome}}</td>
+                <!-- <td>{{colaborador.empresa.nome}}</td> -->
                 <td [ngClass]="colaborador.status ? 'status active' : 'status inactive'">
                     {{ colaborador.status ? "Ativo" : "Inativo" }}
                 </td>
