@@ -28,6 +28,8 @@ export class ColaboradorComponent implements OnInit {
   selectedEmpresa: number | null = null;
   colaborador: any;
   searchTerm: string = '';
+  selectedDate: string | null = null;
+  ordenacao: string | null = null;
 
   constructor(
     public dialog: MatDialog,
@@ -88,8 +90,33 @@ export class ColaboradorComponent implements OnInit {
     this.abrirModalEditar();
   }
   get colaboradoesFiltrados(): Colaborador[] {
-    return this.colaboradores.filter(colaborador =>
+    let filtrados = this.colaboradores.filter(colaborador =>
       colaborador.nome.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
+
+    if(this.ordenacao == 'alfab') {
+      filtrados.sort((a, b) => a.nome.localeCompare(b.nome));
+    }
+
+    if(this.ordenacao == 'cadastro' && this.selectedDate){
+      filtrados = filtrados.filter(colaborador => {
+        const dataColaborador = colaborador.dataCadastro?.split('T')[0]; // pega só "2025-04-14"
+        return dataColaborador === this.selectedDate;
+      });
+    }
+
+    return filtrados;
+  }
+
+  handleOrdenacaoChange() {// Resetar data se saiu da ordenação por cadastro
+    if (this.ordenacao !== 'cadastro') {
+      this.selectedDate = null;
+    }
+  
+    // Se limpou os filtros
+    if (!this.ordenacao) {
+      this.selectedDate = null;
+      this.searchTerm = '';
+    }
   }
 }

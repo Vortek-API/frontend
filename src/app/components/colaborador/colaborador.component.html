@@ -7,14 +7,23 @@
             <span class="search-icon"></span>
         </div>
 
-        <input type="date" class="date-picker">
+        <div class="ordenar-container">
+            <input *ngIf="ordenacao=='cadastro'" type="date" class="date-picker">
+            <select class="ordenar-btn" [(ngModel)]="ordenacao" (change)="handleOrdenacaoChange()">
+                <option *ngIf="!ordenacao" [ngValue]="null">Ordenar por</option>
+                <option *ngIf="ordenacao" [ngValue]="null">Limpar filtros</option>
+                <option [ngValue]="'alfab'">Alfabética</option>
+                <option [ngValue]="'cadastro'">Data de cadastro</option>
+            </select>
+            
+        </div>
 
         <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
             <option [ngValue]="null">Todas</option>
             <option *ngFor="let empresa of empresas" [value]="empresa.id">
               {{ empresa.nome }}
             </option>
-          </select>
+        </select>
 
         <button class="add-employee-btn" (click)='abrirModalCadastro()'> Add Funcionário</button>
     </div>

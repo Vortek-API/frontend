@@ -134,7 +134,7 @@ h2 {
   display: flex;
   position: absolute;
   margin-bottom: 5%;
-  right: 54%;
+  right: 51%;
   /* Espaçamento entre o ícone e o texto */
   background: #0C6834;
   color: white;
@@ -155,7 +155,7 @@ h2 {
   border-radius: var(--border-radius);
   box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.1);
   height: 3rem;
-  right: 44%;
+  right: 40%;
   font-size: 1rem;
   font-family: 'Inter', sans-serif;
   font-weight: 200;
