@@ -10,5 +10,5 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),  // Adicionando o provideHttpClient
     CommonModule
-  ]
+  ]
 };

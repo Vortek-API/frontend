@@ -21,5 +21,5 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Vortek';
+  title = 'Vortek';
 }
