@@ -8,7 +8,7 @@ import { ModalEditarDeletarComponent } from '../colaborador/modais/modal-editar-
 import { Empresa, EmpresaService } from '../empresa/empresa.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-
+import { provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-colaborador',

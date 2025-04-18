@@ -4,49 +4,104 @@
     <div class="avatar">
       <img src="assets/user-avatar.png" alt="Foto do usuário" class="avatar-img">
     </div>
-    <form>
+    
+    <form #form="ngForm" novalidate>
       <div class="form-group">
         <label for="cpf">CPF</label>
-        <input type="text" id="cpf" [(ngModel)]="colaborador.cpf" name="cpf">
+        <input 
+          type="text" 
+          id="cpf" 
+          name="cpf"
+          [(ngModel)]="colaborador.cpf" 
+          required 
+          mask="000.000.000-00"
+          class="form-control"
+          #cpf="ngModel"
+        />
       </div>
-      
+    
       <div class="form-group">
         <label for="nome">Nome</label>
-        <input type="text" id="nome" [(ngModel)]="colaborador.nome" name="nome">
+        <input 
+          type="text" 
+          id="nome" 
+          name="nome" 
+          [(ngModel)]="colaborador.nome" 
+          required
+          class="form-control"
+          #nome="ngModel"
+        />
       </div>
-      
+    
       <div class="form-group">
         <label for="cargo">Cargo</label>
-        <input type="text" id="cargo" [(ngModel)]="colaborador.cargo" name="cargo">
+        <input 
+          type="text" 
+          id="cargo" 
+          name="cargo" 
+          [(ngModel)]="colaborador.cargo" 
+          required
+          class="form-control"
+          #cargo="ngModel"
+        />
       </div>
-
+    
       <div class="form-group">
         <label for="hora_ent">Hora de entrada</label>
-        <input type="text" id="hora_ent" [(ngModel)]="colaborador.hora_ent" name="hora_ent">
+        <input 
+          type="text" 
+          id="hora_ent" 
+          name="hora_ent" 
+          [(ngModel)]="colaborador.hora_ent" 
+          required
+          class="form-control"
+          #hora_ent="ngModel"
+        />
       </div>
-
+    
       <div class="form-group">
-        <label for="hora_sai">Hora de saida</label>
-        <input type="text" id="hora_sai" [(ngModel)]="colaborador.hora_sai" name="hora_sai">
+        <label for="hora_sai">Hora de saída</label>
+        <input 
+          type="text" 
+          id="hora_sai" 
+          name="hora_sai" 
+          [(ngModel)]="colaborador.hora_sai" 
+          required
+          class="form-control"
+          #hora_sai="ngModel"
+        />
       </div>
-      
+    
       <div class="form-group">
         <label for="empresa">Empresa</label>
-        <select id="empresa" [(ngModel)]="colaborador.empresa.id" name="empresa">
-          <option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nome }}
-
-          </option>
+        <select 
+          id="empresa" 
+          name="empresa" 
+          [(ngModel)]="colaborador.empresa.id" 
+          required
+          class="form-control"
+          #empresa="ngModel"
+        >
+          <option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nome }}</option>
         </select>
       </div>
-      
-       <div class="form-group">
-          <label for="status">Status</label>
-          <select id="status" [(ngModel)]="colaborador.status" name="status">
-            <option value="true">Ativo</option>
-            <option value="false">Inativo</option>
-          </select>
-        </div>
+    
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select 
+          id="status" 
+          name="status" 
+          [(ngModel)]="colaborador.status" 
+          required
+          class="form-control"
+          #status="ngModel"
+        >
+          <option value="true">Ativo</option>
+          <option value="false">Inativo</option>
+        </select>
+      </div>
     </form>
+    
     <div class="actions">
       <button class="btn-primary" (click)="save()">Ok</button>
       <button class="btn-secondary" (click)="close()">Cancelar</button>
