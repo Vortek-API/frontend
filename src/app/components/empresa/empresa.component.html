@@ -28,8 +28,7 @@
     <div class="empresa-button" *ngFor="let empresa of empresasFiltradas" (click)="clickRow(empresa)"
       style="cursor: pointer;">
       <div class="empresa-info">
-        <!-- <h1>{{ empresa.colaboradores.length }}</h1> -->
-        <h1>455</h1>
+        <h1>{{ empresa.colaboradores?.length }}</h1>
         <h2>{{ empresa.nome }}</h2>
         <p>
           <span class="icon"></span> {{ empresa.cnpj }}

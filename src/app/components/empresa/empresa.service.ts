@@ -27,21 +27,21 @@ export class EmpresaService {
 
     async findAll(): Promise<Empresa[]> {
         let emp: Promise<Empresa[]> = firstValueFrom(this.http.get<Empresa[]>(this.apiUrl));
-        let colab: Promise<Colaborador[]> = this.colaboradorService.findAll();
     
         const empresas = await emp;
-        const colaboradores = await colab;
     
-        // empresas.forEach((empresa: Empresa) => {
-        //     empresa.colaboradores = colaboradores.filter(c => c.empresa.id === empresa.id);
-        //     const totalColaboradores = empresa.colaboradores.length;
-        // });
+        empresas.forEach(async (empresa: Empresa) => {
+            empresa.colaboradores = await this.findColabs(empresa.id);
+        });
     
         return empresas;
     }
 
     async find(id: number): Promise<Empresa> {
         return firstValueFrom(this.http.get<Empresa>(`${this.apiUrl}/${id}`));
+    }
+    async findColabs(id: number): Promise<Colaborador[]> {
+        return firstValueFrom(this.http.get<Colaborador[]>(`${this.apiUrl}/colabs/${id}`));
     }
 
     async add(empresa: Empresa): Promise<Empresa> {
