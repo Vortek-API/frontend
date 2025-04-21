@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Rounded+Mplus+1c:wght@300;400;500;700&display=swap');
 :root {
     --primary-color: #0C6834;
+    /* Azul escuro elegante */
     --primary-hover: #0C6834;
     --background-color: #ffffff;
     --active-color: #42A5F5;
@@ -7,30 +9,18 @@
     --late-color: #FFD54F;
     --border-color: #0C6834;
     --border-radius: 12px;
-    --text-color: #333;
-    --text-secondary: #666;
-    --shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    --transition: all 0.3s ease;
 }
 
-/* Reset de estilos */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-size: 0.9rem;
-    font-family: 'Inter', sans-serif;
-    font-weight: 300;
-}
-
-/* Corpo do site */
-body {
-    background-color: var(--background-color);
-    color: var(--text-color);
+/* Estilização das células da tabela */
+.attendance-table td {
     padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd7d7;
+    white-space: nowrap;
+    color: var(--text-secondary);
+    /* Cinza para os demais */
 }
 
-/* Container principal */
 .container {
     background-color: #FFFFFF;
     display: flex;
@@ -38,7 +28,7 @@ body {
     position: fixed;
     width: 86%;
     height: 86%;
-    overflow: auto;
+    overflow: auto; 
     top: 20%;
     border-radius: 0.5rem;
     right: 1%;
@@ -50,58 +40,217 @@ body {
     transform: scale(0.99);
 }
 
-/* Tabela de presenças */
-.attendance-table {
-    text-align: center;
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    padding: 1rem;
-}
 
-.attendance-table thead th {
-    border-top: 2px solid rgb(219, 216, 216);
-    border-bottom: 2px solid rgb(219, 216, 216);
-    font-weight: bold;
-    color: var(--text-color);
-    padding: 2rem;
-    text-align: center;
-}
-
-.attendance-table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #ddd7d7;
-    white-space: nowrap;
-    color: var(--text-secondary);
-}
-
-.attendance-table td.status {
-    width: 120px;
-    border-radius: 2.98px;
-}
-
+/* CPF e Nome com cor principal */
 .attendance-table td:nth-child(1),
+/* Nome */
 .attendance-table td:nth-child(2) {
+    /* CPF */
     font-size: 0.9rem;
     font-family: 'Inter', sans-serif;
     font-weight: 500;
 }
 
+/* Cargo, Empresa e Data com cinza clarinho */
 .attendance-table td:nth-child(3),
-.attendance-table td:nth-child(4),
-.attendance-table td:nth-child(5) {
+.attendance-table td:nth-child(5),
+.attendance-table td:nth-child(4) {
     color: #70757e;
     font-size: 0.9rem;
     font-family: 'Inter', sans-serif;
     font-weight: 300;
 }
 
-.attendance-table tbody tr {
-    height: 13vh;
+/* Reset de estilos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    /* Aplica a nova fonte */
 }
 
+/* Corpo do site */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: 1rem;
+}
+
+
+/* Aumenta o espaçamento entre as linhas da tabela */
+.attendance-table tbody tr {
+    height: 13vh;
+    /* Ajuste a altura das linhas */
+}
+
+/* Alinha o status no centro da célula */
+.attendance-table td.status {
+    width: 123.29744720458984;
+    border-radius: 2.98px;
+}
+
+#titleFunc{
+    font-size: 1.5rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+}
+
+
+/* Cabeçalho */
+.header-actions {
+
+    display: flex;
+     
+    align-items: center; /* Alinha verticalmente os itens */
+    gap: 1rem; /* Espaçamento entre os itens */
+    margin-bottom: 1.5rem;
+    padding: 0 1rem; /* Adiciona um pouco de padding nas laterais, se necessário */
+}
+
+/* Campo de pesquisa */
+.search-container {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 0.05rem solid #ddd7d7;
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    width: 25%;
+    
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    padding: 5px 10px;
+    font-size: 1rem;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-weight: 200;
+
+}
+
+/* Container para o seletor de ordenação e o datepicker */
+.ordenar-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Espaçamento entre o seletor e o datepicker */
+}
+
+.ordenar-btn {
+    display: inline-flex;
+    align-items: center; /* Alinha o texto verticalmente */
+    justify-content: center; /* Centraliza o texto horizontalmente */
+    background: #0C6834;
+    color: white;
+    border: 0.05rem solid #0C6834;
+    border-radius: var(--border-radius);
+    padding: 0.8rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    height: auto; /* Deixa a altura automática para se ajustar ao padding */
+}
+
+/* Campo de data */
+.date-picker {
+    border: 1px solid #ddd7d7;
+    border-radius: var(--border-radius);
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 0.8rem; /* Reduzi o padding vertical para alinhar melhor */
+    height: auto; /* Deixa a altura automática para se ajustar ao padding */
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 200;
+}
+
+ 
+
+/* Dropdown de filtro */
+.filter-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Espaço entre o texto/ícone e o select */
+    border: 1px solid #ddd7d7;
+    border-radius: var(--border-radius);
+    padding: 0.5rem 0.8rem; /* Reduzi o padding vertical para alinhar melhor */
+    font-size: 1rem;
+    background: #0C6834;
+    color: white;
+    cursor: pointer;
+    height: auto; /* Deixa a altura automática para se ajustar ao padding */
+}
+
+/* Botão de adicionar funcionário */
+.add-employee-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Espaçamento entre o ícone e o texto */
+    background: #0C6834;
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.6rem 1rem; /* Ajustei o padding para melhor alinhamento */
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    height: auto; /* Deixa a altura automática para se ajustar ao padding */
+}
+
+.add-employee-btn {
+    background: #0C6834;
+}
+
+/* Ícone do botão */
+.add-employee-btn::before {
+    content: "+";
+    /* Pode ser substituído por um SVG */
+    font-size: 1.2rem;
+}
+
+/* Estilização da tabela */
+.attendance-table {
+    text-align: center;
+    width: 100%;
+    border-collapse: collapse;
+    /* Remove espaçamentos extras */
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 1rem;
+}
+
+/* Estilização do cabeçalho da tabela */
+.attendance-table thead th {
+    border-top: 2px solid rgb(219, 216, 216);
+    /* Linha acima */
+    border-bottom: 2px solid rgb(219, 216, 216);
+    /* Linha abaixo */
+    font-weight: bold;
+    color: var(--text-color);
+    padding: 2rem;
+    text-align: center;
+}
+
+th,
+td {
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid #0C6834;
+    white-space: nowrap;
+
+}
+
+th {
+    background-color: var(--background-color);
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+/* Status */
 .status {
     font-weight: bold;
     padding: 0.5rem 1rem;
@@ -126,124 +275,18 @@ body {
     color: var(--late-color);
 }
 
-/* Cabeçalho */
-.header-actions {
+#btn-add{
     display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding: 0 1rem;
-}
-
-.search-container {
-    display: flex;
-    align-items: center;
-    background: white;
-    border: 0.05rem solid #ddd7d7;
-    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.1);
-    border-radius: var(--border-radius);
-    padding: 0.5rem;
-    width: 25%;
-}
-
-.search-input {
-    border: none;
-    outline: none;
-    padding: 5px 10px;
-    font-size: 1rem;
-    width: 100%;
-    font-family: 'Inter', sans-serif;
-    font-weight: 200;
-}
-
-.ordenar-container {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.ordenar-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--primary-color);
-    color: white;
-    border: 0.05rem solid var(--primary-color);
-    border-radius: var(--border-radius);
-    padding: 0.8rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: var(--transition);
-    height: auto;
-}
-
-.date-picker {
-    border: 1px solid #ddd7d7;
-    border-radius: var(--border-radius);
-    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.1);
-    padding: 0.5rem 0.8rem;
-    height: auto;
-    font-size: 1rem;
-    font-family: 'Inter', sans-serif;
-    font-weight: 200;
-}
-
-.filter-dropdown {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    border: 1px solid #ddd7d7;
-    border-radius: var(--border-radius);
-    padding: 0.5rem 0.8rem;
-    font-size: 1rem;
-    background: var(--primary-color);
-    color: white;
-    cursor: pointer;
-    height: auto;
-}
-
-.add-employee-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius);
-    padding: 0.6rem 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: var(--transition);
-    height: auto;
-}
-
-.add-employee-btn::before {
-    content: "+";
-    font-size: 1.2rem;
-    margin-right: 4px;
-}
-
-#btn-add,
-#btn-edit {
-    display: flex;
-    position: fixed;
-    bottom: 2%;
-    padding: 0.6rem 1rem;
-    z-index: 10;
-}
-
-#btn-add {
+    position: absolute;
+    top: 90%;
     right: 15%;
 }
 
-#btn-edit {
-    right: 5%;
-}
-
-#titleFunc {
-    font-size: 1.5rem;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
+#btn-edit{
+    display: flex;
+    position: absolute;
+    top: 90%;
+    right: 5%
 }
 
 /* Responsividade */
@@ -267,7 +310,6 @@ body {
     }
 }
 
-/* Estilos adicionais */
 .popup-colab {
     position: absolute;
     bottom: 20px;

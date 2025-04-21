@@ -6,7 +6,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { Colaborador, ColaboradorService } from './colaborador.service';
 import { ModalEditarDeletarComponent } from '../colaborador/modais/modal-editar-deletar/modal-editar-deletar.component';
 import { Empresa, EmpresaService } from '../empresa/empresa.service';
+import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-colaborador',
@@ -24,7 +26,7 @@ export class ColaboradorComponent implements OnInit {
   colaboradores: Colaborador[] = [];
   empresas: Empresa[] = [];
   selectedEmpresa: number | null = null;
-  colaborador: Colaborador | null = null;
+  colaborador: any;
   searchTerm: string = '';
   selectedDate: string | null = null;
   ordenacao: string | null = null;
@@ -47,11 +49,15 @@ export class ColaboradorComponent implements OnInit {
     });
 
     this.dialog.afterAllClosed.subscribe(() => {
-      setTimeout(() => this.loadColaboradores(), 5000);
-      setTimeout(() => this.loadColaboradores(), 30000);
+      setTimeout(async () => {
+        await this.loadColaboradores();
+      }, 5000);
+
+      setTimeout(async () => {
+        await this.loadColaboradores();
+      }, 30001);
     });
   }
-
   async abrirModalEditar() {
     this.dialog.open(ModalEditarDeletarComponent, {
       width: '400px',
@@ -59,20 +65,22 @@ export class ColaboradorComponent implements OnInit {
     });
 
     this.dialog.afterAllClosed.subscribe(() => {
-      setTimeout(() => this.loadColaboradores(), 5000);
-      setTimeout(() => this.loadColaboradores(), 30000);
+      setTimeout(async () => {
+        await this.loadColaboradores();
+      }, 5000);
+
+      setTimeout(async () => {
+        await this.loadColaboradores();
+      }, 30000);
     });
   }
-
   async loadColaboradores() {
     this.colaboradores = await this.colaboradorService.findAll();
-    // Se quiser formatar horas, pode descomentar isso:
     // this.colaboradores.forEach(colaborador => {
     //   colaborador.hora_ent = colaborador.hora_ent.substring(0, 5);
     //   colaborador.hora_sai = colaborador.hora_sai.substring(0, 5);
     // });
   }
-
   async loadEmpresas() {
     this.empresas = await this.empresaService.findAll();
   }
@@ -81,19 +89,18 @@ export class ColaboradorComponent implements OnInit {
     this.colaboradorService.setData(colaborador);
     this.abrirModalEditar();
   }
-
   get colaboradoesFiltrados(): Colaborador[] {
     let filtrados = this.colaboradores.filter(colaborador =>
       colaborador.nome.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
 
-    if (this.ordenacao === 'alfab') {
+    if(this.ordenacao == 'alfab') {
       filtrados.sort((a, b) => a.nome.localeCompare(b.nome));
     }
 
-    if (this.ordenacao === 'cadastro' && this.selectedDate) {
+    if(this.ordenacao == 'cadastro' && this.selectedDate){
       filtrados = filtrados.filter(colaborador => {
-        const dataColaborador = (colaborador as any).dataCadastro?.split('T')[0];
+        const dataColaborador = colaborador.dataCadastro?.split('T')[0]; // pega só "2025-04-14"
         return dataColaborador === this.selectedDate;
       });
     }
@@ -101,11 +108,12 @@ export class ColaboradorComponent implements OnInit {
     return filtrados;
   }
 
-  handleOrdenacaoChange() {
+  handleOrdenacaoChange() {// Resetar data se saiu da ordenação por cadastro
     if (this.ordenacao !== 'cadastro') {
       this.selectedDate = null;
     }
-
+  
+    // Se limpou os filtros
     if (!this.ordenacao) {
       this.selectedDate = null;
       this.searchTerm = '';

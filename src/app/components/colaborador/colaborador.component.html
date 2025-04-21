@@ -1,74 +1,65 @@
 <div class="container">
     <div class="header-actions">
-      <h1 id="titleFunc">Funcionários</h1>
-  
-      <!-- Campo de pesquisa -->
-      <div class="search-container">
-        <input type="text" class="search-input" placeholder="Pesquisar colaborador..." [(ngModel)]="searchTerm" />
-        <span class="search-icon"></span>
-      </div>
-  
-      <!-- Campo de ordenação -->
-      <div class="ordenar-container">
-        <input *ngIf="ordenacao == 'cadastro'" type="date" class="date-picker" [(ngModel)]="selectedDate" />
-        <select class="ordenar-btn" [(ngModel)]="ordenacao" (change)="handleOrdenacaoChange()">
-          <option *ngIf="!ordenacao" [ngValue]="null">Ordenar por</option>
-          <option *ngIf="ordenacao" [ngValue]="null">Limpar filtros</option>
-          <option [ngValue]="'alfab'">Alfabética</option>
-          <option [ngValue]="'cadastro'">Data de cadastro</option>
+        <h1 id="titleFunc">Funcionários</h1>
+
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Pesquisar colaborador..." [(ngModel)]="searchTerm">
+            <span class="search-icon"></span>
+        </div>
+
+        <div class="ordenar-container">
+            <input *ngIf="ordenacao=='cadastro'" type="date" class="date-picker">
+            <select class="ordenar-btn" [(ngModel)]="ordenacao" (change)="handleOrdenacaoChange()">
+                <option *ngIf="!ordenacao" [ngValue]="null">Ordenar por</option>
+                <option *ngIf="ordenacao" [ngValue]="null">Limpar filtros</option>
+                <option [ngValue]="'alfab'">Alfabética</option>
+                <option [ngValue]="'cadastro'">Data de cadastro</option>
+            </select>
+            
+        </div>
+
+        <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
+            <option [ngValue]="null">Todas</option>
+            <option *ngFor="let empresa of empresas" [value]="empresa.id">
+              {{ empresa.nome }}
+            </option>
         </select>
-      </div>
-  
-      <!-- Filtro por empresa -->
-      <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
-        <option [ngValue]="null">Todas</option>
-        <option *ngFor="let empresa of empresas" [ngValue]="empresa.id">
-          {{ empresa.nome }}
-        </option>
-      </select>
-  
-      <!-- Botão de adicionar funcionário -->
-      <button class="add-employee-btn" (click)="abrirModalCadastro()">Add Funcionário</button>
+
+        <button class="add-employee-btn" (click)='abrirModalCadastro()'> Add Funcionário</button>
     </div>
-  
-    <!-- Tabela de funcionários -->
+
     <table class="attendance-table">
-      <thead>
-        <tr>
-          <th>CPF</th>
-          <th>Funcionário</th>
-          <th>Cargo</th>
-          <th>Empresas</th>
-          <th>Status</th>
-          <th>Entrada</th>
-          <th>Saída</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngFor="let colaborador of colaboradoesFiltrados">
-          <tr
-            *ngIf="selectedEmpresa == null || colaborador.empresas?.some(e => e.id === selectedEmpresa)"
-            (click)="clickRow(colaborador)"
-            style="cursor: pointer;"
-          >
-            <td>{{ colaborador.cpf }}</td>
-            <td>{{ colaborador.nome }}</td>
-            <td>{{ colaborador.cargo }}</td>
-            <td>
-              <span *ngFor="let empresa of colaborador.empresas; let last = last">
-                {{ empresa.nome }}<span *ngIf="!last">, </span>
-              </span>
-            </td>
-            <td [ngClass]="colaborador.status ? 'status active' : 'status inactive'">
-              {{ colaborador.status ? "Ativo" : "Inativo" }}
-            </td>
-            <td>{{ colaborador.hora_ent }}</td>
-            <td>{{ colaborador.hora_sai }}</td>
-          </tr>
-        </ng-container>
-      </tbody>
+        <thead>
+            <tr>
+                <th>CPF</th>
+                <th>Funcionário</th>
+                <th>Cargo</th>
+                <!-- <th>Empresa</th> -->
+                <!-- <th>Data</th> -->
+                <th>Status</th>
+                <th>Entrada</th>
+                <th>Saída</th>
+                <!-- <th>Horas trabalhadas</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let colaborador of colaboradoesFiltrados">
+                <tr *ngIf="selectedEmpresa == null || selectedEmpresa == colaborador.empresa.id" 
+                (click)="clickRow(colaborador)" 
+                style="cursor: pointer;">
+                <td>{{colaborador.cpf}}</td>
+                <td>{{colaborador.nome}}</td>
+                <td>{{colaborador.cargo}}</td>
+                <!-- <td>{{colaborador.empresa.nome}}</td> -->
+                <td [ngClass]="colaborador.status ? 'status active' : 'status inactive'">
+                    {{ colaborador.status ? "Ativo" : "Inativo" }}
+                </td>
+                <td>{{ colaborador.hora_ent }}</td>
+                <td>{{ colaborador.hora_sai }}</td>
+            </tr>            
+            </ng-container>
+          </tbody>          
     </table>
-  </div>
-  
-  <div class="modal-colab-crud"></div>
-  
+</div>
+
+<div class="modal-colab-crud">
