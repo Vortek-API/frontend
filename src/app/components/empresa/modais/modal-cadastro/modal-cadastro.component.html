@@ -1,51 +1,21 @@
 <div class="container modal-cadastro">
   <div class="cadastro-content">
-    <h3>Adicionar Colaborador</h3>
-  </div>
-
-  <form (ngSubmit)="save()">
-    <div class="form-group">
-      <label for="nome">Nome</label>
-      <input type="text" id="nome" [(ngModel)]="colaborador.nome" name="nome" required />
+    <h3>Adicionar Empresa</h3>
     </div>
-
-    <div class="form-group">
-      <label for="cpf">CPF</label>
-      <input type="text" id="cpf" [(ngModel)]="colaborador.cpf" name="cpf" required />
-    </div>
-
-    <div class="form-group">
-      <label for="cargo">Cargo</label>
-      <input type="text" id="cargo" [(ngModel)]="colaborador.cargo" name="cargo" />
-    </div>
-
-    <div class="form-group">
-      <label for="hora_ent">Hora Entrada</label>
-      <input type="time" id="hora_ent" [(ngModel)]="colaborador.hora_ent" name="hora_ent" />
-    </div>
-
-    <div class="form-group">
-      <label for="hora_sai">Hora Saída</label>
-      <input type="time" id="hora_sai" [(ngModel)]="colaborador.hora_sai" name="hora_sai" />
-    </div>
-
-    <div class="form-group">
-      <label for="status">Ativo</label>
-      <input type="checkbox" id="status" [(ngModel)]="colaborador.status" name="status" />
-    </div>
-
-    <div class="form-group">
-      <label for="empresas">Empresas</label>
-      <select id="empresas" multiple [(ngModel)]="empresasSelecionadas" name="empresasSelecionadas">
-        <option *ngFor="let empresa of empresas" [value]="empresa.id">
-          {{ empresa.nome }}
-        </option>
-      </select>
-    </div>
-
+    <form>
+      <div class="form-group">
+        <label for="cnpj">CNPJ</label>
+        <input type="text" id="cnpj" [(ngModel)]="empresa.cnpj" name="cnpj">
+      </div>
+      
+      <div class="form-group">
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" [(ngModel)]="empresa.nome" name="nome">
+      </div>
+      
+    </form>
     <div class="actions">
-      <button type="submit" class="btn-primary">Salvar</button>
-      <button type="button" class="btn-secondary" (click)="close()">Cancelar</button>
+      <button class="btn-primary" (click)="save()">Ok</button>
+      <button class="btn-secondary" (click)="close()">Cancelar</button>
     </div>
-  </form>
-</div>
+  </div>

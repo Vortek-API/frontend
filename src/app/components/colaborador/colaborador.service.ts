@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Data } from '@angular/router';
+import { Empresa } from '../empresa/empresa.service';
 
 export interface Colaborador {
     id: number;
@@ -12,22 +14,23 @@ export interface Colaborador {
     hora_sai: string;
     status: boolean;
     dataCadastro?: string;
-    empresas: {
+    empresa: {
         id: number;
         nome: string;
         cnpj: string;
-    }[];  // Atributo empresas (array)
+    },
 }
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class ColaboradorService {
 
-    private apiUrl = `${environment.apiUrl}/colaborador`;
     private colaboradorDataTransfer: Colaborador | undefined;
 
-    constructor(private http: HttpClient) {}
+    private apiUrl = `${environment.apiUrl}/colaborador`
+
+    constructor(private http: HttpClient) { }
 
     async findAll(): Promise<Colaborador[]> {
         return firstValueFrom(this.http.get<Colaborador[]>(this.apiUrl));
@@ -56,10 +59,11 @@ export class ColaboradorService {
     setData(colaborador: Colaborador) {
         this.colaboradorDataTransfer = colaborador;
     }
-
     getData(): Colaborador | undefined {
         const colabRet = this.colaboradorDataTransfer;
-        this.colaboradorDataTransfer = undefined; // Limpa o dado após a leitura
+        this.colaboradorDataTransfer = undefined;
+
+
         return colabRet;
     }
 }
