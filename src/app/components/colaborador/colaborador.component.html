@@ -8,7 +8,7 @@
         </div>
 
         <div class="ordenar-container">
-            <input *ngIf="ordenacao=='cadastro'" type="date" class="date-picker">
+            <input *ngIf="ordenacao=='cadastro'" type="date" class="date-picker" [(ngModel)]="selectedDate">
             <select class="ordenar-btn" [(ngModel)]="ordenacao" (change)="handleOrdenacaoChange()">
                 <option *ngIf="!ordenacao" [ngValue]="null">Ordenar por</option>
                 <option *ngIf="ordenacao" [ngValue]="null">Limpar filtros</option>
