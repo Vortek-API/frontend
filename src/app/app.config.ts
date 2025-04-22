@@ -5,6 +5,7 @@ import { routes } from './app.routes';
 import { CommonModule } from '@angular/common';
 import { provideNgxMask } from 'ngx-mask';
 
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 

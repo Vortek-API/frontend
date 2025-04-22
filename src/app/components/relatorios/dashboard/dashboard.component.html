@@ -1,6 +1,30 @@
-<div class="card">
-    <h2>Resumo do Sistema</h2>
-    <p>Total de Colaboradores: {{ resumo?.totalColaboradores }}</p>
-    <p>Total de Empresas: {{ resumo?.totalEmpresas }}</p>
+<div class="container">
+  <div class="header-actions">
+    <h1 id="titleRelatorios">Relatorios</h1>
+
+    <div class="actions-container">
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="Pesquisar empresa...">
+        <span class="search-icon"></span>
+      </div>
+
+      <button class="download-btn">Download Relatório</button>
+
+      <select class="ordenar-btn">
+        <option >Ordenar por</option>
+        <option>Limpar filtros</option>
+        <option>Empresa</option>
+        <option>Alfabética</option>
+        <option>Data</option>
+      </select>
+      
+
+    </div>
   </div>
-  
+
+<div class="charts-container">
+  <div echarts [options]="barChartOptions" class="chart-box"></div>
+  <div echarts [options]="pieChartOptions" class="chart-box"></div>
+  <div echarts [options]="lineChartOptions" class="chart-box"></div>
+  <div echarts [options]="radarChartOptions" class="chart-box"></div>
+</div>
