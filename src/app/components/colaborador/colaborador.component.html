@@ -14,8 +14,9 @@
                 <option *ngIf="ordenacao" [ngValue]="null">Limpar filtros</option>
                 <option [ngValue]="'alfab'">Alfabética</option>
                 <option [ngValue]="'cadastro'">Data de cadastro</option>
+                <option [ngValue]="'ativo'">Status Ativo</option>
+                <option [ngValue]="'inativo'">Status Inativo</option>
             </select>
-            
         </div>
 
         <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
@@ -51,8 +52,8 @@
                 <td>{{colaborador.nome}}</td>
                 <td>{{colaborador.cargo}}</td>
                 <!-- <td>{{colaborador.empresa.nome}}</td> -->
-                <td [ngClass]="colaborador.status ? 'status active' : 'status inactive'">
-                    {{ colaborador.status ? "Ativo" : "Inativo" }}
+                <td [ngClass]="colaborador.statusAtivo ? 'status ativo' : 'status inativo'">
+                    {{ colaborador.statusAtivo ? "Ativo" : "Inativo" }}
                 </td>
                 <td>{{ colaborador.hora_ent }}</td>
                 <td>{{ colaborador.hora_sai }}</td>

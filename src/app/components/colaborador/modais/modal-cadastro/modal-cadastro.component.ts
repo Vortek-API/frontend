@@ -27,7 +27,7 @@ export class ModalCadastroComponent implements OnInit {
     },
     hora_ent: '',
     hora_sai: '',
-    status: true,
+    statusAtivo: true,
   };
 
   empresas: Empresa[] = [];

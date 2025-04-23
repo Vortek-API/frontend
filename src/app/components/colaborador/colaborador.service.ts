@@ -12,7 +12,7 @@ export interface Colaborador {
     cargo: string;
     hora_ent: string;
     hora_sai: string;
-    status: boolean;
+    statusAtivo: boolean;
     dataCadastro?: string;
     empresa: {
         id: number;

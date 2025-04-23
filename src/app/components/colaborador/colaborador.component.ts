@@ -105,6 +105,18 @@ export class ColaboradorComponent implements OnInit {
       });
     }
 
+    if(this.ordenacao == 'ativo' ){
+      filtrados = filtrados.filter( colaborador => {
+        return colaborador.statusAtivo == true;
+      })
+    }
+
+    if(this.ordenacao == 'inativo' ){
+      filtrados = filtrados.filter( colaborador => {
+        return colaborador.statusAtivo == false;
+      })
+    }
+    
     return filtrados;
   }
 

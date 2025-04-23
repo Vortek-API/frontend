@@ -260,12 +260,12 @@ th {
     margin-top: 1.5rem;
 }
 
-.status.active {
+.status.ativo {
     background-color: #d1fae5;
     color: var(--active-color);
 }
 
-.status.inactive {
+.status.inativo {
     background-color: #fee2e2;
     color: var(--inactive-color);
 }
