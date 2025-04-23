@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { EchartsConfigModule } from '../../../echarts-config.module';
 import { FormsModule } from '@angular/forms';
 import { saveAs } from 'file-saver';
+import { jsPDF } from 'jspdf';
 
 @Component({
   selector: 'app-dashboard',
@@ -47,53 +48,6 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarDadosIniciais();
-  }
-
-  gerarDadosDeRelatorio(filtros: any): any[] {
-    // Sua lógica para gerar os dados do relatório com base nos filtros
-    // Retorne um array de objetos que você quer exportar
-    return [
-      { data: '2025-04-22', status: 'Ativo', empresa: 'Empresa A', valor: 100 },
-      { data: '2025-04-21', status: 'Inativo', empresa: 'Empresa B', valor: 50 },
-      // ... mais dados
-    ];
-  }
-
-  toggleDownloadOptions() {
-    this.showDownloadOptions = !this.showDownloadOptions;
-  }
-
-  downloadCSV() {
-    const csvData = this.convertToCSV(this.relatorioData);
-    this.downloadFile(csvData, 'relatorio.csv', 'text/csv');
-    this.showDownloadOptions = false;
-  }
-
-  downloadPDF() {
-    // Implementação do download de PDF (usando jsPDF ou outra biblioteca)
-    console.log('Implementação do download de PDF do relatório aqui!');
-    this.showDownloadOptions = false;
-  }
-
-  convertToCSV(data: any[]): string {
-    if (!data || data.length === 0) {
-      return '';
-    }
-    const headers = Object.keys(data[0]).join(',');
-    const rows = data.map(obj => Object.values(obj).join(',')).join('\n');
-    return `${headers}\n${rows}`;
-  }
-
-  downloadFile(data: string, filename: string, mimeType: string) {
-    const blob = new Blob([data], { type: mimeType });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
   }
 
   carregarDadosIniciais(): void {
@@ -154,23 +108,68 @@ export class DashboardComponent implements OnInit {
     
     this.carregarDadosDashboard();
   }
+
+  gerarDadosDeRelatorio(filtros: any): any[] {
+    // Sua lógica para gerar os dados do relatório com base nos filtros
+    // Retorne um array de objetos que você quer exportar
+    return [
+      { data: '2025-04-22', status: 'Ativo', empresa: 'Empresa A', valor: 100 },
+      { data: '2025-04-21', status: 'Inativo', empresa: 'Empresa B', valor: 50 },
+      // ... mais dados
+    ];
+  }
+
+  toggleDownloadOptions() {
+    this.showDownloadOptions = !this.showDownloadOptions;
+  }
+
+  downloadCSV() {
+    const csvData = this.convertToCSV(this.relatorioData);
+    this.downloadFile(csvData, 'relatorio.csv', 'text/csv');
+    this.showDownloadOptions = false;
+  }
+
+  downloadPDF() {
+    // Implementação do download de PDF (usando jsPDF ou outra biblioteca)
+    try {
+      const pdf = new jsPDF();
+      pdf.text('Lista de Colaboradores', 10, 10);
   
-  exportarRelatorio(): void {
-    this.carregando = true;
-    
-    this.dashboardService.exportarRelatorio(this.filtros).subscribe({
-      next: (blob) => {
-        // Usando file-saver para fazer download do blob
-        const dataAtual = new Date().toISOString().slice(0, 10);
-        saveAs(blob, `relatorio-dashboard-${dataAtual}.xlsx`);
-        this.carregando = false;
-      },
-      error: (err) => {
-        console.error('Erro ao exportar relatório:', err);
-        this.carregando = false;
-        // Aqui poderia ter uma lógica para mostrar mensagem de erro
-      }
-    });
+      let y = 20;
+      this.relatorioData.forEach(colaborador => {
+        pdf.text(`${colaborador.nome} - ${colaborador.cargo}`, 10, y);
+        y += 10;
+      });
+  
+      pdf.save('relatorio.pdf');
+      this.showDownloadOptions = false;
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      this.showDownloadOptions = false;
+      // Aqui você pode adicionar lógica para mostrar uma mensagem de erro ao usuário
+      alert('Ocorreu um erro ao gerar o PDF.'); // Exemplo simples
+    }
+  }
+
+  convertToCSV(data: any[]): string {
+    if (!data || data.length === 0) {
+      return '';
+    }
+    const headers = Object.keys(data[0]).join(',');
+    const rows = data.map(obj => Object.values(obj).join(',')).join('\n');
+    return `${headers}\n${rows}`;
+  }
+
+  downloadFile(data: string, filename: string, mimeType: string) {
+    const blob = new Blob([data], { type: mimeType });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   }
   
   atualizarGraficos(data: any): void {

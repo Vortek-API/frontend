@@ -45,7 +45,7 @@
           </select>
         </div>
 
-        <div class="filter-group">
+        <div class="filter-group"> <!--Trocar para classe filter-ations para teste -->
           <label>Ordenar por:</label>
           <select 
             [(ngModel)]="filtros.ordenacao" 
@@ -60,21 +60,19 @@
             <option value="colaboradores_desc">Colaboradores (Maior)</option>
           </select>
         </div>
-      </div>
-
-      <div class="filter-actions">
-        <button class="limpar-btn" (click)="limparFiltros()">Limpar Filtros</button>
-        <button class="download-btn" (click)="exportarRelatorio()">
-          <span class="icon-download"></span>
-          Download Relatório
-        </button>
-        <button (click)="toggleDownloadOptions()">Baixar</button>
-
-        <div *ngIf="showDownloadOptions" class="download-options">
-          <button (click)="downloadCSV()">Download CSV</button>
-          <button (click)="downloadPDF()">Download PDF</button>
+        <div class="filter-actions">
+          <button class="limpar-btn" (click)="limparFiltros()">Limpar Filtros</button>
+          
+          <button class="download-btn" (click)="toggleDownloadOptions()">
+            <span class="icon-download"></span> 
+            Download Relatório
+          </button>
+  
+          <div *ngIf="showDownloadOptions" class="download-options">
+            <button (click)="downloadCSV()">Download CSV</button>
+            <button (click)="downloadPDF()">Download PDF</button>
+          </div>
         </div>
-        
       </div>
     </div>
   </div>

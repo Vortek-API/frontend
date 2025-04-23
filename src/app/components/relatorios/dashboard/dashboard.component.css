@@ -68,9 +68,11 @@
 }
 
 .filter-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  position: relative; /* Necessário para posicionar .download-options absolutamente dentro */
+  display: flex; /* Se os botões de ação estiverem lado a lado */
+  align-items: center;
+  gap: 10px; /* Espaço entre os botões de ação */
+ 
 }
 
 .limpar-btn {
@@ -89,47 +91,47 @@
 }
 
 .download-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: #0C6834;
+  /* Estilos para o botão principal de download */
+  background-color: #0C6834; /* Cor azul primária */
   color: white;
   border: none;
-  padding: 0.8rem 1.2rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: var(--transition);
-  border: 0.05rem solid #0C6834;
+  padding: 10px 15px;
   border-radius: var(--border-radius);
-  font-weight: 500;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; /* Para alinhar ícone e texto */
+  align-items: center;
+  gap: 5px; /* Espaço entre ícone e texto */
 }
 
 .download-btn:hover {
-  background: #095029;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: #0B3B17;
 }
 
-.icon-download {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  background-size: contain;
+.icon-download::before {
+  /* Exemplo de um ícone de download (você pode usar uma biblioteca de ícones) */
+  content: '\2193'; /* Seta para baixo */
+  font-size: 20px;
+ 
 }
 
 .download-options {
-  position: absolute; /* Posiciona em relação ao ancestral mais próximo com position definido */
+  position: absolute;
   background-color: #f9f9f9;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   padding: 10px;
-  margin-top: 5px; /* Espaço entre o botão e as opções */
+  margin-top: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  z-index: 10; /* Garante que apareça sobre outros elementos */
+  z-index: 10;
+  right: 0; /* Alinha a div à direita do botão */
+  top: 100%; /* Posiciona abaixo do botão */
+  min-width: 150px; /* Largura mínima para as opções */
+  text-align: left; /* Alinha o texto dos botões à esquerda */
 }
 
 .download-options button {
-  display: block; /* Faz os botões ficarem em linhas separadas */
+  display: block;
   width: 100%;
   padding: 8px 10px;
   border: none;
@@ -137,11 +139,12 @@
   text-align: left;
   cursor: pointer;
   font-size: 14px;
-  border-bottom: 1px solid #eee; /* Separador visual entre os botões */
+  border-bottom: 1px solid #eee;
+  border-radius: 0; /* Remove border-radius dos botões internos */
 }
 
 .download-options button:last-child {
-  border-bottom: none; /* Remove a borda inferior do último botão */
+  border-bottom: none;
 }
 
 .download-options button:hover {
