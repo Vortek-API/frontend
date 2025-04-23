@@ -5,6 +5,12 @@ import { HttpClient } from '@angular/common/http';
 import { Data } from '@angular/router';
 import { Empresa } from '../empresa/empresa.service';
 
+
+//export interface Empresa{
+  //  id: number;
+  //  nome: string;
+  //  cnpj: string;
+//}
 export interface Colaborador {
     id: number;
     cpf: string;
@@ -12,13 +18,10 @@ export interface Colaborador {
     cargo: string;
     hora_ent: string;
     hora_sai: string;
-    statusAtivo: boolean;
+    status: boolean;
     dataCadastro?: string;
-    empresa: {
-        id: number;
-        nome: string;
-        cnpj: string;
-    },
+    foto?: Uint8Array
+    empresas?: Empresa[];
 }
 
 @Injectable({

@@ -1,31 +1,38 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { Empresa, EmpresaService } from '../../../empresa/empresa.service';
 import { Colaborador, ColaboradorService } from '../../colaborador.service';
 import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-modal-editar-deletar',
-  imports: [FormsModule, CommonModule],
+  imports: [
+    FormsModule,
+    CommonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatOptionModule
+  ],
   templateUrl: './modal-editar-deletar.component.html',
   styleUrl: './modal-editar-deletar.component.css'
 })
-export class ModalEditarDeletarComponent implements OnInit  {
-  colaborador = {
+export class ModalEditarDeletarComponent implements OnInit {
+  colaborador: Colaborador = {
     id: 0,
-    cpf: '', 
+    cpf: '',
     nome: '',
     cargo: '',
-    empresa: {
-      id: 0,
-      nome: '',
-      cnpj: '',
-    },
+    empresas: [],
     hora_ent: '',
     hora_sai: '',
-    statusAtivo: true,
+    status: true,
   };
+
   empresas: Empresa[] = [];
 
   constructor(
@@ -35,39 +42,77 @@ export class ModalEditarDeletarComponent implements OnInit  {
   ) { }
 
   async ngOnInit() {
-    this.loadEditData();
     this.empresas = await this.empresaService.findAll();
+    this.loadEditData();
   }
 
   close(): void {
     this.dialogRef.close();
   }
 
-  save(): void {
-    const colaboradorEnviado = {
-      ...this.colaborador,
-      empresa: {
-        id: Number(this.colaborador.empresa.id),
-        nome: this.colaborador.empresa.nome,
-        cnpj: this.colaborador.empresa.cnpj
-      }
-    };
-  
-    this.colaboradorService.update(colaboradorEnviado.id, colaboradorEnviado);
-    this.close();
-  }
-  
+  async save(): Promise<void> {
+    const primeiraEmpresa = this.colaborador.empresas?.[0];
 
-  
-  
-  deletar(): void {
-    this.colaboradorService.delete(this.colaborador.id);
-    this.close();
-  }
-  loadEditData() {
-    const colab = this.colaboradorService.getData(); 
-    if(colab != undefined) {
-      this.colaborador = colab;
+    if (!primeiraEmpresa) {
+      await Swal.fire('Atenção', 'Selecione ao menos uma empresa antes de salvar.', 'warning');
+      return;
+    }
+
+    const colaboradorEnviado: Colaborador = {
+      ...this.colaborador,
+      empresas: this.colaborador.empresas?.filter(e => e !== undefined) as Empresa[],
+    };
+
+    try {
+      await this.colaboradorService.update(colaboradorEnviado.id, colaboradorEnviado);
+      await Swal.fire('Sucesso', 'Colaborador atualizado com sucesso.', 'success');
+      this.close();
+    } catch (error) {
+      console.error(error);
+      await Swal.fire('Erro', 'Erro ao atualizar o colaborador.', 'error');
     }
   }
+
+  async deletar(): Promise<void> {
+    try {
+      await this.colaboradorService.delete(this.colaborador.id);
+      await Swal.fire('Removido', 'Colaborador deletado com sucesso.', 'success');
+      this.close();
+    } catch (error) {
+      console.error(error);
+      await Swal.fire('Erro', 'Erro ao deletar o colaborador.', 'error');
+    }
+  }
+
+  loadEditData(): void {
+    const colab = this.colaboradorService.getData();
+    if (colab) {
+      this.colaborador = {
+        ...colab,
+        empresas: colab.empresas?.map(empColab => {
+          return this.empresas.find(e => e.id === empColab.id) || empColab;
+        }) || []
+      };
+    }
+  }
+
+  isEmpresaSelecionada(emp: Empresa): boolean {
+    return this.colaborador.empresas?.some(e => e.id === emp.id) ?? false;
+  }
+  
+  toggleEmpresa(emp: Empresa, checked: boolean) {
+    if (!this.colaborador.empresas) {
+      this.colaborador.empresas = [];
+    }
+  
+    if (checked) {
+      const jaExiste = this.colaborador.empresas.some(e => e.id === emp.id);
+      if (!jaExiste) {
+        this.colaborador.empresas.push(emp);
+      }
+    } else {
+      this.colaborador.empresas = this.colaborador.empresas.filter(e => e.id !== emp.id);
+    }
+  }
+  
 }

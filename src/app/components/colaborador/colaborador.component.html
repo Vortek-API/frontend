@@ -45,15 +45,15 @@
         </thead>
         <tbody>
             <ng-container *ngFor="let colaborador of colaboradoesFiltrados">
-                <tr *ngIf="selectedEmpresa == null || selectedEmpresa == colaborador.empresa.id" 
+                <tr *ngIf="selectedEmpresa == null || selectedEmpresa == colaborador.empresas?.[0]?.id" 
                 (click)="clickRow(colaborador)" 
                 style="cursor: pointer;">
                 <td>{{colaborador.cpf}}</td>
                 <td>{{colaborador.nome}}</td>
                 <td>{{colaborador.cargo}}</td>
                 <!-- <td>{{colaborador.empresa.nome}}</td> -->
-                <td [ngClass]="colaborador.statusAtivo ? 'status ativo' : 'status inativo'">
-                    {{ colaborador.statusAtivo ? "Ativo" : "Inativo" }}
+                <td [ngClass]="colaborador.status ? 'status ativo' : 'status inativo'">
+                    {{ colaborador.status ? "Ativo" : "Inativo" }}
                 </td>
                 <td>{{ colaborador.hora_ent }}</td>
                 <td>{{ colaborador.hora_sai }}</td>

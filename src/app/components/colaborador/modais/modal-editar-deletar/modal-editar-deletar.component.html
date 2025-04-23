@@ -26,27 +26,40 @@
       </div>
 
       <div class="form-group">
-        <label for="hora_sai">Hora de saida</label>
+        <label for="hora_sai">Hora de saída</label>
         <input type="text" id="hora_sai" [(ngModel)]="colaborador.hora_sai" name="hora_sai">
       </div>
-      
-      <div class="form-group">
-        <label for="empresa">Empresa</label>
-        <select id="empresa" [(ngModel)]="colaborador.empresa.id" name="empresa">
-          <option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nome }}
 
-          </option>
-        </select>
+      <<div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label for="empresa">Empresas</mat-label>
+          <mat-select 
+            id="empresa" 
+            name="empresa" 
+            [(ngModel)]="colaborador.empresas" 
+            multiple 
+            required
+            class="form-control"
+            #empresa="ngModel">
+              <mat-option *ngFor="let empresa of empresas" [value]="empresa">
+                {{ empresa.nome }}
+              </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
       
-       <div class="form-group">
-          <label for="status">Status</label>
-          <select id="status" [(ngModel)]="colaborador.statusAtivo" name="status">
-            <option value="true">Ativo</option>
-            <option value="false">Inativo</option>
-          </select>
-        </div>
+      
+      
+
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" [(ngModel)]="colaborador.status" name="status">
+          <option [ngValue]="true">Ativo</option>
+          <option [ngValue]="false">Inativo</option>
+        </select>
+      </div>
     </form>
+    
     <div class="actions">
       <button class="btn-primary" (click)="save()">Ok</button>
       <button class="btn-secondary" (click)="deletar()">Deletar</button>

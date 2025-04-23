@@ -107,13 +107,13 @@ export class ColaboradorComponent implements OnInit {
 
     if(this.ordenacao == 'ativo' ){
       filtrados = filtrados.filter( colaborador => {
-        return colaborador.statusAtivo == true;
+        return colaborador.status == true;
       })
     }
 
     if(this.ordenacao == 'inativo' ){
       filtrados = filtrados.filter( colaborador => {
-        return colaborador.statusAtivo == false;
+        return colaborador.status == false;
       })
     }
     

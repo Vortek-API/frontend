@@ -73,17 +73,19 @@
       </div>
     
       <div class="form-group">
-        <label for="empresa">Empresa</label>
-        <select 
+        <mat-form-field appearance="fill">
+        <mat-label for="empresa">Empresas</mat-label>
+        <mat-select 
           id="empresa" 
           name="empresa" 
           [(ngModel)]="colaborador.empresa.id" 
           required
           class="form-control"
           #empresa="ngModel"
-        >
-          <option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nome }}</option>
-        </select>
+        multiple required>
+          <mat-option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nome }}</mat-option>
+        </mat-select>
+      </mat-form-field>
       </div>
     
       <div class="form-group">
@@ -91,7 +93,7 @@
         <select 
           id="status" 
           name="status" 
-          [(ngModel)]="colaborador.statusAtivo" 
+          [(ngModel)]="colaborador.status" 
           required
           class="form-control"
           #status="ngModel"

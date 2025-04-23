@@ -6,11 +6,15 @@ import { Colaborador, ColaboradorService } from '../../colaborador.service';
 import { CommonModule } from '@angular/common';
 import { NgxMaskDirective } from 'ngx-mask';
 import Swal from 'sweetalert2';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+
 
 @Component({
   selector: 'app-modal-cadastro',
   standalone: true,
-  imports: [FormsModule, CommonModule, NgxMaskDirective],
+  imports: [FormsModule, CommonModule, NgxMaskDirective,MatFormFieldModule, MatSelectModule,MatOptionModule,],
   templateUrl: './modal-cadastro.component.html',
   styleUrl: './modal-cadastro.component.css'
 })
@@ -27,7 +31,7 @@ export class ModalCadastroComponent implements OnInit {
     },
     hora_ent: '',
     hora_sai: '',
-    statusAtivo: true,
+    status: true,
   };
 
   empresas: Empresa[] = [];
