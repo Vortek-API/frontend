@@ -28,6 +28,10 @@ export class DashboardComponent implements OnInit {
   // Listas para os filtros
   listaEmpresas: string[] = [];
   listaStatus: string[] = [];
+
+  showDownloadOptions: boolean = false;
+  relatorioData: any[] = []; // Os dados do seu relatório (preenchidos após a filtragem)
+
   
   // Objeto de filtros
   filtros = {
@@ -43,6 +47,53 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarDadosIniciais();
+  }
+
+  gerarDadosDeRelatorio(filtros: any): any[] {
+    // Sua lógica para gerar os dados do relatório com base nos filtros
+    // Retorne um array de objetos que você quer exportar
+    return [
+      { data: '2025-04-22', status: 'Ativo', empresa: 'Empresa A', valor: 100 },
+      { data: '2025-04-21', status: 'Inativo', empresa: 'Empresa B', valor: 50 },
+      // ... mais dados
+    ];
+  }
+
+  toggleDownloadOptions() {
+    this.showDownloadOptions = !this.showDownloadOptions;
+  }
+
+  downloadCSV() {
+    const csvData = this.convertToCSV(this.relatorioData);
+    this.downloadFile(csvData, 'relatorio.csv', 'text/csv');
+    this.showDownloadOptions = false;
+  }
+
+  downloadPDF() {
+    // Implementação do download de PDF (usando jsPDF ou outra biblioteca)
+    console.log('Implementação do download de PDF do relatório aqui!');
+    this.showDownloadOptions = false;
+  }
+
+  convertToCSV(data: any[]): string {
+    if (!data || data.length === 0) {
+      return '';
+    }
+    const headers = Object.keys(data[0]).join(',');
+    const rows = data.map(obj => Object.values(obj).join(',')).join('\n');
+    return `${headers}\n${rows}`;
+  }
+
+  downloadFile(data: string, filename: string, mimeType: string) {
+    const blob = new Blob([data], { type: mimeType });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   }
 
   carregarDadosIniciais(): void {
@@ -86,23 +137,23 @@ export class DashboardComponent implements OnInit {
   }
   
   // Atualização do método aplicarFiltros no dashboard.component.ts
-aplicarFiltros(): void {
-  // Como removemos a caixa de pesquisa, não precisamos mais do delay
-  this.carregarDadosDashboard();
-}
+  aplicarFiltros(): void {
+    // Como removemos a caixa de pesquisa, não precisamos mais do delay
+    this.carregarDadosDashboard();
+  }
 
-limparFiltros(): void {
-  this.filtros = {
-    empresa: '',
-    dataInicio: '',
-    dataFim: '',
-    status: '',
-    categoria: '',
-    ordenacao: ''
-  };
-  
-  this.carregarDadosDashboard();
-}
+  limparFiltros(): void {
+    this.filtros = {
+      empresa: '',
+      dataInicio: '',
+      dataFim: '',
+      status: '',
+      categoria: '',
+      ordenacao: ''
+    };
+    
+    this.carregarDadosDashboard();
+  }
   
   exportarRelatorio(): void {
     this.carregando = true;

@@ -68,6 +68,13 @@
           <span class="icon-download"></span>
           Download Relatório
         </button>
+        <button (click)="toggleDownloadOptions()">Baixar</button>
+
+        <div *ngIf="showDownloadOptions" class="download-options">
+          <button (click)="downloadCSV()">Download CSV</button>
+          <button (click)="downloadPDF()">Download PDF</button>
+        </div>
+        
       </div>
     </div>
   </div>
