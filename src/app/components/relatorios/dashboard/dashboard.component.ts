@@ -23,8 +23,13 @@ export class DashboardComponent implements OnInit {
   lineChartOptions: any;
   radarChartOptions: any;
   
+  // Gráficos para horas por empresa
+  horasEmpresaBarChartOptions: any;
+  horasEmpresaPieChartOptions: any;
+  
   // Estado de carregamento
   carregando = false;
+  carregandoHorasEmpresa = false;
   
   // Listas para os filtros
   listaEmpresas: string[] = [];
@@ -33,6 +38,8 @@ export class DashboardComponent implements OnInit {
   showDownloadOptions: boolean = false;
   relatorioData: any[] = []; // Os dados do seu relatório (preenchidos após a filtragem)
 
+  // Dados de horas por empresa
+  horasEmpresaData: any[] = [];
   
   // Objeto de filtros
   filtros = {
@@ -71,6 +78,9 @@ export class DashboardComponent implements OnInit {
     
     // Carregar dados do dashboard com filtros vazios inicialmente
     this.carregarDadosDashboard();
+    
+    // Carregar dados de horas por empresa
+    this.carregarHorasPorEmpresa();
   }
   
   carregarDadosDashboard(): void {  
@@ -85,15 +95,31 @@ export class DashboardComponent implements OnInit {
       error: (err) => {
         console.error('Erro ao buscar resumo:', err);
         this.carregando = false;
-        // Aqui poderia ter uma lógica para mostrar uma mensagem de erro
       }
     });
   }
   
-  // Atualização do método aplicarFiltros no dashboard.component.ts
+  carregarHorasPorEmpresa(): void {
+    this.carregandoHorasEmpresa = true;
+    
+    this.dashboardService.getHorasPorEmpresa(this.filtros.dataInicio, this.filtros.dataFim).subscribe({
+      next: (data) => {
+        this.horasEmpresaData = data;
+        this.atualizarGraficosHorasEmpresa(data);
+        this.carregandoHorasEmpresa = false;
+        // Também atualiza os dados para exportação se necessário
+        this.prepararDadosParaExportacao(data);
+      },
+      error: (err) => {
+        console.error('Erro ao buscar horas por empresa:', err);
+        this.carregandoHorasEmpresa = false;
+      }
+    });
+  }
+  
   aplicarFiltros(): void {
-    // Como removemos a caixa de pesquisa, não precisamos mais do delay
     this.carregarDadosDashboard();
+    this.carregarHorasPorEmpresa();
   }
 
   limparFiltros(): void {
@@ -107,16 +133,19 @@ export class DashboardComponent implements OnInit {
     };
     
     this.carregarDadosDashboard();
+    this.carregarHorasPorEmpresa();
   }
 
-  gerarDadosDeRelatorio(filtros: any): any[] {
-    // Sua lógica para gerar os dados do relatório com base nos filtros
-    // Retorne um array de objetos que você quer exportar
-    return [
-      { data: '2025-04-22', status: 'Ativo', empresa: 'Empresa A', valor: 100 },
-      { data: '2025-04-21', status: 'Inativo', empresa: 'Empresa B', valor: 50 },
-      // ... mais dados
-    ];
+  prepararDadosParaExportacao(data: any[]): void {
+    // Converte os dados de horas por empresa em um formato adequado para exportação
+    this.relatorioData = data.map(item => ({
+      empresaId: item.empresaId,
+      empresaNome: item.empresaNome,
+      horasTotais: item.horasTotais,
+      minutosTotais: item.minutosTotais,
+      segundosTotais: item.segundosTotais,
+      tempoFormatado: `${item.horasTotais}h ${item.minutosTotais}m ${item.segundosTotais}s`
+    }));
   }
 
   toggleDownloadOptions() {
@@ -125,29 +154,42 @@ export class DashboardComponent implements OnInit {
 
   downloadCSV() {
     const csvData = this.convertToCSV(this.relatorioData);
-    this.downloadFile(csvData, 'relatorio.csv', 'text/csv');
+    this.downloadFile(csvData, 'relatorio-horas-por-empresa.csv', 'text/csv');
     this.showDownloadOptions = false;
   }
 
   downloadPDF() {
-    // Implementação do download de PDF (usando jsPDF ou outra biblioteca)
     try {
       const pdf = new jsPDF();
-      pdf.text('Lista de Colaboradores', 10, 10);
+      pdf.text('Relatório de Horas por Empresa', 10, 10);
   
-      let y = 20;
-      this.relatorioData.forEach(colaborador => {
-        pdf.text(`${colaborador.nome} - ${colaborador.cargo}`, 10, y);
+      // Adicionar filtros aplicados
+      if (this.filtros.dataInicio || this.filtros.dataFim) {
+        let periodoTexto = 'Período: ';
+        periodoTexto += this.filtros.dataInicio ? `De ${this.filtros.dataInicio}` : 'Sem data inicial';
+        periodoTexto += this.filtros.dataFim ? ` até ${this.filtros.dataFim}` : ' até hoje';
+        pdf.text(periodoTexto, 10, 20);
+      }
+  
+      // Cabeçalho da tabela
+      pdf.text('Empresa', 10, 30);
+      pdf.text('Horas Totais', 100, 30);
+      pdf.text('Tempo Formatado', 150, 30);
+      
+      let y = 40;
+      this.relatorioData.forEach(empresa => {
+        pdf.text(empresa.empresaNome, 10, y);
+        pdf.text(empresa.horasTotais.toString(), 100, y);
+        pdf.text(empresa.tempoFormatado, 150, y);
         y += 10;
       });
   
-      pdf.save('relatorio.pdf');
+      pdf.save('relatorio-horas-por-empresa.pdf');
       this.showDownloadOptions = false;
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
       this.showDownloadOptions = false;
-      // Aqui você pode adicionar lógica para mostrar uma mensagem de erro ao usuário
-      alert('Ocorreu um erro ao gerar o PDF.'); // Exemplo simples
+      alert('Ocorreu um erro ao gerar o PDF.');
     }
   }
 
@@ -162,22 +204,210 @@ export class DashboardComponent implements OnInit {
 
   downloadFile(data: string, filename: string, mimeType: string) {
     const blob = new Blob([data], { type: mimeType });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
+    saveAs(blob, filename);
+  }
+  
+  atualizarGraficosHorasEmpresa(data: any[]): void {
+    if (!data || data.length === 0) {
+      this.configurarGraficosHorasEmpresaVazios();
+      return;
+    }
+    
+    // Preparar dados para o gráfico de barras
+    const empresas = data.map(item => item.empresaNome);
+    const horasTotais = data.map(item => item.horasTotais + (item.minutosTotais / 60) + (item.segundosTotais / 3600));
+    const formatoHoras = data.map(item => {
+      const horas = item.horasTotais;
+      const minutos = item.minutosTotais;
+      const segundos = item.segundosTotais;
+      
+      return `${horas}h ${minutos}m ${segundos}s`;
+    });
+    
+    // Configurar gráfico de barras
+    this.horasEmpresaBarChartOptions = {
+      title: { 
+        text: 'Horas Trabalhadas por Empresa',
+        left: 'center',
+        textStyle: {
+          fontSize: 16,
+          fontWeight: 'bold'
+        }
+      },
+      tooltip: {
+        trigger: 'axis',
+        formatter: function(params: any) {
+          const dataIndex = params[0].dataIndex;
+          return `${empresas[dataIndex]}: ${formatoHoras[dataIndex]}`;
+        }
+      },
+      grid: {
+        left: '5%',
+        right: '5%',
+        bottom: '10%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: empresas,
+        axisLabel: {
+          interval: 0,
+          rotate: 45,
+          textStyle: {
+            fontSize: 12
+          }
+        }
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Horas',
+        axisLabel: {
+          formatter: '{value} h'
+        }
+      },
+      series: [
+        {
+          name: 'Horas Trabalhadas',
+          type: 'bar',
+          data: horasTotais,
+          itemStyle: {
+            color: '#3498db'
+          },
+          label: {
+            show: true,
+            position: 'top',
+            formatter: function(params: any) {
+              const dataIndex = params.dataIndex;
+              return formatoHoras[dataIndex];
+            }
+          }
+        }
+      ]
+    };
+    
+    // Configurar gráfico de pizza
+    this.horasEmpresaPieChartOptions = {
+      title: { 
+        text: 'Distribuição de Horas por Empresa', 
+        left: 'center',
+        textStyle: {
+          fontSize: 16,
+          fontWeight: 'bold'
+        }
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: function(params: any) {
+          const index = empresas.indexOf(params.name);
+          if (index !== -1) {
+            return `${params.name}: ${formatoHoras[index]} (${params.percent}%)`;
+          }
+          return params.name;
+        }
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left',
+        type: 'scroll',
+        textStyle: {
+          fontSize: 12
+        }
+      },
+      series: [
+        {
+          name: 'Horas Trabalhadas',
+          type: 'pie',
+          radius: '60%',
+          center: ['50%', '60%'],
+          data: data.map((item, index) => ({
+            name: item.empresaNome,
+            value: horasTotais[index]
+          })),
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          },
+          label: {
+            formatter: '{b}: {d}%'
+          }
+        }
+      ]
+    };
+  }
+  
+  configurarGraficosHorasEmpresaVazios(): void {
+    // Gráfico de barras vazio
+    this.horasEmpresaBarChartOptions = {
+      title: { 
+        text: 'Horas Trabalhadas por Empresa',
+        left: 'center',
+        textStyle: {
+          fontSize: 16,
+          fontWeight: 'bold'
+        }
+      },
+      tooltip: {},
+      xAxis: {
+        type: 'category',
+        data: []
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Horas'
+      },
+      series: [
+        {
+          name: 'Horas Trabalhadas',
+          type: 'bar',
+          data: [],
+          itemStyle: {
+            color: '#3498db'
+          }
+        }
+      ]
+    };
+    
+    // Gráfico de pizza vazio
+    this.horasEmpresaPieChartOptions = {
+      title: { 
+        text: 'Distribuição de Horas por Empresa', 
+        left: 'center',
+        textStyle: {
+          fontSize: 16,
+          fontWeight: 'bold'
+        }
+      },
+      tooltip: { trigger: 'item' },
+      legend: {
+        orient: 'vertical',
+        left: 'left'
+      },
+      series: [
+        {
+          name: 'Horas Trabalhadas',
+          type: 'pie',
+          radius: '60%',
+          center: ['50%', '60%'],
+          data: [],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    };
   }
   
   atualizarGraficos(data: any): void {
-    // Estes são apenas exemplos. Na implementação real, 
-    // você deve adaptar os dados vindo da API para os gráficos
-    
+    // Implementação existente dos gráficos principais
     // Gráfico de barras - Colaboradores por Empresa
-    if (data.colaboradoresPorEmpresa) {
+    if (data && data.colaboradoresPorEmpresa) {
       const empresas = data.colaboradoresPorEmpresa.map((item: any) => item.empresa);
       const valores = data.colaboradoresPorEmpresa.map((item: any) => item.quantidade);
       
@@ -218,7 +448,7 @@ export class DashboardComponent implements OnInit {
     }
     
     // Gráfico de pizza - Distribuição de Status
-    if (data.distribuicaoStatus) {
+    if (data && data.distribuicaoStatus) {
       const statusDados = data.distribuicaoStatus.map((item: any) => ({
         value: item.quantidade,
         name: item.status
@@ -261,9 +491,9 @@ export class DashboardComponent implements OnInit {
             radius: '60%',
             center: ['50%', '50%'],
             data: [
-              { value: 40, name: 'Ativos' },
-              { value: 30, name: 'Inativos' },
-              { value: 30, name: 'Pendentes' }
+              { value: 30, name: 'Ativo' },
+              { value: 15, name: 'Inativo' },
+              { value: 10, name: 'Férias' }
             ],
             emphasis: {
               itemStyle: {
@@ -273,166 +503,78 @@ export class DashboardComponent implements OnInit {
               }
             },
             label: {
-              formatter: '{b}: {c} ({d}%)'
+              formatter: '{b}: {d}%'
             }
           }
         ]
       };
     }
-    
-    // Gráfico de linha - Evolução Mensal
-    if (data.evolucaoMensal) {
-      const meses = data.evolucaoMensal.map((item: any) => item.mes);
-      const valores = data.evolucaoMensal.map((item: any) => item.quantidade);
-      
+                
+    // Gráfico de linha - Histórico de registros
+    if (data && data.historicoRegistros) {
+      const datas = data.historicoRegistros.map((item: any) => item.data);
+      const valores = data.historicoRegistros.map((item: any) => item.quantidade);
+                
       this.lineChartOptions = {
-        title: { text: 'Evolução Mensal' },
-        tooltip: { trigger: 'axis' },
+        title: { text: 'Histórico de Registros' },
+        tooltip: {
+          trigger: 'axis'
+        },
         xAxis: {
           type: 'category',
-          data: meses
+          data: datas
         },
         yAxis: {
           type: 'value'
         },
-        series: [
-          {
-            name: 'Colaboradores',
-            type: 'line',
-            data: valores,
-            smooth: true,
-            lineStyle: {
-              color: '#0C6834',
-              width: 3
-            },
-            itemStyle: {
-              color: '#0C6834'
-            },
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  {
-                    offset: 0,
-                    color: 'rgba(12, 104, 52, 0.5)'
-                  },
-                  {
-                    offset: 1,
-                    color: 'rgba(12, 104, 52, 0.05)'
-                  }
-                ]
-              }
-            }
+        series: [{
+          name: 'Registros',
+          type: 'line',
+          data: valores,
+          itemStyle: {
+            color: '#e67e22'
+          },
+          lineStyle: {
+            width: 2
           }
-        ]
-      };
-    } else {
-      // Dados fictícios caso não venham da API
-      this.lineChartOptions = {
-        title: { text: 'Evolução Mensal' },
-        tooltip: { trigger: 'axis' },
-        xAxis: {
-          type: 'category',
-          data: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai']
-        },
-        yAxis: {
-          type: 'value'
-        },
-        series: [
-          {
-            name: 'Colaboradores',
-            type: 'line',
-            data: [5, 15, 25, 20, 30],
-            smooth: true,
-            lineStyle: {
-              color: '#0C6834',
-              width: 3
-            },
-            itemStyle: {
-              color: '#0C6834'
-            },
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  {
-                    offset: 0,
-                    color: 'rgba(12, 104, 52, 0.5)'
-                  },
-                  {
-                    offset: 1,
-                    color: 'rgba(12, 104, 52, 0.05)'
-                  }
-                ]
-              }
-            }
-          }
-        ]
+        }]
       };
     }
-    
-    // Gráfico de radar - Comparativo de Desempenho
-    if (data.comparativoDesempenho) {
-      const indicadores = data.comparativoDesempenho.indicadores;
-      const empresas = data.comparativoDesempenho.empresas;
-      
-      this.radarChartOptions = {
-        title: { text: 'Comparativo de Desempenho' },
-        tooltip: {},
-        legend: { data: empresas.map((emp: any) => emp.nome) },
-        radar: {
-          indicator: indicadores.map((ind: any) => ({ name: ind.nome, max: 100 }))
-        },
-        series: [
-          {
-            name: 'Desempenho',
-            type: 'radar',
-            data: empresas.map((emp: any) => ({
-              value: emp.valores,
-              name: emp.nome
-            }))
-          }
+                
+    // Gráfico radar - Critérios de desempenho
+    this.radarChartOptions = {
+      title: { text: 'Indicadores de Desempenho' },
+      tooltip: {},
+      radar: {
+        indicator: [
+          { name: 'Pontualidade', max: 100 },
+          { name: 'Horas Extras', max: 100 },
+          { name: 'Ausências', max: 100 },
+          { name: 'Pausas', max: 100 },
+          { name: 'Inconsistências', max: 100 }
         ]
-      };
-    } else {
-      // Dados fictícios caso não venham da API
-      this.radarChartOptions = {
-        title: { text: 'Comparativo de Desempenho' },
-        tooltip: {},
-        legend: { data: ['Empresa A', 'Empresa B'] },
-        radar: {
-          indicator: [
-            { name: 'Produtividade', max: 100 },
-            { name: 'Pontualidade', max: 100 },
-            { name: 'Qualidade', max: 100 },
-            { name: 'Satisfação', max: 100 }
-          ]
-        },
-        series: [
-          {
-            name: 'Desempenho',
-            type: 'radar',
-            data: [
-              {
-                value: [80, 90, 70, 85],
-                name: 'Empresa A'
-              },
-              {
-                value: [70, 85, 80, 70],
-                name: 'Empresa B'
-              }
-            ]
+      },
+      series: [
+        {
+          name: 'Desempenho',
+          type: 'radar',
+          data: [
+            {
+              value: [
+                data?.indicePontualidade || 0,
+                data?.taxaHorasExtras || 0,
+                data?.frequenciaAusencias || 0,
+                data?.tempoMedioPausas || 0,
+                data?.taxaInconsistencias || 0
+              ],
+              name: 'Empresa'
+            }
+          ],
+          itemStyle: {
+            color: '#9b59b6'
           }
-        ]
-      };
-    }
+        }
+      ]
+    };
   }
 }

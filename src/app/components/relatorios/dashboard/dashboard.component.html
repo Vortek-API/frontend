@@ -45,7 +45,7 @@
           </select>
         </div>
 
-        <div class="filter-group"> <!--Trocar para classe filter-ations para teste -->
+        <div class="filter-group">
           <label>Ordenar por:</label>
           <select 
             [(ngModel)]="filtros.ordenacao" 
@@ -77,16 +77,25 @@
     </div>
   </div>
 
-  <!-- Gráficos sem o wrapper de rolagem separado -->
-  <div class="charts-container" *ngIf="!carregando">
-    <div echarts [options]="barChartOptions" class="chart-box"></div>
-    <div echarts [options]="pieChartOptions" class="chart-box"></div>
-    <div echarts [options]="lineChartOptions" class="chart-box"></div>
-    <div echarts [options]="radarChartOptions" class="chart-box"></div>
-  </div>
+
 
   <div class="loading-container" *ngIf="carregando">
     <div class="spinner"></div>
     <p>Carregando dados...</p>
+  </div>
+  
+  <!-- Nova seção para os gráficos de horas por empresa -->
+  <div class="section-title">
+    <h2>Horas Trabalhadas por Empresa</h2>
+  </div>
+  
+  <div class="charts-container" *ngIf="!carregandoHorasEmpresa">
+    <div echarts [options]="horasEmpresaBarChartOptions" class="chart-box"></div>
+    <div echarts [options]="horasEmpresaPieChartOptions" class="chart-box"></div>
+  </div>
+  
+  <div class="loading-container" *ngIf="carregandoHorasEmpresa">
+    <div class="spinner"></div>
+    <p>Carregando dados de horas por empresa...</p>
   </div>
 </div>

@@ -1,4 +1,4 @@
-/* src/app/components/relatorios/dashboard/dashboard.component.css */
+
 .container {
   background-color: #FFFFFF;
   display: flex;
@@ -12,7 +12,7 @@
   box-shadow: var(--shadow);
   flex-direction: column;
   top: 20%;
-  overflow-y: auto; /* Habilitamos a rolagem para todo o container */
+  overflow-y: auto; /* Habilita a rolagem para todo o container */
 }
 
 #titleRelatorios {
@@ -21,23 +21,41 @@
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   margin-bottom: 1.5rem;
+  color: #0C6834;
+}
+
+#titleRelatorios::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.5rem;
+  width: 3rem;
+  height: 0.2rem;
+  background-color: #0C6834;
+  border-radius: 2px;
 }
 
 .header-actions {
   margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+
 }
 
 .filtros-container {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0.1rem;
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .advanced-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.2rem;
   align-items: center;
 }
 
@@ -49,30 +67,32 @@
 
 .filter-group label {
   font-size: 0.9rem;
-  color: #555;
+  color: #444;
   font-weight: 500;
 }
 
 .date-input, .select-filter, .ordenar-select {
-  padding: 0.6rem;
+  padding: 0.7rem;
   border: 1px solid #ddd;
   border-radius: var(--border-radius);
   font-size: 0.9rem;
-  min-width: 150px;
+  min-width: 160px;
   outline: none;
-  transition: border-color 0.3s;
+  transition: all 0.3s;
+  background-color: #fff;
 }
 
 .date-input:focus, .select-filter:focus, .ordenar-select:focus {
   border-color: #0C6834;
+  box-shadow: 0 0 0 2px rgba(12, 104, 52, 0.1);
 }
 
 .filter-actions {
-  position: relative; /* Necessário para posicionar .download-options absolutamente dentro */
-  display: flex; /* Se os botões de ação estiverem lado a lado */
+  position: relative;
+  display: flex;
   align-items: center;
-  gap: 10px; /* Espaço entre os botões de ação */
- 
+  gap: 12px;
+  margin-left: auto;
 }
 
 .limpar-btn {
@@ -88,59 +108,68 @@
 
 .limpar-btn:hover {
   background: #e1e1e1;
+  border-color: #ccc;
 }
 
 .download-btn {
-  /* Estilos para o botão principal de download */
-  background-color: #0C6834; /* Cor azul primária */
+  background-color: #0C6834;
   color: white;
   border: none;
-  padding: 10px 15px;
+  padding: 0.8rem 1.2rem;
   border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: 16px;
-  display: flex; /* Para alinhar ícone e texto */
+  font-size: 0.95rem;
+  display: flex;
   align-items: center;
-  gap: 5px; /* Espaço entre ícone e texto */
+  gap: 6px;
+  font-weight: 500;
+  transition: all 0.3s;
 }
 
 .download-btn:hover {
   background-color: #0B3B17;
+  transform: translateY(-2px);
 }
 
 .icon-download::before {
-  /* Exemplo de um ícone de download (você pode usar uma biblioteca de ícones) */
-  content: '\2193'; /* Seta para baixo */
-  font-size: 20px;
- 
+  content: '\2193';
+  font-size: 18px;
 }
 
 .download-options {
   position: absolute;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
+  background-color: #fff;
+  border: 1px solid #eaeaea;
   border-radius: var(--border-radius);
-  padding: 10px;
+  padding: 0.5rem;
   margin-top: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 10;
-  right: 0; /* Alinha a div à direita do botão */
-  top: 100%; /* Posiciona abaixo do botão */
-  min-width: 150px; /* Largura mínima para as opções */
-  text-align: left; /* Alinha o texto dos botões à esquerda */
+  right: 0;
+  top: 100%;
+  min-width: 160px;
+  text-align: left;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .download-options button {
   display: block;
   width: 100%;
-  padding: 8px 10px;
+  padding: 0.7rem 1rem;
   border: none;
   background-color: transparent;
   text-align: left;
   cursor: pointer;
-  font-size: 14px;
-  border-bottom: 1px solid #eee;
-  border-radius: 0; /* Remove border-radius dos botões internos */
+  font-size: 0.9rem;
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 4px;
+  transition: all 0.2s;
+  color: #333;
 }
 
 .download-options button:last-child {
@@ -148,16 +177,17 @@
 }
 
 .download-options button:hover {
-  background-color: #e9e9e9;
+  background-color: #f2f9f5;
+  color: #0C6834;
 }
 
 /* Contêiner principal para os gráficos */
 .charts-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 24px;
   width: 100%;
-  padding-bottom: 20px; /* Espaço no final da rolagem */
+  padding-bottom: 20px;
 }
 
 /* Cada gráfico dentro do contêiner */
@@ -165,17 +195,18 @@
   background-color: #fff;
   border-radius: 10px;
   border: 1px solid #eaeaea;
-  padding: 15px;
+  padding: 18px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  height: 300px;
+  height: 320px;
 }
 
 /* Efeito de hover */
 .chart-box:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-color: #d8e8e0;
 }
 
 /* Loading spinner */
@@ -185,20 +216,53 @@
   align-items: center;
   justify-content: center;
   height: 200px;
+  gap: 12px;
 }
 
 .spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  width: 36px;
-  height: 36px;
+  border: 4px solid rgba(12, 104, 52, 0.1);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border-left-color: #0C6834;
   animation: spin 1s linear infinite;
 }
 
+.loading-container p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Ajuste no espaçamento superior do título da seção */
+.section-title {
+  margin-top: 0.2rem; /* Reduzido de 2rem */
+  margin-bottom: 0.5rem;
+}
+
+
+
+.section-title h2 {
+  font-size: 1.3rem;
+  color: #0C6834;
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.6rem;
+}
+
+.section-title h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #0C6834;
 }
 
 /* Estilização da barra de rolagem */
@@ -227,25 +291,91 @@
   }
   
   .advanced-filters {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: flex-start;
+  }
+  
+  .filter-group {
+    width: calc(50% - 1.2rem);
+    min-width: 200px;
+  }
+  
+  .filter-actions {
+    margin-top: 1rem;
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 991px) {
+  .container {
+    width: 95%;
+    right: 2.5%;
+  }
+  
+  .filter-group {
+    width: calc(33.33% - 1.2rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+  
+  /* Garantir que os gráficos fiquem mais próximos do título */
+.charts-container {
+  margin-top: 1rem; /* Novo: adiciona espaçamento leve entre título e gráficos */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  width: 100%;
+  padding-bottom: 20px;
+}
+  
+  .chart-box {
+    height: 280px;
+  }
+  
+  .filtros-container {
+    width: 100%;
+    margin-bottom: 1.0rem;
+
+  }
+  
+  .filter-group {
+    width: calc(50% - 1.2rem);
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .advanced-filters {
+    gap: 1rem;
   }
   
   .filter-group {
     width: 100%;
   }
-}
-
-@media (max-width: 768px) {
-  .charts-container {
-    grid-template-columns: 1fr;
-  }
-
-  .chart-box {
-    height: 250px;
+  
+  .filter-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
   }
   
-  .filtros-container {
+  .limpar-btn, .download-btn {
     width: 100%;
+    justify-content: center;
+  }
+  
+  .download-options {
+    width: 100%;
+    right: 0;
   }
 }

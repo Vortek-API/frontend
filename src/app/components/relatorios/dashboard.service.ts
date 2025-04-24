@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class DashboardService {
   private apiUrl = 'http://localhost:8080/api/dashboard';
+  private pontoApiUrl = 'http://localhost:8080/ponto';
 
   constructor(private http: HttpClient) {}
 
@@ -23,6 +24,15 @@ export class DashboardService {
     }
     
     return this.http.get(`${this.apiUrl}/resumo`, { params });
+  }
+  
+  getHorasPorEmpresa(dataInicio?: string, dataFim?: string): Observable<any[]> {
+    let params = new HttpParams();
+    
+    if (dataInicio) params = params.append('dataInicio', dataInicio);
+    if (dataFim) params = params.append('dataFim', dataFim);
+    
+    return this.http.get<any[]>(`${this.pontoApiUrl}/horas-por-empresa`, { params });
   }
   
   getEmpresas(): Observable<string[]> {
