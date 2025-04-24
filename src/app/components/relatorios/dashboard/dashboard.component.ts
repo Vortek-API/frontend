@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DashboardService } from '../dashboard.service';
+import { ExportService } from '../../../services/exports/export.service';
 import { CommonModule } from '@angular/common';
 import { EchartsConfigModule } from '../../../echarts-config.module';
 import { FormsModule } from '@angular/forms';
@@ -44,7 +45,8 @@ export class DashboardComponent implements OnInit {
     ordenacao: ''
   };
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(private dashboardService: DashboardService, private exportService: ExportService) {}
+  
 
   ngOnInit(): void {
     this.carregarDadosIniciais();
@@ -124,15 +126,17 @@ export class DashboardComponent implements OnInit {
   }
 
   downloadCSV() {
-    const csvData = this.convertToCSV(this.relatorioData);
-    this.downloadFile(csvData, 'relatorio.csv', 'text/csv');
+    /*const csvData = this.convertToCSV(this.relatorioData);
+    this.downloadFile(csvData, 'relatorio.csv', 'text/csv');*/
+    console.log('Dados CSV:', this.relatorioData); 
+    this.exportService.exportToCSV('relatorio', this.relatorioData);
     this.showDownloadOptions = false;
   }
 
   downloadPDF() {
     // Implementação do download de PDF (usando jsPDF ou outra biblioteca)
     try {
-      const pdf = new jsPDF();
+      /*const pdf = new jsPDF();
       pdf.text('Lista de Colaboradores', 10, 10);
   
       let y = 20;
@@ -141,7 +145,9 @@ export class DashboardComponent implements OnInit {
         y += 10;
       });
   
-      pdf.save('relatorio.pdf');
+      pdf.save('relatorio.pdf');*/
+      console.log('Dados PDF:', this.relatorioData); 
+      this.exportService.exportToPDF('relatorio', this.relatorioData);
       this.showDownloadOptions = false;
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
