@@ -7,13 +7,15 @@ import { LoginComponent } from './components/login/login.component';
 import { NgModule } from '@angular/core';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 import { authGuard } from './guards/auth/auth.guard';
+import { RegistroPontoComponent } from './components/pontos/registro-ponto/registro-ponto.component';
 
 export const routes: Routes = [
     {path: '', component: MainLayoutComponent, 
         canActivate: [authGuard],
         children: [
         { path: 'home', component: DashboardComponent },
-        { path: 'relatorios', component: HomeComponent },
+        // { path: 'relatorios', component: HomeComponent },
+        { path: 'pontos', component: RegistroPontoComponent },
         { path: 'empresa', component: EmpresaComponent },
         { path: 'colaborador', component: ColaboradorComponent },
         { path: '', redirectTo: '/home', pathMatch: 'full' }

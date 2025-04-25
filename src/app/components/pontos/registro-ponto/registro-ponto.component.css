@@ -1,0 +1,210 @@
+@import url('https://fonts.googleapis.com/css2?family=Rounded+Mplus+1c:wght@300;400;500;700&display=swap');
+
+/* Container principal */
+.ponto-container {
+background-color: #FFFFFF;
+display: flex;
+padding: 2rem;
+position: fixed;
+width: 81.8%;
+height: 86%;
+transition: width 0.3sease;
+border-radius: 0.5rem;
+right: 1%;
+box-shadow: var(--shadow);
+flex-direction: column;
+top: 20%;
+overflow-y: auto;
+}
+
+
+
+/* Ações */
+.ponto-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rem;
+  align-items: center;
+  
+}
+
+/* Campo de busca */
+.search-container {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  flex: 1 1 250px;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  width: 100%;
+  background: transparent;
+}
+
+/* Filtros */
+.ponto-filtros {
+  display: flex;
+  gap: 3.5rem;
+  align-items: center;
+  flex: 2 1 350px;
+}
+
+/* Botão ordenar */
+.ordenar-btn {
+  background: #0C6834; /* Verde principal */
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ordenar-btn:hover {
+  background: #095227; /* Verde escuro */
+}
+
+/* Filtro dropdown */
+.filter-dropdown,
+.date-picker {
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background: white;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.add-employee-btn:hover {
+  background-color: #095227; /* Verde escuro */
+}
+
+/* Tabela */
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+
+.attendance-table th,
+.attendance-table td {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.95rem;
+}
+
+.attendance-table th {
+  color: #0C6834; /* Verde principal */
+  font-weight: 600;
+}
+
+.attendance-table td:nth-child(1),
+.attendance-table td:nth-child(2) {
+  font-weight: 500;
+}
+
+/* Botão editar */
+.editar-btn {
+  padding: 0.4rem 0.8rem;
+  background: #0C6834; /* Verde principal */
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.editar-btn:hover {
+  background: #095227; /* Verde escuro */
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .ponto-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .attendance-table th,
+  .attendance-table td {
+    padding: 0.8rem;
+  }
+}
+.ponto-title{
+  position: relative;
+  bottom: 5%;
+  font-size: 1.5rem;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+}
+attendance-table{
+/* Estilização das células da tabela */
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd7d7;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  /* Cinza para os demais */
+}
+
+.attendance-table tbody tr {
+    height: 13vh;
+    /* Ajuste a altura das linhas */
+}
+
+/* Alinha o status no centro da célula */
+.attendance-table td.status {
+    width: 123.29744720458984;
+    border-radius: 2.98px;
+}
+/* Estilização do cabeçalho da tabela */
+.attendance-table thead th {
+  border-top: 2px solid rgb(219, 216, 216);
+  /* Linha acima */
+  border-bottom: 2px solid rgb(219, 216, 216);
+  /* Linha abaixo */
+  font-weight: bold;
+  color: var(--text-color);
+  padding: 2rem;
+  text-align: center;
+}
+
+th,
+td {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid #0C6834;
+  white-space: nowrap;
+
+}
+
+th {
+  background-color: var(--background-color);
+  font-weight: bold;
+  color: var(--text-color);
+}
+/* Corpo do site */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  padding: 1rem;
+}
+
+
+/* Aumenta o espaçamento entre as linhas da tabela */
+.attendance-table tbody tr {
+  height: 13vh;
+  /* Ajuste a altura das linhas */
+}
