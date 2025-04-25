@@ -60,23 +60,14 @@
             <option value="colaboradores_desc">Colaboradores (Maior)</option>
           </select>
         </div>
-        <div class="filter-actions">
+        <div class="filter-group">
           <button class="limpar-btn" (click)="limparFiltros()">Limpar Filtros</button>
           
-          <button class="download-btn" (click)="toggleDownloadOptions()">
-            <span class="icon-download"></span> 
-            Download Relatório
-          </button>
-  
-          <div *ngIf="showDownloadOptions" class="download-options">
-            <button (click)="downloadCSV()">Download CSV</button>
-            <button (click)="downloadPDF()">Download PDF</button>
-          </div>
           <div class="loading-container-dwd" *ngIf="showDownloadOptions">
             <div class="spinner-dwd"></div>
             <p>Gerando Relatório</p>
-            
           </div>
+
         </div>
       </div>
     </div>

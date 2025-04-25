@@ -14,6 +14,19 @@
             {{ empresa.nome }}
           </option>
         </select>
+        
+        <div class="filter-actions">      
+          <button class="download-btn" (click)="toggleDownloadOptions()">
+            <span class="icon-download"></span> 
+            Download Relatório
+          </button>
+  
+          <div *ngIf="showDownloadOptions" class="download-options">
+            <button (click)="downloadCSV()">Download CSV</button>
+            <button (click)="downloadPDF()">Download PDF</button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>

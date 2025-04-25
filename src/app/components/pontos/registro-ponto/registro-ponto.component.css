@@ -114,6 +114,86 @@ overflow-y: auto;
 .attendance-table td:nth-child(2) {
   font-weight: 500;
 }
+/* Botão Download */
+.filter-actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.download-btn {
+  background-color: #0C6834;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.download-btn:hover {
+  background-color: #0B3B17;
+  transform: translateY(-2px);
+}
+
+.icon-download::before {
+  content: '\2193';
+  font-size: 18px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.download-options {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: var(--border-radius);
+  padding: 0.5rem;
+  margin-top: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  right: 0;
+  top: 100%;
+  min-width: 160px;
+  text-align: left;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.download-options button {
+  display: block;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 4px;
+  transition: all 0.2s;
+  color: #333;
+}
+
+.download-options button:last-child {
+  border-bottom: none;
+}
+
+.download-options button:hover {
+  background-color: #f2f9f5;
+  color: #0C6834;
+}
+
+
 
 /* Botão editar */
 .editar-btn {
@@ -141,6 +221,27 @@ overflow-y: auto;
   .attendance-table td {
     padding: 0.8rem;
   }
+
+  .filter-group {
+    width: 100%;
+  }
+  
+  .filter-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+  }
+  
+  .limpar-btn, .download-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .download-options {
+    width: 100%;
+    right: 0;
+  }
+
 }
 .ponto-title{
   position: relative;

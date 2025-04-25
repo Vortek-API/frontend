@@ -39,8 +39,6 @@ export class DashboardComponent implements OnInit {
   listaEmpresas: string[] = [];
   listaStatus: string[] = [];
 
-  relatorioData: any[] = []; // Os dados do seu relatório (preenchidos após a filtragem)
-
   // Dados de horas por empresa
   horasEmpresaData: any[] = [];
   
@@ -110,8 +108,6 @@ export class DashboardComponent implements OnInit {
         this.horasEmpresaData = data;
         this.atualizarGraficosHorasEmpresa(data);
         this.carregandoHorasEmpresa = false;
-        // Também atualiza os dados para exportação se necessário
-        this.prepararDadosParaExportacao(data);
       },
       error: (err) => {
         console.error('Erro ao buscar horas por empresa:', err);
@@ -139,89 +135,6 @@ export class DashboardComponent implements OnInit {
     this.carregarHorasPorEmpresa();
   }
 
-  prepararDadosParaExportacao(data: any[]): void {
-    // Converte os dados de horas por empresa em um formato adequado para exportação
-    this.relatorioData = data.map(item => ({
-      empresaId: item.empresaId,
-      empresaNome: item.empresaNome,
-      horasTotais: item.horasTotais,
-      minutosTotais: item.minutosTotais,
-      segundosTotais: item.segundosTotais,
-      tempoFormatado: `${item.horasTotais}h ${item.minutosTotais}m ${item.segundosTotais}s`
-    }));
-  }
-
-  toggleDownloadOptions() {
-    this.showDownloadOptions = !this.showDownloadOptions;
-  }
-
-  downloadCSV() {
-    this.baixandoRelatorio = true;
-    setTimeout(() => {
-      try {
-        const csvData = this.convertToCSV(this.relatorioData);
-        this.downloadFile(csvData, 'relatorio-horas-por-empresa.csv', 'text/csv');
-      } catch (error) {
-        console.error('Erro ao gerar CSV:', error);
-        alert('Erro ao gerar CSV.');
-      } finally {
-        this.baixandoRelatorio = false;
-        this.showDownloadOptions = false;
-      }
-    }, 100); // pequeno delay para garantir que o loading apareça
-  }
-  
-  downloadPDF() {
-    this.baixandoRelatorio = true;
-    setTimeout(() => {
-      try {
-        const pdf = new jsPDF();
-        pdf.text('Relatório de Horas por Empresa', 10, 10);
-  
-        if (this.filtros.dataInicio || this.filtros.dataFim) {
-          let periodoTexto = 'Período: ';
-          periodoTexto += this.filtros.dataInicio ? `De ${this.filtros.dataInicio}` : '';
-          periodoTexto += this.filtros.dataFim ? ` até ${this.filtros.dataFim}` : '';
-          pdf.text(periodoTexto, 10, 20);
-        }
-  
-        pdf.text('Empresa', 10, 30);
-        pdf.text('Horas Totais', 100, 30);
-        pdf.text('Tempo Formatado', 150, 30);
-  
-        let y = 40;
-        this.relatorioData.forEach(empresa => {
-          pdf.text(empresa.empresaNome, 10, y);
-          pdf.text(empresa.horasTotais.toString(), 100, y);
-          pdf.text(empresa.tempoFormatado, 150, y);
-          y += 10;
-        });
-  
-        pdf.save('relatorio-horas-por-empresa.pdf');
-      } catch (error) {
-        console.error('Erro ao gerar PDF:', error);
-        alert('Erro ao gerar PDF.');
-      } finally {
-        this.baixandoRelatorio = false;
-        this.showDownloadOptions = false;
-      }
-    }, 100);
-  }
-  
-
-  convertToCSV(data: any[]): string {
-    if (!data || data.length === 0) {
-      return '';
-    }
-    const headers = Object.keys(data[0]).join(',');
-    const rows = data.map(obj => Object.values(obj).join(',')).join('\n');
-    return `${headers}\n${rows}`;
-  }
-
-  downloadFile(data: string, filename: string, mimeType: string) {
-    const blob = new Blob([data], { type: mimeType });
-    saveAs(blob, filename);
-  }
   
   atualizarGraficosHorasEmpresa(data: any[]): void {
     if (!data || data.length === 0) {
