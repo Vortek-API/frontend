@@ -3,19 +3,18 @@
     <h1 class="ponto-title">Registro de Pontos</h1>
     <div class="ponto-actions">
       <div class="search-container">
-        <input type="text" class="search-input" placeholder="Buscar por nome ou CPF" />
+        <input type="text" class="search-input" placeholder="Buscar por nome ou CPF" [(ngModel)]="searchTerm" />
       </div>
 
       <div class="ponto-filtros">
-        <input type="date" class="date-picker" />
-        <select class="filter-dropdown">
-          <option value="">Empresa</option>
-          <option value="empresa1">Empresa 1</option>
-          <option value="empresa2">Empresa 2</option>
+        <input type="date" class="date-picker" [(ngModel)]="selectedDate" />
+        <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
+          <option [ngValue]="null">Todas as empresas</option>
+          <option *ngFor="let empresa of empresas" [value]="empresa.id">
+            {{ empresa.nome }}
+          </option>
         </select>
-        <button class="ordenar-btn">Ordenar</button>
       </div>
-
     </div>
   </div>
 
@@ -28,26 +27,19 @@
         <th>Data</th>
         <th>Entrada</th>
         <th>Saída</th>
+        <th>Tempo Total</th>
         <th>Ações</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>João Silva</td>
-        <td>123.456.789-00</td>
-        <td>Ato Devs</td>
-        <td>23/04/2025</td>
-        <td>08:05</td>
-        <td>17:15</td>
-        <td><button class="editar-btn">Editar</button></td>
-      </tr>
-      <tr>
-        <td>Maria Santos</td>
-        <td>987.654.321-00</td>
-        <td>Ato Devs</td>
-        <td>23/04/2025</td>
-        <td>09:30</td>
-        <td>18:00</td>
+      <tr *ngFor="let registro of registrosFiltrados">
+        <td>{{ getNomeColaborador(registro.colaboradorId) }}</td>
+        <td>{{ getCpfColaborador(registro.colaboradorId) }}</td>
+        <td>{{ getNomeEmpresa(registro.empresaId) }}</td>
+        <td>{{ registro.data }}</td>
+        <td>{{ registro.horaEntrada }}</td>
+        <td>{{ registro.horaSaida }}</td>
+        <td>{{ registro.tempoTotal }}</td>
         <td><button class="editar-btn">Editar</button></td>
       </tr>
     </tbody>
