@@ -28,18 +28,22 @@ export class ModalEditarDeletarComponent implements OnInit {
     nome: '',
     cargo: '',
     empresas: [],
-    hora_ent: '',
-    hora_sai: '',
-    status: true,
+    horarioEntrada: '',
+    horarioSaida: '',
+    statusAtivo: true,
+    foto: new Uint8Array()
   };
 
   empresas: Empresa[] = [];
+
+  imagemBase64: string | null = null;
+  imagemPreview: string | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<ModalEditarDeletarComponent>,
     private colaboradorService: ColaboradorService,
     private empresaService: EmpresaService
-  ) { }
+  ) {}
 
   async ngOnInit() {
     this.empresas = await this.empresaService.findAll();
@@ -61,6 +65,9 @@ export class ModalEditarDeletarComponent implements OnInit {
     const colaboradorEnviado: Colaborador = {
       ...this.colaborador,
       empresas: this.colaborador.empresas?.filter(e => e !== undefined) as Empresa[],
+      foto: this.imagemBase64
+        ? this.base64ToUint8Array(this.imagemBase64)
+        : this.colaborador.foto
     };
 
     try {
@@ -93,18 +100,56 @@ export class ModalEditarDeletarComponent implements OnInit {
           return this.empresas.find(e => e.id === empColab.id) || empColab;
         }) || []
       };
+
+      // Exibe preview da imagem, se tiver
+      if (this.colaborador.foto && this.colaborador.foto.length > 0) {
+        const blob = new Blob([this.colaborador.foto], { type: 'image/png' });
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.imagemPreview = reader.result as string;
+        };
+        reader.readAsDataURL(blob);
+      }
     }
+  }
+
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagemBase64 = e.target.result;
+        this.imagemPreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removerImagem(): void {
+    this.imagemBase64 = null;
+    this.imagemPreview = null;
+    this.colaborador.foto = new Uint8Array();
+  }
+
+  base64ToUint8Array(base64: string): Uint8Array {
+    const binaryString = window.atob(base64.split(',')[1]);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes;
   }
 
   isEmpresaSelecionada(emp: Empresa): boolean {
     return this.colaborador.empresas?.some(e => e.id === emp.id) ?? false;
   }
-  
+
   toggleEmpresa(emp: Empresa, checked: boolean) {
     if (!this.colaborador.empresas) {
       this.colaborador.empresas = [];
     }
-  
+
     if (checked) {
       const jaExiste = this.colaborador.empresas.some(e => e.id === emp.id);
       if (!jaExiste) {
@@ -114,5 +159,4 @@ export class ModalEditarDeletarComponent implements OnInit {
       this.colaborador.empresas = this.colaborador.empresas.filter(e => e.id !== emp.id);
     }
   }
-  
 }

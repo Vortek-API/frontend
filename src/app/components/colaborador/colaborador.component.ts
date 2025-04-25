@@ -76,10 +76,6 @@ export class ColaboradorComponent implements OnInit {
   }
   async loadColaboradores() {
     this.colaboradores = await this.colaboradorService.findAll();
-    // this.colaboradores.forEach(colaborador => {
-    //   colaborador.hora_ent = colaborador.hora_ent.substring(0, 5);
-    //   colaborador.hora_sai = colaborador.hora_sai.substring(0, 5);
-    // });
   }
   async loadEmpresas() {
     this.empresas = await this.empresaService.findAll();
@@ -107,13 +103,13 @@ export class ColaboradorComponent implements OnInit {
 
     if(this.ordenacao == 'ativo' ){
       filtrados = filtrados.filter( colaborador => {
-        return colaborador.status == true;
+        return colaborador.statusAtivo == true;
       })
     }
 
     if(this.ordenacao == 'inativo' ){
       filtrados = filtrados.filter( colaborador => {
-        return colaborador.status == false;
+        return colaborador.statusAtivo == false;
       })
     }
     

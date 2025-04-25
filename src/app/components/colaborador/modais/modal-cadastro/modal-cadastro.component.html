@@ -1,8 +1,23 @@
 <div class="container modal-cadastro">
   <div class="cadastro-content">
     <h3>Adicionar Colaborador</h3>
-    <div class="avatar">
-      <img src="assets/user-avatar.png" alt="Foto do usuário" class="avatar-img">
+   
+    
+    <div class="form-group">
+      <label for="foto">Foto do colaborador</label>
+      <input 
+        type="file" 
+        id="foto" 
+        name="foto"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+        class="form-control"
+      />
+    </div>
+    
+    <div class="form-group" *ngIf="imagemPreview">
+      <label>Prévia da Foto:</label><br>
+      <img [src]="imagemPreview" alt="Prévia da imagem" class="avatar-img" style="max-width: 120px; max-height: 120px;" />
     </div>
     
     <form #form="ngForm" novalidate>
@@ -47,12 +62,12 @@
       </div>
     
       <div class="form-group">
-        <label for="hora_ent">Hora de entrada</label>
+        <label for="horarioEntrada">Hora de entrada</label>
         <input 
           type="text" 
-          id="hora_ent" 
-          name="hora_ent" 
-          [(ngModel)]="colaborador.hora_ent" 
+          id="horarioEntrada" 
+          name="horarioEntrada" 
+          [(ngModel)]="colaborador.horarioEntrada" 
           required
           class="form-control"
           #hora_ent="ngModel"
@@ -60,12 +75,12 @@
       </div>
     
       <div class="form-group">
-        <label for="hora_sai">Hora de saída</label>
+        <label for="horarioSaida">Hora de saída</label>
         <input 
           type="text" 
-          id="hora_sai" 
-          name="hora_sai" 
-          [(ngModel)]="colaborador.hora_sai" 
+          id="horarioSaida" 
+          name="horarioSaida" 
+          [(ngModel)]="colaborador.horarioSaida" 
           required
           class="form-control"
           #hora_sai="ngModel"
@@ -78,12 +93,12 @@
         <mat-select 
           id="empresa" 
           name="empresa" 
-          [(ngModel)]="colaborador.empresa.id" 
+          [(ngModel)]="colaborador.empresas"  
           required
           class="form-control"
           #empresa="ngModel"
-        multiple required>
-          <mat-option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nome }}</mat-option>
+          multiple required>
+          <mat-option *ngFor="let empresa of empresas" [value]="empresa">{{ empresa.nome }}</mat-option>
         </mat-select>
       </mat-form-field>
       </div>
@@ -93,7 +108,7 @@
         <select 
           id="status" 
           name="status" 
-          [(ngModel)]="colaborador.status" 
+          [(ngModel)]="colaborador.statusAtivo" 
           required
           class="form-control"
           #status="ngModel"

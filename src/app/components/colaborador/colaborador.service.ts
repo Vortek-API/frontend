@@ -1,26 +1,19 @@
 import { Injectable } from '@angular/core';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { HttpClient } from '@angular/common/http';
-import { Data } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Empresa } from '../empresa/empresa.service';
 
-
-//export interface Empresa{
-  //  id: number;
-  //  nome: string;
-  //  cnpj: string;
-//}
 export interface Colaborador {
     id: number;
     cpf: string;
     nome: string;
     cargo: string;
-    hora_ent: string;
-    hora_sai: string;
-    status: boolean;
+    horarioEntrada: string;
+    horarioSaida: string;
+    statusAtivo: boolean;
     dataCadastro?: string;
-    foto?: Uint8Array
+    foto?: Uint8Array | string;
     empresas?: Empresa[];
 }
 
@@ -30,8 +23,11 @@ export interface Colaborador {
 export class ColaboradorService {
 
     private colaboradorDataTransfer: Colaborador | undefined;
+    private apiUrl = `${environment.apiUrl}/colaborador`;
 
-    private apiUrl = `${environment.apiUrl}/colaborador`
+    private jsonHeaders = new HttpHeaders({
+        'Content-Type': 'application/json'
+    });
 
     constructor(private http: HttpClient) { }
 
@@ -44,15 +40,21 @@ export class ColaboradorService {
     }
 
     async add(colaborador: Colaborador): Promise<Colaborador> {
-        return firstValueFrom(this.http.post<Colaborador>(this.apiUrl, colaborador, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }));
+        const payload = {
+            colaborador: colaborador,
+            empresasId: colaborador.empresas?.map(e => e.id) ?? []
+          };
+          
+          return firstValueFrom(this.http.post<Colaborador>(this.apiUrl, payload, {
+            headers: this.jsonHeaders
+          }));
+          
     }
 
     async update(id: number, colaborador: Colaborador): Promise<Colaborador> {
-        return firstValueFrom(this.http.put<Colaborador>(`${this.apiUrl}/${id}`, colaborador));
+        return firstValueFrom(this.http.put<Colaborador>(`${this.apiUrl}/${id}`, colaborador, {
+            headers: this.jsonHeaders
+        }));
     }
 
     async delete(id: number): Promise<void> {
@@ -62,11 +64,10 @@ export class ColaboradorService {
     setData(colaborador: Colaborador) {
         this.colaboradorDataTransfer = colaborador;
     }
+
     getData(): Colaborador | undefined {
         const colabRet = this.colaboradorDataTransfer;
         this.colaboradorDataTransfer = undefined;
-
-
         return colabRet;
     }
 }

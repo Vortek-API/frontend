@@ -18,23 +18,36 @@ import { MatOptionModule } from '@angular/material/core';
   templateUrl: './modal-cadastro.component.html',
   styleUrl: './modal-cadastro.component.css'
 })
+
 export class ModalCadastroComponent implements OnInit {
-  colaborador = {
+  colaborador: Colaborador = {
     id: 0,
     cpf: '', 
     nome: '',
     cargo: '',
-    empresa: {
-      id: 0,
-      nome: '',
-      cnpj: '',
-    },
-    hora_ent: '',
-    hora_sai: '',
-    status: true,
+    empresas: [],
+    horarioEntrada: '',
+    horarioSaida: '',
+    statusAtivo: true,
   };
 
   empresas: Empresa[] = [];
+
+  imagemPreview: string | ArrayBuffer | null = null;
+imagemBase64: string | null = null;
+
+onFileSelected(event: any): void {
+  const file: File = event.target.files[0];
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagemPreview = reader.result;
+      this.imagemBase64 = (reader.result as string).split(',')[1]; // Remove o prefixo "data:image/jpeg;base64,"
+    };
+    reader.readAsDataURL(file);
+  }
+}
 
   constructor(
     public dialogRef: MatDialogRef<ModalCadastroComponent>,
@@ -55,9 +68,9 @@ export class ModalCadastroComponent implements OnInit {
     if (
       !this.colaborador.nome.trim() ||
       !this.colaborador.cargo.trim() ||
-      !this.colaborador.empresa.id ||
-      !this.colaborador.hora_ent ||
-      !this.colaborador.hora_sai ||
+      !this.colaborador.empresas ||
+      !this.colaborador.horarioEntrada ||
+      !this.colaborador.horarioSaida ||
       this.colaborador.cpf.replace(/\D/g, '').length !== 11
     ) {
       await Swal.fire({
@@ -71,7 +84,10 @@ export class ModalCadastroComponent implements OnInit {
     try {
       // Limpa o CPF antes de enviar
       this.colaborador.cpf = this.colaborador.cpf.replace(/\D/g, '');
-  
+      
+       // Adiciona a imagem base64 ao colaborador
+     (this.colaborador as any).foto = this.imagemBase64;
+
       // Chama o serviço para salvar
       await this.colaboradorService.add(this.colaborador);
   

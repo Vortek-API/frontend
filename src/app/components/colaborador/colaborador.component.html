@@ -37,7 +37,7 @@
                 <th>Cargo</th>
                 <!-- <th>Empresa</th> -->
                 <!-- <th>Data</th> -->
-                <th>Status</th>
+                <th>StatusAtivo</th>
                 <th>Entrada</th>
                 <th>Saída</th>
                 <!-- <th>Horas trabalhadas</th> -->
@@ -52,11 +52,12 @@
                 <td>{{colaborador.nome}}</td>
                 <td>{{colaborador.cargo}}</td>
                 <!-- <td>{{colaborador.empresa.nome}}</td> -->
-                <td [ngClass]="colaborador.status ? 'status ativo' : 'status inativo'">
-                    {{ colaborador.status ? "Ativo" : "Inativo" }}
+                <td [ngClass]="colaborador.statusAtivo ? 'status ativo' : 'status inativo'">
+                    {{ colaborador.statusAtivo ? "Ativo" : "Inativo" }}
                 </td>
-                <td>{{ colaborador.hora_ent }}</td>
-                <td>{{ colaborador.hora_sai }}</td>
+                  
+                <td>{{ colaborador.horarioEntrada}}</td>
+                <td>{{ colaborador.horarioSaida }}</td>
             </tr>            
             </ng-container>
           </tbody>          
