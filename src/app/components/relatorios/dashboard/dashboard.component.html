@@ -72,21 +72,19 @@
             <button (click)="downloadCSV()">Download CSV</button>
             <button (click)="downloadPDF()">Download PDF</button>
           </div>
+          <div class="loading-container-dwd" *ngIf="showDownloadOptions">
+            <div class="spinner-dwd"></div>
+            <p>Gerando Relatório</p>
+            
+          </div>
         </div>
       </div>
     </div>
   </div>
-
-
-
-  <div class="loading-container" *ngIf="carregando">
-    <div class="spinner"></div>
-    <p>Carregando dados...</p>
-  </div>
   
-  <!-- Nova seção para os gráficos de horas por empresa -->
+
   <div class="section-title">
-    <h2>Horas Trabalhadas por Empresa</h2>
+    <h2>Indicadores</h2>
   </div>
   
   <div class="charts-container" *ngIf="!carregandoHorasEmpresa">
@@ -96,6 +94,6 @@
   
   <div class="loading-container" *ngIf="carregandoHorasEmpresa">
     <div class="spinner"></div>
-    <p>Carregando dados de horas por empresa...</p>
+    <p>Carregando dados</p>
   </div>
 </div>

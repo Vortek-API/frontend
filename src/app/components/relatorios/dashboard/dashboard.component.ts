@@ -16,6 +16,9 @@ import { jsPDF } from 'jspdf';
 export class DashboardComponent implements OnInit {
   // Dados do resumo
   resumo: any;
+
+  baixandoRelatorio = false;
+  showDownloadOptions = false;
   
   // Configurações dos gráficos
   barChartOptions: any;
@@ -26,7 +29,8 @@ export class DashboardComponent implements OnInit {
   // Gráficos para horas por empresa
   horasEmpresaBarChartOptions: any;
   horasEmpresaPieChartOptions: any;
-  
+
+
   // Estado de carregamento
   carregando = false;
   carregandoHorasEmpresa = false;
@@ -35,7 +39,6 @@ export class DashboardComponent implements OnInit {
   listaEmpresas: string[] = [];
   listaStatus: string[] = [];
 
-  showDownloadOptions: boolean = false;
   relatorioData: any[] = []; // Os dados do seu relatório (preenchidos após a filtragem)
 
   // Dados de horas por empresa
@@ -153,45 +156,58 @@ export class DashboardComponent implements OnInit {
   }
 
   downloadCSV() {
-    const csvData = this.convertToCSV(this.relatorioData);
-    this.downloadFile(csvData, 'relatorio-horas-por-empresa.csv', 'text/csv');
-    this.showDownloadOptions = false;
-  }
-
-  downloadPDF() {
-    try {
-      const pdf = new jsPDF();
-      pdf.text('Relatório de Horas por Empresa', 10, 10);
-  
-      // Adicionar filtros aplicados
-      if (this.filtros.dataInicio || this.filtros.dataFim) {
-        let periodoTexto = 'Período: ';
-        periodoTexto += this.filtros.dataInicio ? `De ${this.filtros.dataInicio}` : 'Sem data inicial';
-        periodoTexto += this.filtros.dataFim ? ` até ${this.filtros.dataFim}` : ' até hoje';
-        pdf.text(periodoTexto, 10, 20);
+    this.baixandoRelatorio = true;
+    setTimeout(() => {
+      try {
+        const csvData = this.convertToCSV(this.relatorioData);
+        this.downloadFile(csvData, 'relatorio-horas-por-empresa.csv', 'text/csv');
+      } catch (error) {
+        console.error('Erro ao gerar CSV:', error);
+        alert('Erro ao gerar CSV.');
+      } finally {
+        this.baixandoRelatorio = false;
+        this.showDownloadOptions = false;
       }
-  
-      // Cabeçalho da tabela
-      pdf.text('Empresa', 10, 30);
-      pdf.text('Horas Totais', 100, 30);
-      pdf.text('Tempo Formatado', 150, 30);
-      
-      let y = 40;
-      this.relatorioData.forEach(empresa => {
-        pdf.text(empresa.empresaNome, 10, y);
-        pdf.text(empresa.horasTotais.toString(), 100, y);
-        pdf.text(empresa.tempoFormatado, 150, y);
-        y += 10;
-      });
-  
-      pdf.save('relatorio-horas-por-empresa.pdf');
-      this.showDownloadOptions = false;
-    } catch (error) {
-      console.error('Erro ao gerar PDF:', error);
-      this.showDownloadOptions = false;
-      alert('Ocorreu um erro ao gerar o PDF.');
-    }
+    }, 100); // pequeno delay para garantir que o loading apareça
   }
+  
+  downloadPDF() {
+    this.baixandoRelatorio = true;
+    setTimeout(() => {
+      try {
+        const pdf = new jsPDF();
+        pdf.text('Relatório de Horas por Empresa', 10, 10);
+  
+        if (this.filtros.dataInicio || this.filtros.dataFim) {
+          let periodoTexto = 'Período: ';
+          periodoTexto += this.filtros.dataInicio ? `De ${this.filtros.dataInicio}` : '';
+          periodoTexto += this.filtros.dataFim ? ` até ${this.filtros.dataFim}` : '';
+          pdf.text(periodoTexto, 10, 20);
+        }
+  
+        pdf.text('Empresa', 10, 30);
+        pdf.text('Horas Totais', 100, 30);
+        pdf.text('Tempo Formatado', 150, 30);
+  
+        let y = 40;
+        this.relatorioData.forEach(empresa => {
+          pdf.text(empresa.empresaNome, 10, y);
+          pdf.text(empresa.horasTotais.toString(), 100, y);
+          pdf.text(empresa.tempoFormatado, 150, y);
+          y += 10;
+        });
+  
+        pdf.save('relatorio-horas-por-empresa.pdf');
+      } catch (error) {
+        console.error('Erro ao gerar PDF:', error);
+        alert('Erro ao gerar PDF.');
+      } finally {
+        this.baixandoRelatorio = false;
+        this.showDownloadOptions = false;
+      }
+    }, 100);
+  }
+  
 
   convertToCSV(data: any[]): string {
     if (!data || data.length === 0) {
