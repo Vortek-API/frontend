@@ -13,7 +13,7 @@ export interface Colaborador {
     horarioSaida: string;
     statusAtivo: boolean;
     dataCadastro?: string;
-    foto?: Uint8Array | string;
+    foto?: string | Uint8Array;
     empresas?: Empresa[];
 }
 
@@ -32,7 +32,12 @@ export class ColaboradorService {
     constructor(private http: HttpClient) { }
 
     async findAll(): Promise<Colaborador[]> {
-        return firstValueFrom(this.http.get<Colaborador[]>(this.apiUrl));
+        const colabs = await firstValueFrom(this.http.get<Colaborador[]>(this.apiUrl));
+        colabs.forEach(async (colab: Colaborador) => {
+            if (colab.foto) colab.foto = await this.findFoto(colab.id);
+        });
+
+        return colabs;
     }
 
     async find(id: number): Promise<Colaborador> {
@@ -52,13 +57,21 @@ export class ColaboradorService {
     }
 
     async update(id: number, colaborador: Colaborador): Promise<Colaborador> {
-        return firstValueFrom(this.http.put<Colaborador>(`${this.apiUrl}/${id}`, colaborador, {
+        const payload = {
+            colaborador: colaborador,
+            empresasId: colaborador.empresas?.map(e => e.id) ?? []
+          };
+          colaborador.empresas = undefined;
+        return firstValueFrom(this.http.put<Colaborador>(`${this.apiUrl}/${id}`, payload, {
             headers: this.jsonHeaders
         }));
     }
 
     async delete(id: number): Promise<void> {
         return firstValueFrom(this.http.delete<void>(`${this.apiUrl}/${id}`));
+    }
+    async findFoto(id: number): Promise<string>  {
+        return firstValueFrom(this.http.get<string>(`${this.apiUrl}/${id}/foto`));
     }
 
     setData(colaborador: Colaborador) {

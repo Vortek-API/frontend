@@ -19,7 +19,7 @@ import Swal from 'sweetalert2';
     MatOptionModule
   ],
   templateUrl: './modal-editar-deletar.component.html',
-  styleUrl: './modal-editar-deletar.component.css'
+  styleUrls: ['./modal-editar-deletar.component.css']
 })
 export class ModalEditarDeletarComponent implements OnInit {
   colaborador: Colaborador = {
@@ -37,7 +37,7 @@ export class ModalEditarDeletarComponent implements OnInit {
   empresas: Empresa[] = [];
 
   imagemBase64: string | null = null;
-  imagemPreview: string | null = null;
+  imagemPreview: string | Uint8Array = new Uint8Array();
 
   constructor(
     public dialogRef: MatDialogRef<ModalEditarDeletarComponent>,
@@ -65,9 +65,7 @@ export class ModalEditarDeletarComponent implements OnInit {
     const colaboradorEnviado: Colaborador = {
       ...this.colaborador,
       empresas: this.colaborador.empresas?.filter(e => e !== undefined) as Empresa[],
-      foto: this.imagemBase64
-        ? this.base64ToUint8Array(this.imagemBase64)
-        : this.colaborador.foto
+      foto: this.imagemBase64 ? this.removeBase64Prefix(this.imagemBase64) : this.colaborador.foto
     };
 
     try {
@@ -100,15 +98,10 @@ export class ModalEditarDeletarComponent implements OnInit {
           return this.empresas.find(e => e.id === empColab.id) || empColab;
         }) || []
       };
-
+      console.log(this.colaborador.foto)
       // Exibe preview da imagem, se tiver
-      if (this.colaborador.foto && this.colaborador.foto.length > 0) {
-        const blob = new Blob([this.colaborador.foto], { type: 'image/png' });
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.imagemPreview = reader.result as string;
-        };
-        reader.readAsDataURL(blob);
+      if (this.colaborador.foto) {
+        this.imagemPreview = this.colaborador.foto;
       }
     }
   }
@@ -118,8 +111,8 @@ export class ModalEditarDeletarComponent implements OnInit {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.imagemBase64 = e.target.result;
-        this.imagemPreview = e.target.result;
+        this.imagemBase64 = e.target.result as string;  // A imagem será manipulada como string Base64
+        this.imagemPreview = e.target.result as string;
       };
       reader.readAsDataURL(file);
     }
@@ -127,18 +120,12 @@ export class ModalEditarDeletarComponent implements OnInit {
 
   removerImagem(): void {
     this.imagemBase64 = null;
-    this.imagemPreview = null;
-    this.colaborador.foto = new Uint8Array();
+    this.imagemPreview = new Uint8Array();
+    this.colaborador.foto = '';  // Alterado para string vazia
   }
 
-  base64ToUint8Array(base64: string): Uint8Array {
-    const binaryString = window.atob(base64.split(',')[1]);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes;
+  removeBase64Prefix(base64: string): string {
+    return base64.split(',')[1]; // Remove a parte `data:image/jpeg;base64,`
   }
 
   isEmpresaSelecionada(emp: Empresa): boolean {

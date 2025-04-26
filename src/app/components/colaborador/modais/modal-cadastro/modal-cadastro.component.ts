@@ -36,18 +36,17 @@ export class ModalCadastroComponent implements OnInit {
   imagemPreview: string | ArrayBuffer | null = null;
 imagemBase64: string | null = null;
 
-onFileSelected(event: any): void {
-  const file: File = event.target.files[0];
-
+onFileSelected(event: any) {
+  const file = event.target.files[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = () => {
-      this.imagemPreview = reader.result;
-      this.imagemBase64 = (reader.result as string).split(',')[1]; // Remove o prefixo "data:image/jpeg;base64,"
+      this.imagemPreview = reader.result as string;
     };
     reader.readAsDataURL(file);
   }
 }
+
 
   constructor(
     public dialogRef: MatDialogRef<ModalCadastroComponent>,
