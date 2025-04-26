@@ -42,7 +42,7 @@
     }
 
     a:hover {
-        background-color: #f0f0f0; 
+        background-color: rgba(2, 201, 62, 0.129);
         border-radius: 0.5rem; 
     }
 
@@ -87,7 +87,7 @@
     }
 
     .logout-btn:hover {
-        background-color: #d26969;
+        background-color: #ed7b7b4e;
       }
     
     @media (min-width: 768px) and (max-width: 1024px) {

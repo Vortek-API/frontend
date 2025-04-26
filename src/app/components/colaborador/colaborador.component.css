@@ -3,14 +3,16 @@
     background-color: #FFFFFF;
     display: flex;
     position: fixed;
-    width: 86%;
-    height: 78%;
+    height: 86%;
     overflow: hidden;
     top: 20%;
+    margin-top: 0.5rem;
     border-radius: 0.5rem;
     right: 1%;
+    left: 13%;
     flex-direction: column;
     overflow: hidden; 
+    transition: width 0.3s ease;
 }
 
 * {
@@ -24,12 +26,10 @@
 .header-actions {
     display: flex;
     justify-content: space-between; 
-    margin-top: 2rem;
     width: 100%;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
+    padding: 1.1rem;
 }
 
 .right-controls {
@@ -149,6 +149,8 @@
     align-items: center;
   }
 
+  
+
   .ordenar-btn,
   .date-picker,
   .filter-dropdown,
@@ -162,8 +164,16 @@
     cursor: pointer;
     text-align: center;
     font-size: 0.9rem;
+    transition: transform 0.3s ease;
   }
 
+  .ordenar-btn:hover,
+  .date-picker:hover,
+  .filter-dropdown:hover,
+  .add-employee-btn:hover,
+  .search-container:hover {
+    transform: scale(1.02);
+  }
 
 .table-wrapper {
     flex: 1 1 auto;  
@@ -356,10 +366,10 @@
   @media (min-width: 1280px) {
 
     #titleFunc {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
     }
     #titleFunc::after {
-      width: 9.8rem;
+      width: 9rem;
     }
 
     .search-container:hover,
@@ -383,7 +393,7 @@
   @media (min-width: 1366px) {
 
     #titleFunc {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
       }
     #titleFunc::after {
       width: 11rem;
@@ -537,3 +547,31 @@
         font-size: 1.2rem;
       }
   }
+
+  .date-picker {
+    border: 0.1rem solid #d1d5db;
+    border-radius: 0.3rem;
+    background-color: rgba(2, 201, 62, 0.129);
+    color: rgb(0, 74, 0);
+  }
+  
+  .date-picker:focus {
+    outline: none;
+    border-color: #0C6834;
+    box-shadow: 0 0 5px rgba(2, 201, 62, 0.129);
+  }
+  
+  .ordenar-btn,
+  .filter-dropdown {
+    color: white;
+    appearance: none; 
+    background-image: url('/assets/icons/arrow.svg'); /* Adiciona a imagem de seta */
+    background-repeat: no-repeat;
+    background-position: right 0.1rem center; 
+  }
+  
+  .ordenar-btn option,
+  .filter-dropdown option {
+    background-color: #8bae9a20;
+  }
+  

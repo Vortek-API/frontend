@@ -24,6 +24,25 @@
     top: 0.6rem;
     font: 550 1.5rem 'Inter', sans-serif;
     color: black;
+    animation: greenLetter 5s infinite;
+}
+
+@keyframes greenLetter {
+    0% {
+        color: #062f17;
+    }
+    25% {
+        color: #0b5e2f;
+    }
+    50% {
+        color: #12954b;
+    }
+    75% {
+        color: #0C6834;
+    }
+    100% {
+        color: #074120;
+    }
 }
 
 .user-content img {
