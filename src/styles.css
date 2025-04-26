@@ -10,9 +10,10 @@
   --inactive-color: #EF5350;
   --late-color: #FFD54F;
   --border-color: #0C6834;
-  --border-radius: 12px;
+  --border-radius: 0.3rem;
   --transition: all 0.3s ease-in-out;
 }
+
 
 body,
 html {
