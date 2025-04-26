@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -13,12 +14,12 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  errorMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {
     this.loginForm = this.fb.group({
       login: ['', [Validators.required]],
@@ -27,25 +28,35 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if(this.loginForm.invalid) return;
-
-    this.errorMessage = null;
+    if (this.loginForm.invalid) return;
     const { login, senha } = this.loginForm.value;
     const cleanedLogin = login.replace(/\D/g, '');
 
-  
     this.authService.login(cleanedLogin, senha).subscribe({
       next: (response) => {
-       sessionStorage.setItem('userGroup', response.grupo);
-       if(response.grupo === 'ADMIN') {
-       this.router.navigate(['/home']);
-       } else if(response.grupo === 'EMPRESA') {
-         this.router.navigate(['/empresa']);}
+        sessionStorage.setItem('userGroup', response.grupo);
+        if (response.grupo === 'ADMIN') {
+          this.router.navigate(['/home']);
+        } else if (response.grupo === 'EMPRESA') {
+          this.router.navigate(['/empresa']);
+        }
+
+        this.snackBar.open('Bem-Vindo!', 'Fechar', {
+          duration: 4000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['glass-snackbar']
+        });
       },
       error: (error) => {
-        this.errorMessage = error.error || 'Erro ao fazer login. Verifique suas credenciais.';
+        this.snackBar.open('Usuário ou Senha inválido.', 'Fechar', {
+          duration: 6000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['glass-snackbar', 'error-snackbar']
+        });
       }
-    });
+    })
   }
 
   formatCnpjInput(event: Event): void {

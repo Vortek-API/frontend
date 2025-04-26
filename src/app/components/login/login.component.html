@@ -10,9 +10,6 @@
                         <input type="password" formControlName="senha" required>
                         <label>Senha</label>
                     </div>
-                    @if (errorMessage) {
-                        <div class="error-message">{{errorMessage}}</div>
-                    }
                     <button type="submit" class="btn" [disabled]="loginForm.invalid">Login</button>
                     <div class="forgot-password">
                         <a href="#">Problemas com a senha?</a>
