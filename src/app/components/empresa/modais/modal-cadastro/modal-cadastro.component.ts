@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ColaboradorService, Colaborador } from '../../../colaborador/colaborador.service';
 import { Empresa, EmpresaService } from '../../empresa.service';
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-modal-cadastro',
   imports: [FormsModule, CommonModule],
@@ -13,7 +15,7 @@ import { Empresa, EmpresaService } from '../../empresa.service';
 export class ModalCadastroComponent implements OnInit {
   empresa = {
     id: 0,
-    nome: '', 
+    nome: '',
     cnpj: '',
     colaboradores: [],
   }
@@ -33,17 +35,43 @@ export class ModalCadastroComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  save(): void {
-    let colaboradores: Colaborador[] = [];
-    const empresaEnviado = {
-      ...this.empresa,
-      empresa: {
-        id: Number(this.empresa.id),
-        nome: this.empresa.nome,
-        cnpj: this.empresa.cnpj,
-      }
-    };
-    this.empresaService.add(empresaEnviado);
-    this.dialogRef.close();
+  async save(): Promise<void> {
+
+    if (!this.empresa.nome.trim() || !this.empresa.cnpj.trim) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Preencha todos os campos obrigatórios!',
+      });
+      return;
+    }
+
+    try {
+      const empresaEnviado = {
+        ...this.empresa,
+        empresa: {
+          id: Number(this.empresa.id),
+          nome: this.empresa.nome,
+          cnpj: this.empresa.cnpj,
+        }
+      };
+
+      await this.empresaService.add(empresaEnviado);
+
+      await Swal.fire({
+        icon: 'success',
+        title: 'Empresa salva com sucesso!',
+        confirmButtonColor: '#0C6834',
+      });
+
+      this.dialogRef.close(true);
+
+    } catch (error) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Erro ao salvar a empresa!',
+        confirmButtonColor: '#EF5350',
+      });
+    }
   }
 }

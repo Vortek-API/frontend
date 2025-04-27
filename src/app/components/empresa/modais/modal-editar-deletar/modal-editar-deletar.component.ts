@@ -2,42 +2,82 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Colaborador } from '../../../colaborador/colaborador.service';
 import { Empresa, EmpresaService } from '../../empresa.service';
+import Swal from 'sweetalert2';
+
+
 @Component({
   selector: 'app-modal-editar-deletar',
   imports: [FormsModule, CommonModule],
   templateUrl: './modal-editar-deletar.component.html',
   styleUrl: './modal-editar-deletar.component.css'
 })
-export class ModalEditarDeletarComponent implements OnInit  {
+export class ModalEditarDeletarComponent implements OnInit {
   empresa = {
-      id: 0,
-      nome: '', 
-      cnpj: '',
-      dataCadastro: '',
+    id: 0,
+    nome: '',
+    cnpj: '',
+    dataCadastro: '',
+  }
+  empresas: Empresa[] = [];
+
+  constructor(
+    private empresaService: EmpresaService,
+    public dialogRef: MatDialogRef<ModalEditarDeletarComponent>,
+  ) { }
+
+  async ngOnInit() {
+    this.loadEditData();
+  }
+
+  close(): void {
+    this.dialogRef.close();
+  }
+
+  async deletar(): Promise<void> {
+    const confirmacao = await Swal.fire({
+      title: 'Tem certeza?',
+      text: 'Esta ação não poderá ser desfeita!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#EF5350',
+      cancelButtonColor: '#0C6834',
+      confirmButtonText: 'Sim, excluir!',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (confirmacao.isConfirmed) {
+      try {
+
+        await this.empresaService.delete(this.empresa.id);
+        await Swal.fire({
+          icon: 'success',
+          title: 'Empresa excluída com sucesso!',
+          confirmButtonColor: '#0C6834',
+        });
+        this.dialogRef.close(true);
+      } catch (error) {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Erro ao excluir a empresa!',
+          confirmButtonColor: '#EF5350',
+        });
+      }
     }
-    empresas: Empresa[] = [];
-  
-    constructor(
-      private empresaService: EmpresaService,
-      public dialogRef: MatDialogRef<ModalEditarDeletarComponent>,
-    ) { }
-  
-    async ngOnInit() {
-      this.loadEditData();
-    }
-  
-    close(): void {
-      this.dialogRef.close();
-    }
-    deletar(): void {
-      this.empresaService.delete(this.empresa.id);
-      this.close();
+  }
+
+  async save(): Promise<void> {
+
+    if (!this.empresa.nome.trim() || !this.empresa.nome.trim()) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Preencha todos os campos obrigatórios!',
+      });
+      return
     }
 
-    save(): void {
-      let colaboradores: Colaborador[] = [];
+    try {
       const empresaEnviado = {
         ...this.empresa,
         empresa: {
@@ -46,13 +86,31 @@ export class ModalEditarDeletarComponent implements OnInit  {
           cnpj: this.empresa.cnpj,
         }
       };
-      this.empresaService.update(empresaEnviado.id, empresaEnviado);
-      this.dialogRef.close();
-    }
-    loadEditData() {
-      const emp = this.empresaService.getData(); 
-      if(emp != undefined) {
-        this.empresa = emp;
-      }
+
+      await
+        this.empresaService.update(empresaEnviado.id, empresaEnviado);
+
+      await Swal.fire({
+        icon: 'success',
+        title: 'Empresa atualizada com sucesso!',
+        confirmButtonColor: '#0C6834',
+      });
+
+      this.dialogRef.close(true);
+
+    } catch (error) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Erro ao atualizar a empresa!',
+        confirmButtonColor: '#EF5350',
+      });
     }
   }
+
+  loadEditData() {
+    const emp = this.empresaService.getData();
+    if (emp != undefined) {
+      this.empresa = emp;
+    }
+  }
+}
