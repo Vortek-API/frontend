@@ -1,15 +1,16 @@
 <div class="container">
   <div class="header-actions">
-    <h1 id="titleEmpresa">Empresas</h1>
+    <div class="titulo-empresa">
+      <h1 id="titleEmpresa">Empresas</h1>
+    </div>
 
-    <div class="actions-container">
-      <div class="search-container">
-        <input type="text" class="search-input" placeholder="Pesquisar empresa..." [(ngModel)]="searchTerm">
-        <span class="search-icon"></span>
-      </div>
+    <!-- <div class="actions-container"> -->
+    <div class="search-container">
+       <input type="text" class="search-input" placeholder="Pesquisar empresa..." [(ngModel)]="searchTerm">
+       <span class="search-icon"></span>
+    </div>
 
-      <button class="add-empresa-btn" (click)="openModalCadastro()">Add Empresa</button>
-
+    <div class="campo-ordenar">
       <input *ngIf="ordenacao === 'cadastro'" type="date" class="date-picker" [(ngModel)]="selectedDate">
 
       <select class="ordenar-btn" [(ngModel)]="ordenacao" (change)="handleOrdenacaoChange()">
@@ -19,9 +20,12 @@
         <option [ngValue]="'alfab'">Alfabética</option>
         <option [ngValue]="'cadastro'">Data de cadastro</option>
       </select>
-      
-
     </div>
+
+    <div class="campo-adicionar">
+      <button class="add-empresa-btn" (click)="openModalCadastro()">Add Empresa</button>
+    </div>
+
   </div>
 
   <div class="empresa-list">
