@@ -98,13 +98,30 @@ export class ModalEditarDeletarComponent implements OnInit {
           return this.empresas.find(e => e.id === empColab.id) || empColab;
         }) || []
       };
-      console.log(this.colaborador.foto)
-      // Exibe preview da imagem, se tiver
+  
       if (this.colaborador.foto) {
-        this.imagemPreview = this.colaborador.foto;
+        if (typeof this.colaborador.foto !== 'string') {
+          // Se for Uint8Array, converte para Base64
+          const binary = this.arrayBufferToBase64(this.colaborador.foto);
+          this.imagemPreview = `data:image/jpeg;base64,${binary}`;
+        } else {
+          this.imagemPreview = `data:image/jpeg;base64,${this.colaborador.foto}`;
+        }
       }
     }
   }
+  
+  // Função auxiliar:
+  arrayBufferToBase64(buffer: Uint8Array): string {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  }
+  
 
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];

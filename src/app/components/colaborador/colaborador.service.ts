@@ -48,20 +48,20 @@ export class ColaboradorService {
         const payload = {
             colaborador: colaborador,
             empresasId: colaborador.empresas?.map(e => e.id) ?? []
-          };
-          
-          return firstValueFrom(this.http.post<Colaborador>(this.apiUrl, payload, {
+        };
+
+        return firstValueFrom(this.http.post<Colaborador>(this.apiUrl, payload, {
             headers: this.jsonHeaders
-          }));
-          
+        }));
+
     }
 
     async update(id: number, colaborador: Colaborador): Promise<Colaborador> {
         const payload = {
             colaborador: colaborador,
             empresasId: colaborador.empresas?.map(e => e.id) ?? []
-          };
-          colaborador.empresas = undefined;
+        };
+        colaborador.empresas = undefined;
         return firstValueFrom(this.http.put<Colaborador>(`${this.apiUrl}/${id}`, payload, {
             headers: this.jsonHeaders
         }));
@@ -70,8 +70,18 @@ export class ColaboradorService {
     async delete(id: number): Promise<void> {
         return firstValueFrom(this.http.delete<void>(`${this.apiUrl}/${id}`));
     }
-    async findFoto(id: number): Promise<string>  {
-        return firstValueFrom(this.http.get<string>(`${this.apiUrl}/${id}/foto`));
+    async findFoto(id: number): Promise<string> {
+        const arrayBuffer = await firstValueFrom(this.http.get(`${this.apiUrl}/${id}/foto`, {
+            responseType: 'arraybuffer' as 'json' 
+        }));
+        const bytes = new Uint8Array(arrayBuffer as ArrayBuffer);
+        let binary = '';
+        for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        const base64String = window.btoa(binary);
+
+        return base64String;  // Retorna já convertido para o componente
     }
 
     setData(colaborador: Colaborador) {

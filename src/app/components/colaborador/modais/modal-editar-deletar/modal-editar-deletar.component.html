@@ -1,12 +1,11 @@
 <div class="container modal-cadastro">
   <div class="cadastro-content">
     <h3>Gerenciar Colaborador</h3>
-    <div class="form-group">
+    <div class="form-group avatar-group">
       
       <div class="avatar" *ngIf="imagemPreview; else noImage">
         <img 
           [src]="imagemPreview" 
-          alt="Adicionar Foto" 
           class="avatar-img" 
           style="max-width: 120px; max-height: 120px; cursor: pointer;" 
           (click)="fileInput.click()" 
@@ -15,13 +14,11 @@
     
       <ng-template #noImage>
         <div 
-          class="avatar" 
-          style="width: 120px; height: 120px; border-radius: 50%; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 2px solid #ccc;"
+          class="avatar"
           (click)="fileInput.click()">
-          <span style="font-size: 1.2rem; color: #5d5757;">Adicionar Foto</span>
+          <span class="avatar-text">Adicionar Foto</span>
         </div>
       </ng-template>
-    
     
       <input 
         type="file" 
@@ -58,25 +55,24 @@
         <input type="text" id="horarioSaida" [(ngModel)]="colaborador.horarioSaida" name="horarioSaida">
       </div>
 
-     <div class="form-group">
-  <label for="empresas">Empresas</label>
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-select
-      id="empresas"
-      name="empresas"
-      [(ngModel)]="colaborador.empresas"
-      multiple
-      required
-      placeholder="Selecione"
-      panelClass="empresas-select-panel">
-      <mat-option *ngFor="let empresa of empresas" [value]="empresa">
-        {{ empresa.nome }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>
+      <div class="form-group">
+        <label for="empresas">Empresas</label>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-select
+            id="empresas"
+            name="empresas"
+            [(ngModel)]="colaborador.empresas"
+            multiple
+            required
+            placeholder="Selecione"
+            panelClass="empresas-select-panel">
+            <mat-option *ngFor="let empresa of empresas" [value]="empresa">
+              {{ empresa.nome }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
       
-
       <div class="form-group">
         <label for="statusAtivo">Status</label>
         <select id="statusAtivo" [(ngModel)]="colaborador.statusAtivo" name="statusAtivo">

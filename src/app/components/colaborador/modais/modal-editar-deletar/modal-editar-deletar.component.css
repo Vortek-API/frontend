@@ -1,10 +1,10 @@
-
 .modal-cadastro {
   padding: 2%;
   display: flex;
   justify-content: center;
   align-items: center;
-} 
+}
+
 .container.modal-cadastro {
   display: flex;
   flex-direction: column;
@@ -13,7 +13,7 @@
   background: #f0f0f0;
   border-radius: 25px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transform: scale(0.97999999999999);
+  transform: scale(0.98);
   overflow: hidden;
 }
 
@@ -25,27 +25,43 @@
   color: #4a4a4a;
 }
 
-.avatar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.avatar-img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #8a8a8a;
-}
-
 .form-group {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 15px;
   width: 90%;
+}
+
+.form-group.avatar-group {
+  justify-content: center;
+  margin-left: 15px;
+}
+
+.avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  border: 2px solid #ccc;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.avatar-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #8a8a8a;
+}
+
+.avatar-text {
+  font-size: 1.2rem;
+  color: #5d5757;
 }
 
 .form-group label {
@@ -88,8 +104,14 @@ button {
   background-color: #F43333;
   color: white;
 }
-form{
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: white;
+}
+
+form {
   display: flex;
-  flex-direction: column;  /* Organiza os itens em uma coluna */
+  flex-direction: column;
   gap: 5px;
 }
