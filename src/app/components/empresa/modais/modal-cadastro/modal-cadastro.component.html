@@ -1,21 +1,20 @@
-<div class="container modal-cadastro">
+<div class="container-modal-cadastro">
   <div class="cadastro-content">
     <h3>Adicionar Empresa</h3>
-    </div>
     <form>
       <div class="form-group">
         <label for="cnpj">CNPJ</label>
-        <input type="text" id="cnpj" [(ngModel)]="empresa.cnpj" name="cnpj">
+        <input type="text" id="cnpj" [(ngModel)]="empresa.cnpj" name="cnpj" />
       </div>
-      
+
       <div class="form-group">
         <label for="nome">Nome</label>
-        <input type="text" id="nome" [(ngModel)]="empresa.nome" name="nome">
+        <input type="text" id="nome" [(ngModel)]="empresa.nome" name="nome" />
       </div>
-      
     </form>
     <div class="actions">
       <button class="btn-primary" (click)="save()">Ok</button>
       <button class="btn-secondary" (click)="close()">Cancelar</button>
     </div>
   </div>
+</div>

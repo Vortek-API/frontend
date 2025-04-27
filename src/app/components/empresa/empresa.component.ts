@@ -31,8 +31,6 @@ export class EmpresaComponent implements OnInit {
 
   openModalCadastro() {
     this.dialog.open(ModalCadastroComponent, {
-      width: '400px',
-      height: '28%',
     });
 
     this.dialog.afterAllClosed.subscribe(() => {
@@ -47,8 +45,7 @@ export class EmpresaComponent implements OnInit {
   }
   openModalEditar() {
     this.dialog.open(ModalEditarDeletarComponent, {
-      width: '500px',
-      height: '28%',
+
     });
 
     this.dialog.afterAllClosed.subscribe(() => {
@@ -90,7 +87,7 @@ export class EmpresaComponent implements OnInit {
     if (this.ordenacao !== 'cadastro') {
       this.selectedDate = null;
     }
-  
+
     // Se limpou os filtros
     if (!this.ordenacao) {
       this.selectedDate = null;
