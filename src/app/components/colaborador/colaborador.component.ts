@@ -43,10 +43,7 @@ export class ColaboradorComponent implements OnInit {
   }
 
   async abrirModalCadastro() {
-    this.dialog.open(ModalCadastroComponent, {
-      width: '400px',
-      height: '90%',
-    });
+    this.dialog.open(ModalCadastroComponent, {});
 
     this.dialog.afterAllClosed.subscribe(() => {
       setTimeout(async () => {
@@ -59,10 +56,7 @@ export class ColaboradorComponent implements OnInit {
     });
   }
   async abrirModalEditar() {
-    this.dialog.open(ModalEditarDeletarComponent, {
-      width: '400px',
-      height: '90%',
-    });
+    this.dialog.open(ModalEditarDeletarComponent, {});
 
     this.dialog.afterAllClosed.subscribe(() => {
       setTimeout(async () => {
