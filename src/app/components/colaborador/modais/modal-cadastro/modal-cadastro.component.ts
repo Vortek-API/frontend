@@ -14,7 +14,7 @@ import { MatOptionModule } from '@angular/material/core';
 @Component({
   selector: 'app-modal-cadastro',
   standalone: true,
-  imports: [FormsModule, CommonModule, NgxMaskDirective,MatFormFieldModule, MatSelectModule,MatOptionModule,],
+  imports: [FormsModule, CommonModule, NgxMaskDirective, MatFormFieldModule, MatSelectModule, MatOptionModule,],
   templateUrl: './modal-cadastro.component.html',
   styleUrl: './modal-cadastro.component.css'
 })
@@ -22,7 +22,7 @@ import { MatOptionModule } from '@angular/material/core';
 export class ModalCadastroComponent implements OnInit {
   colaborador: Colaborador = {
     id: 0,
-    cpf: '', 
+    cpf: '',
     nome: '',
     cargo: '',
     empresas: [],
@@ -34,25 +34,27 @@ export class ModalCadastroComponent implements OnInit {
   empresas: Empresa[] = [];
 
   imagemPreview: string | ArrayBuffer | null = null;
-imagemBase64: string | null = null;
+  imagemBase64: string | null = null;
 
-onFileSelected(event: any) {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.imagemPreview = reader.result as string;
-    };
-    reader.readAsDataURL(file);
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagemPreview = reader.result as string;
+        this.imagemBase64 = (reader.result as string)?.split(',')[1] || null; // <<< AQUI!
+      };
+      reader.readAsDataURL(file);
+    }
   }
-}
+
 
 
   constructor(
     public dialogRef: MatDialogRef<ModalCadastroComponent>,
     private colaboradorService: ColaboradorService,
     private empresaService: EmpresaService
-  ) {}
+  ) { }
 
   async ngOnInit() {
     this.empresas = await this.empresaService.findAll();
@@ -79,24 +81,24 @@ onFileSelected(event: any) {
       });
       return;
     }
-  
+
     try {
       // Limpa o CPF antes de enviar
       this.colaborador.cpf = this.colaborador.cpf.replace(/\D/g, '');
-      
-       // Adiciona a imagem base64 ao colaborador
-     (this.colaborador as any).foto = this.imagemBase64;
+
+      // Adiciona a imagem base64 ao colaborador
+      (this.colaborador as any).foto = this.imagemBase64;
 
       // Chama o serviço para salvar
       await this.colaboradorService.add(this.colaborador);
-  
+
       // Mensagem de sucesso
       await Swal.fire({
         icon: 'success',
         title: 'Colaborador salvo com sucesso!',
         confirmButtonColor: '#3085d6',
       });
-  
+
       // Fecha o modal
       this.dialogRef.close(true);
     } catch (error) {
@@ -108,5 +110,5 @@ onFileSelected(event: any) {
       });
     }
   }
-  
+
 }
