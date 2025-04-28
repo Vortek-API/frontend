@@ -45,7 +45,8 @@ export class ColaboradorComponent implements OnInit {
   async abrirModalCadastro() {
     this.dialog.open(ModalCadastroComponent, {});
 
-    this.dialog.afterAllClosed.subscribe(() => {
+    this.dialog.afterAllClosed.subscribe(async () => {
+      await this.loadColaboradores();
       setTimeout(async () => {
         await this.loadColaboradores();
       }, 2000);
@@ -53,8 +54,8 @@ export class ColaboradorComponent implements OnInit {
   }
   async abrirModalEditar() {
     this.dialog.open(ModalEditarDeletarComponent, {});
-    
-    this.dialog.afterAllClosed.subscribe(() => {
+    this.dialog.afterAllClosed.subscribe(async () => {
+      await this.loadColaboradores();
       setTimeout(async () => {
         await this.loadColaboradores();
       }, 2000);

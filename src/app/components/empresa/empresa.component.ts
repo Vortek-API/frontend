@@ -33,7 +33,8 @@ export class EmpresaComponent implements OnInit {
     this.dialog.open(ModalCadastroComponent, {
     });
 
-    this.dialog.afterAllClosed.subscribe(() => {
+    this.dialog.afterAllClosed.subscribe(async () => {
+      await this.loadEmpresas();
       setTimeout(async () => {
         await this.loadEmpresas();
       }, 2000);
@@ -43,7 +44,8 @@ export class EmpresaComponent implements OnInit {
     this.dialog.open(ModalEditarDeletarComponent, {
     });
 
-    this.dialog.afterAllClosed.subscribe(() => {
+    this.dialog.afterAllClosed.subscribe(async () => {
+      await this.loadEmpresas();
       setTimeout(async () => {
         await this.loadEmpresas();
       }, 2000);
