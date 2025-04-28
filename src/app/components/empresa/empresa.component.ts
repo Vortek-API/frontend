@@ -35,9 +35,9 @@ export class EmpresaComponent implements OnInit {
 
     this.dialog.afterAllClosed.subscribe(async () => {
       await this.loadEmpresas();
-      setTimeout(async () => {
-        await this.loadEmpresas();
-      }, 2000);
+      // setTimeout(async () => {
+      //   await this.loadEmpresas();
+      // }, 2000);
     });
   }
   openModalEditar() {
@@ -46,9 +46,9 @@ export class EmpresaComponent implements OnInit {
 
     this.dialog.afterAllClosed.subscribe(async () => {
       await this.loadEmpresas();
-      setTimeout(async () => {
-        await this.loadEmpresas();
-      }, 2000);
+      // setTimeout(async () => {
+      //   await this.loadEmpresas();
+      // }, 2000);
     });
   }
   async loadEmpresas() {

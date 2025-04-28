@@ -47,18 +47,18 @@ export class ColaboradorComponent implements OnInit {
 
     this.dialog.afterAllClosed.subscribe(async () => {
       await this.loadColaboradores();
-      setTimeout(async () => {
-        await this.loadColaboradores();
-      }, 2000);
+      // setTimeout(async () => {
+      //   await this.loadColaboradores();
+      // }, 2000);
     });
   }
   async abrirModalEditar() {
     this.dialog.open(ModalEditarDeletarComponent, {});
     this.dialog.afterAllClosed.subscribe(async () => {
       await this.loadColaboradores();
-      setTimeout(async () => {
-        await this.loadColaboradores();
-      }, 2000);
+      // setTimeout(async () => {
+      //   await this.loadColaboradores();
+      // }, 2000);
     });
   }
   async loadColaboradores() {
