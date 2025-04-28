@@ -55,12 +55,12 @@ export class ModalEditarDeletarComponent implements OnInit {
   }
 
   async save(): Promise<void> {
-    const primeiraEmpresa = this.colaborador.empresas?.[0];
+    // const primeiraEmpresa = this.colaborador.empresas?.[0];
 
-    if (!primeiraEmpresa) {
-      await Swal.fire('Atenção', 'Selecione ao menos uma empresa antes de salvar.', 'warning');
-      return;
-    }
+    // if (!primeiraEmpresa) {
+    //   await Swal.fire('Atenção', 'Selecione ao menos uma empresa antes de salvar.', 'warning');
+    //   return;
+    // }
 
     const colaboradorEnviado: Colaborador = {
       ...this.colaborador,
@@ -80,9 +80,18 @@ export class ModalEditarDeletarComponent implements OnInit {
 
   async deletar(): Promise<void> {
     try {
-      await this.colaboradorService.delete(this.colaborador.id);
-      await Swal.fire('Removido', 'Colaborador deletado com sucesso.', 'success');
-      this.close();
+      if (await this.colaboradorService.hasRegistro(this.colaborador.id)) {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Erro ao excluir o colaborador! Existem registros relacionados.',
+          confirmButtonColor: '#EF5350',
+        });
+      }
+      else {
+        await this.colaboradorService.delete(this.colaborador.id);
+        await Swal.fire('Removido', 'Colaborador deletado com sucesso.', 'success');
+        this.close();
+      }
     } catch (error) {
       console.error(error);
       await Swal.fire('Erro', 'Erro ao deletar o colaborador.', 'error');
@@ -98,7 +107,7 @@ export class ModalEditarDeletarComponent implements OnInit {
           return this.empresas.find(e => e.id === empColab.id) || empColab;
         }) || []
       };
-  
+
       if (this.colaborador.foto) {
         if (typeof this.colaborador.foto !== 'string') {
           // Se for Uint8Array, converte para Base64
@@ -110,7 +119,7 @@ export class ModalEditarDeletarComponent implements OnInit {
       }
     }
   }
-  
+
   // Função auxiliar:
   arrayBufferToBase64(buffer: Uint8Array): string {
     let binary = '';
@@ -121,7 +130,7 @@ export class ModalEditarDeletarComponent implements OnInit {
     }
     return window.btoa(binary);
   }
-  
+
 
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];

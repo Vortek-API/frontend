@@ -36,33 +36,24 @@ export class EmpresaComponent implements OnInit {
     this.dialog.afterAllClosed.subscribe(() => {
       setTimeout(async () => {
         await this.loadEmpresas();
-      }, 5000);
-
-      setTimeout(async () => {
-        await this.loadEmpresas();
-      }, 30001);
+      }, 2000);
     });
   }
   openModalEditar() {
     this.dialog.open(ModalEditarDeletarComponent, {
-
     });
 
     this.dialog.afterAllClosed.subscribe(() => {
       setTimeout(async () => {
         await this.loadEmpresas();
-      }, 5000);
-
-      setTimeout(async () => {
-        await this.loadEmpresas();
-      }, 30001);
+      }, 2000);
     });
   }
   async loadEmpresas() {
     this.empresas = await this.empresaService.findAll();
   }
   clickRow(empresa: Empresa) {
-    this.empresaService.setData(empresa);
+    this.empresaService.setData(empresa, this.empresas);
     this.openModalEditar();
   }
   get empresasFiltradas(): Empresa[] {

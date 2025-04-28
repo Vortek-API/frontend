@@ -20,6 +20,7 @@ export class EmpresaService {
     private apiUrl = `${environment.apiUrl}/empresa`
 
     private empresaDataTransfer: Empresa | undefined;
+    private empresasDataTransfer: Empresa[] = [];
 
     constructor(private http: HttpClient,
         private colaboradorService: ColaboradorService
@@ -27,13 +28,15 @@ export class EmpresaService {
 
     async findAll(): Promise<Empresa[]> {
         let emp: Promise<Empresa[]> = firstValueFrom(this.http.get<Empresa[]>(this.apiUrl));
-    
+
         const empresas = await emp;
-    
-        empresas.forEach(async (empresa: Empresa) => {
-            empresa.colaboradores = await this.findColabs(empresa.id);
-        });
-    
+
+        if (empresas != null) {
+            empresas.forEach(async (empresa: Empresa) => {
+                empresa.colaboradores = await this.findColabs(empresa.id);
+            });
+        }
+
         return empresas;
     }
 
@@ -55,14 +58,16 @@ export class EmpresaService {
     async delete(id: number): Promise<void> {
         return firstValueFrom(this.http.delete<void>(`${this.apiUrl}/${id}`));
     }
-    setData(empresa: Empresa) {
+    setData(empresa: Empresa, empresas: Empresa[]) {
         this.empresaDataTransfer = empresa;
+        this.empresasDataTransfer = empresas;
     }
 
     getData(): any {
-        const colabRet = this.empresaDataTransfer;
+        const empRet = this.empresaDataTransfer;
+        const empsRet = this.empresasDataTransfer;
         this.empresaDataTransfer = undefined;
 
-        return colabRet;
+        return { empRet, empsRet };
     }
 }

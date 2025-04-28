@@ -37,7 +37,7 @@ export class ModalCadastroComponent implements OnInit {
 
   async save(): Promise<void> {
 
-    if (!this.empresa.nome.trim() || !this.empresa.cnpj.trim) {
+    if (!this.empresa.nome.trim() || !this.empresa.cnpj.trim()) {
       Swal.fire({
         icon: 'error',
         title: 'Erro',

@@ -21,8 +21,7 @@ export class RegistroPontoService {
 
     private apiUrl = `${environment.apiUrl}/ponto`
 
-    constructor(private http: HttpClient,
-        private colaboradorService: ColaboradorService
+    constructor(private http: HttpClient
     ) { }
 
     async findAll(): Promise<PontoDetalhado[]> {
@@ -30,5 +29,8 @@ export class RegistroPontoService {
     }
     async find(id: number): Promise<PontoDetalhado> {
         return firstValueFrom(this.http.get<PontoDetalhado>(`${this.apiUrl}/${id}/detalhado`));
+    }
+    async findByColabId(id: number) : Promise<PontoDetalhado[]> {
+        return firstValueFrom(this.http.get<PontoDetalhado[]>(`${this.apiUrl}?colaboradorId=${id}`));
     }
 }

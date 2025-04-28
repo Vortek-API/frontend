@@ -48,14 +48,25 @@ export class ModalEditarDeletarComponent implements OnInit {
 
     if (confirmacao.isConfirmed) {
       try {
+        const empresaExistente = this.empresas.find(emp => emp.id === this.empresa.id);
+        console.log(empresaExistente)
 
-        await this.empresaService.delete(this.empresa.id);
-        await Swal.fire({
-          icon: 'success',
-          title: 'Empresa excluída com sucesso!',
-          confirmButtonColor: '#0C6834',
-        });
-        this.dialogRef.close(true);
+        if (((Array.isArray(empresaExistente?.colaboradores) && empresaExistente.colaboradores.length > 0))) {
+          await Swal.fire({
+            icon: 'error',
+            title: 'Erro ao excluir a empresa! Existem colaboradores relacionados a ela.',
+            confirmButtonColor: '#EF5350',
+          });
+        }
+        else {
+          await this.empresaService.delete(this.empresa.id);
+          await Swal.fire({
+            icon: 'success',
+            title: 'Empresa excluída com sucesso!',
+            confirmButtonColor: '#0C6834',
+          });
+          this.dialogRef.close(true);
+        }
       } catch (error) {
         await Swal.fire({
           icon: 'error',
@@ -68,7 +79,7 @@ export class ModalEditarDeletarComponent implements OnInit {
 
   async save(): Promise<void> {
 
-    if (!this.empresa.nome.trim() || !this.empresa.nome.trim()) {
+    if (!this.empresa.nome.trim() || !this.empresa.cnpj.trim()) {
       await Swal.fire({
         icon: 'error',
         title: 'Erro',
@@ -107,10 +118,11 @@ export class ModalEditarDeletarComponent implements OnInit {
     }
   }
 
-  loadEditData() {
-    const emp = this.empresaService.getData();
-    if (emp != undefined) {
-      this.empresa = emp;
+  async loadEditData() {
+    const { empRet, empsRet } = this.empresaService.getData();
+    if (empRet != undefined) {
+      this.empresa = empRet;
     }
+    this.empresas = empsRet;
   }
 }

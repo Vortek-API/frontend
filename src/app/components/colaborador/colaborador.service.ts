@@ -3,6 +3,7 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Empresa } from '../empresa/empresa.service';
+import { PontoDetalhado, RegistroPontoService } from '../pontos/registro-ponto/registro-ponto.service';
 
 export interface Colaborador {
     id: number;
@@ -29,7 +30,7 @@ export class ColaboradorService {
         'Content-Type': 'application/json'
     });
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private pontoService: RegistroPontoService) { }
 
     async findAll(): Promise<Colaborador[]> {
         const colabs = await firstValueFrom(this.http.get<Colaborador[]>(this.apiUrl));
@@ -92,5 +93,9 @@ export class ColaboradorService {
         const colabRet = this.colaboradorDataTransfer;
         this.colaboradorDataTransfer = undefined;
         return colabRet;
+    }
+    async hasRegistro(id: number): Promise<boolean> {
+        const ponto: PontoDetalhado[] = await this.pontoService.findByColabId(id);
+        return ponto.length > 0 ? true : false;
     }
 }

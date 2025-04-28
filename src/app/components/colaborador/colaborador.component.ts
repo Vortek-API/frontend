@@ -53,7 +53,12 @@ export class ColaboradorComponent implements OnInit {
   }
   async abrirModalEditar() {
     this.dialog.open(ModalEditarDeletarComponent, {});
-      await this.loadColaboradores();
+    
+    this.dialog.afterAllClosed.subscribe(() => {
+      setTimeout(async () => {
+        await this.loadColaboradores();
+      }, 2000);
+    });
   }
   async loadColaboradores() {
     this.colaboradores = await this.colaboradorService.findAll();
@@ -93,7 +98,7 @@ export class ColaboradorComponent implements OnInit {
         return colaborador.statusAtivo == false;
       })
     }
-    
+
     return filtrados;
   }
 
@@ -101,7 +106,7 @@ export class ColaboradorComponent implements OnInit {
     if (this.ordenacao !== 'cadastro') {
       this.selectedDate = null;
     }
-  
+
     // Se limpou os filtros
     if (!this.ordenacao) {
       this.selectedDate = null;
