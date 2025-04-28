@@ -1,18 +1,18 @@
-<nav class="sidebar">
+<nav class="side-bar">
     <ul>
       <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">
         <a routerLink="/home">
           <span class="icon">
             <img src="assets/icons/dashboard.svg" alt="Dashboard">
-            <span class="title">Home</span>
+            <span class="title">Relatórios</span>
           </span>
         </a>
       </li>
       <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">
-        <a routerLink="/relatorios">
+        <a routerLink="/pontos">
           <span class="icon">
-            <img src="assets/icons/report.svg" alt="Relatórios">
-            <span class="title">Relatórios</span>
+            <img src="assets/icons/clock.svg" alt="Pontos">
+            <span class="title">Pontos</span>
           </span>
         </a>
       </li>
@@ -32,10 +32,13 @@
           </span>
         </a>
       </li>
+      <li>
+        <button class="logout-btn" (click)="logout()">
+          <span class="icon">
+            <img src="assets/icons/exit.svg" alt="Sair">
+            <span class="title">Sair</span>
+          </span>
+        </button>
+      </li>
     </ul>
   </nav>
-
-
-<nav class="sidebar-info"></nav>
-<nav class="sidebar-info2"></nav>
-  

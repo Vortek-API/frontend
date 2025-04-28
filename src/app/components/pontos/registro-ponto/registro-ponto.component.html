@@ -1,0 +1,74 @@
+<div class="ponto-container">
+  <div class="ponto-header">
+    <div class="right-controls">
+      <h1 class="ponto-title">Registro de Pontos</h1>
+      <div class="ponto-actions">
+        <div class="search-container">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Buscar por nome ou CPF"
+            [(ngModel)]="searchTerm"
+            required
+          />
+          <span class="search-icon">
+            <img src="assets/icons/personsearch.svg" alt="Ícone de busca" />
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="left-controls">
+      <input type="date" class="date-picker" [(ngModel)]="selectedDate" />
+      <div class="ponto-filtros">
+        <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
+          <option [ngValue]="null">Todas</option>
+          <option *ngFor="let empresa of empresas" [value]="empresa.id">
+            {{ empresa.nome }}
+          </option>
+        </select>
+      </div>
+
+        <div class="filter-actions">
+          <button class="download-btn" (click)="toggleDownloadOptions()">
+            Relatórios
+            <span class="icon-download"></span>
+          </button>
+
+          <div *ngIf="showDownloadOptions" class="download-options">
+            <button (click)="downloadCSV()">Download CSV</button>
+            <button (click)="downloadPDF()">Download PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="attendance-table">
+      <thead>
+        <tr>
+          <th>Colaboradores</th>
+          <th>CPF</th>
+          <th>Empresa</th>
+          <th>Data</th>
+          <th>Entrada</th>
+          <th>Saída</th>
+          <th>Tempo Total</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let registro of registrosFiltrados">
+          <td>{{ getNomeColaborador(registro.colaboradorId) }}</td>
+          <td>{{ getCpfColaborador(registro.colaboradorId) }}</td>
+          <td>{{ getNomeEmpresa(registro.empresaId) }}</td>
+          <td>{{ registro.data | date:'dd/MM/yyyy' }}</td>
+          <td>{{ registro.horaEntrada }}</td>
+          <td>{{ registro.horaSaida }}</td>
+          <td>{{ registro.tempoTotal }}</td>
+          <td><button class="editar-btn">Editar</button></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+</div>

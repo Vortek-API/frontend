@@ -1,0 +1,111 @@
+<div class="container">
+  <div class="header-actions">
+    <div class="right-controls">
+      <h1 id="titleRelatorios">Relatórios</h1>
+    </div>
+
+    <div class="filtros-container">
+      <!-- Filtros avançados -->
+      <div class="advanced-filters">
+        <div class="filter-group">
+          <label>Data Início:</label>
+          <input
+            type="date"
+            [(ngModel)]="filtros.dataInicio"
+            (change)="aplicarFiltros()"
+            class="date-input"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label>Data Fim:</label>
+          <input
+            type="date"
+            [(ngModel)]="filtros.dataFim"
+            (change)="aplicarFiltros()"
+            class="date-input"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label>Status:</label>
+          <select
+            [(ngModel)]="filtros.status"
+            (change)="aplicarFiltros()"
+            class="select-filter"
+          >
+            <option value="">Todos os status</option>
+            <option *ngFor="let status of listaStatus" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Empresa:</label>
+          <select
+            [(ngModel)]="filtros.empresa"
+            (change)="aplicarFiltros()"
+            class="select-filter"
+          >
+            <option value="">Todas as empresas</option>
+            <option *ngFor="let empresa of listaEmpresas" [value]="empresa">
+              {{ empresa }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Ordenar por:</label>
+          <select
+            [(ngModel)]="filtros.ordenacao"
+            (change)="aplicarFiltros()"
+            class="ordenar-select"
+          >
+            <option value="">Padrão</option>
+            <option value="empresa_asc">Empresa (A-Z)</option>
+            <option value="empresa_desc">Empresa (Z-A)</option>
+            <option value="data_asc">Data (Mais antiga)</option>
+            <option value="data_desc">Data (Mais recente)</option>
+            <option value="colaboradores_asc">Colaboradores (Menor)</option>
+            <option value="colaboradores_desc">Colaboradores (Maior)</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <button class="limpar-btn" (click)="limparFiltros()">
+            Limpar Filtros
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-group">
+    <div class="loading-container-dwd" *ngIf="showDownloadOptions">
+      <div class="spinner-dwd"></div>
+      <p>Gerando Relatório</p>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <h2>Indicadores</h2>
+  </div>
+
+  <div class="charts-container" *ngIf="!carregandoHorasEmpresa">
+    <div
+      echarts
+      [options]="horasEmpresaBarChartOptions"
+      class="chart-box"
+    ></div>
+    <div
+      echarts
+      [options]="horasEmpresaPieChartOptions"
+      class="chart-box"
+    ></div>
+  </div>
+
+  <div class="loading-container" *ngIf="carregandoHorasEmpresa">
+    <div class="spinner"></div>
+    <p>Carregando dados</p>
+  </div>
+</div>

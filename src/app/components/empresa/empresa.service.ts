@@ -8,7 +8,8 @@ export interface Empresa {
     id: number;
     nome: string;
     cnpj: string;
-    colaboradores: Colaborador[];
+    dataCadastro?: string;
+    colaboradores?: Colaborador[];
 }
 
 @Injectable({
@@ -19,6 +20,7 @@ export class EmpresaService {
     private apiUrl = `${environment.apiUrl}/empresa`
 
     private empresaDataTransfer: Empresa | undefined;
+    private empresasDataTransfer: Empresa[] = [];
 
     constructor(private http: HttpClient,
         private colaboradorService: ColaboradorService
@@ -26,27 +28,27 @@ export class EmpresaService {
 
     async findAll(): Promise<Empresa[]> {
         let emp: Promise<Empresa[]> = firstValueFrom(this.http.get<Empresa[]>(this.apiUrl));
-        let colab: Promise<Colaborador[]> = this.colaboradorService.findAll();
-    
+
         const empresas = await emp;
-        const colaboradores = await colab;
-    
-        empresas.forEach((empresa: Empresa) => {
-            empresa.colaboradores = colaboradores.filter(c => c.empresa.id === empresa.id);
-            const totalColaboradores = empresa.colaboradores.length;
-        });
-    
+
+        if (empresas != null) {
+            empresas.forEach(async (empresa: Empresa) => {
+                empresa.colaboradores = await this.findColabs(empresa.id);
+            });
+        }
+
         return empresas;
     }
-    
-    
 
     async find(id: number): Promise<Empresa> {
         return firstValueFrom(this.http.get<Empresa>(`${this.apiUrl}/${id}`));
     }
+    async findColabs(id: number): Promise<Colaborador[]> {
+        return firstValueFrom(this.http.get<Colaborador[]>(`${this.apiUrl}/colabs/${id}`));
+    }
 
     async add(empresa: Empresa): Promise<Empresa> {
-        return firstValueFrom(this.http.post<Empresa>(`${this.apiUrl}/cadastrar`, empresa));
+        return firstValueFrom(this.http.post<Empresa>(`${this.apiUrl}`, empresa));
     }
 
     async update(id: number, empresa: Empresa): Promise<Empresa> {
@@ -56,14 +58,16 @@ export class EmpresaService {
     async delete(id: number): Promise<void> {
         return firstValueFrom(this.http.delete<void>(`${this.apiUrl}/${id}`));
     }
-    setData(empresa: Empresa) {
+    setData(empresa: Empresa, empresas: Empresa[]) {
         this.empresaDataTransfer = empresa;
+        this.empresasDataTransfer = empresas;
     }
 
     getData(): any {
-        const colabRet = this.empresaDataTransfer;
+        const empRet = this.empresaDataTransfer;
+        const empsRet = this.empresasDataTransfer;
         this.empresaDataTransfer = undefined;
 
-        return colabRet;
+        return { empRet, empsRet };
     }
 }
