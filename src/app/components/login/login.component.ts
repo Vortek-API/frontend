@@ -22,7 +22,7 @@ export class LoginComponent {
     private snackBar: MatSnackBar
   ) {
     this.loginForm = this.fb.group({
-      login: ['', [Validators.required]],
+      login: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required]]
     });
   }
@@ -30,9 +30,9 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.invalid) return;
     const { login, senha } = this.loginForm.value;
-    const cleanedLogin = login.replace(/\D/g, '');
+    // const cleanedLogin = login.replace(/\D/g, '');
 
-    this.authService.login(cleanedLogin, senha).subscribe({
+    this.authService.login(login, senha).subscribe({
       next: (response) => {
         sessionStorage.setItem('userGroup', response.grupo);
         if (response.grupo === 'ADMIN') {
@@ -57,6 +57,15 @@ export class LoginComponent {
         });
       }
     })
+  }
+
+  formatEmailInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.value = this.formatEmail(input.value);
+  }
+
+  private formatEmail(email: string): string {
+    return email.trim().toLowerCase(); // remove espaços e deixa tudo minúsculo
   }
 
   formatCnpjInput(event: Event): void {
