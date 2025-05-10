@@ -1,0 +1,21 @@
+<div class="container">
+    <div class="login-box">
+        <h2>Recuperar Senha</h2>
+        <form>
+            <div class="input-box">
+                <input type="email" [(ngModel)]="login" name="email" required #emailInput="ngModel">
+                <label>Email</label>
+                <h6 class="text">Informe o email do usuário.</h6>
+            </div>
+            <button type="submit" class="btn" (click)="requestReset()" [disabled]="!login || isLoading">Enviar</button>
+            <div class="back-login">
+                <a href="/login">Voltar ao login</a>
+            </div>
+        </form>
+        @if (isLoading) {
+            <div class="loading-overlay">
+                <mat-spinner diameter="50" class="glass-spinner"></mat-spinner>
+            </div>
+        }
+    </div>
+</div>

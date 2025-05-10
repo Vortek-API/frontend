@@ -75,3 +75,22 @@ app-root {
 ::-webkit-scrollbar-thumb:hover {
   background: #095029;
   }
+
+  mat-spinner {
+  --mdc-circular-progress-active-indicator-color: rgba(0, 186, 37, 0.8); 
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 247, 247, 0.108); 
+  backdrop-filter: blur(0.2rem);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}

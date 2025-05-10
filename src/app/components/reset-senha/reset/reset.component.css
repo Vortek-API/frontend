@@ -18,7 +18,6 @@
     align-items: center;
 }
 
-
 .login-box {
     position: relative;
     width: 30rem;
@@ -33,7 +32,7 @@
 }
 
 h2 {
-    font-size: 2rem;
+    font-size: 1.5rem;
     text-align: center;
 }
 
@@ -41,6 +40,7 @@ h2 {
     position: relative;
     margin: 3rem 3rem;
 }
+
 
 .input-box input {
     width: 100%;
@@ -52,7 +52,7 @@ h2 {
     font-size: 1rem;
     padding-left: 0.5rem;
     transition: 0.5s;
-    letter-spacing: 0.2rem;
+    letter-spacing: 0.1rem;
     font-weight: 500;
 }
 
@@ -60,7 +60,6 @@ h2 {
 .input-box input:valid {
     border-color: #1f8e00;
 }
-
 
 .input-box label {
     position: absolute;
@@ -78,27 +77,8 @@ h2 {
     font-size: 0.85rem;
 }
 
-.forgot-password {
-    margin-top: 1rem;
-    text-align: center;
-}
-
-.forgot-password a {
-    font-size: 0.85rem;
-    text-decoration: none;
-    color: #000000;
-}
-
-.forgot-password a:hover {
-    text-decoration: underline;
-}
-
-.login-box button{
-    margin: 0 auto; 
-}
-
 .btn {
-    width: 35%;
+    width: 30%;
     height: 2.5rem;
     border-radius: 0.3rem;
     outline: none;
@@ -107,9 +87,34 @@ h2 {
     font-weight: 600;
     margin: 0 auto; 
     display: block;
+    transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .btn:hover {
     background-color: #05ab0a;
     color: #fff;
+    transform: scale(1.03);
+}
+
+.back-login {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.back-login a {
+    font-size: 0.85rem;
+    text-decoration: none;
+    color: #000000;
+}
+
+.back-login a:hover {
+    text-decoration: underline;
+}
+
+h6{
+    width: 100%;
+    position: absolute;
+    font-size: 0.8rem;
+    text-align: center;
+    top: 125%;
 }

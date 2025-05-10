@@ -1,0 +1,16 @@
+<div class="container">
+    <div class="login-box">
+        <h2>Redefinir Senha</h2>
+        <form>
+            <div class="input-box">
+                <input type="password" [(ngModel)]="novaSenha" name="novaSenha" required #novaSenhaInput="ngModel" title="Mínimo 6 caracteres" minlength="6" maxlength="50" >
+                <label>Nova senha</label>
+                <h6 class="text">A nova senha deve ter, no mínimo, 6 caracteres.</h6>
+            </div>
+            <button type="submit" class="btn" [disabled]="novaSenhaInput.invalid" (click)="resetSenha()">Redefinir</button>
+            <div class="back-login">
+                <a href="/login">Voltar ao login</a>
+            </div>
+        </form>
+    </div>
+</div>
