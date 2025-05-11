@@ -5,6 +5,9 @@ import { PontoDetalhado, RegistroPontoService } from './registro-ponto.service';
 import { Empresa, EmpresaService } from '../../empresa/empresa.service';
 import { Colaborador, ColaboradorService } from '../../colaborador/colaborador.service';
 import { ExportService } from '../../../services/exports/export.service';
+import { ModalEditarComponent } from '../modais/modal-editar.component';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+
 
 @Component({
   selector: 'app-registro-ponto',
@@ -38,6 +41,7 @@ export class RegistroPontoComponent implements OnInit {
   };
 
   constructor(
+    public dialog: MatDialog,
     private pontoService: RegistroPontoService,
     private empresaService: EmpresaService,
     private colaboradorService: ColaboradorService,
@@ -156,7 +160,16 @@ export class RegistroPontoComponent implements OnInit {
       }
     }, 100);
   }
-  
 
+  
+  async abrirModalEditar() {
+      this.dialog.open(ModalEditarComponent, {});
+      this.dialog.afterAllClosed.subscribe(async () => {
+        await this.loadColaboradores();
+        // setTimeout(async () => {
+        //   await this.loadColaboradores();
+        // }, 2000);
+      });
+  }
   
 }
