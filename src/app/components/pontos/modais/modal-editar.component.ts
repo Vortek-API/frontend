@@ -49,4 +49,6 @@ export class ModalEditarComponent {
   editarPontos(){
     console.log('chegou')
   }
+
+  onFileSelected(event: any){}
 }
