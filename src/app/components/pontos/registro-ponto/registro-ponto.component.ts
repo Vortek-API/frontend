@@ -6,7 +6,7 @@ import { Empresa, EmpresaService } from '../../empresa/empresa.service';
 import { Colaborador, ColaboradorService } from '../../colaborador/colaborador.service';
 import { ExportService } from '../../../services/exports/export.service';
 import { ModalEditarComponent } from '../modais/modal-editar.component';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import {  MatDialog } from '@angular/material/dialog';
 
 
 @Component({
@@ -162,13 +162,12 @@ export class RegistroPontoComponent implements OnInit {
   }
 
   
-  async abrirModalEditar() {
-      this.dialog.open(ModalEditarComponent, {});
+  async abrirModalEditar(registro: PontoDetalhado) {
+      this.dialog.open(ModalEditarComponent, {
+        data: registro
+      });
       this.dialog.afterAllClosed.subscribe(async () => {
         await this.loadColaboradores();
-        // setTimeout(async () => {
-        //   await this.loadColaboradores();
-        // }, 2000);
       });
   }
   
