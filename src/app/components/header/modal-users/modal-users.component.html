@@ -1,0 +1,142 @@
+<div class="container-modal-users">
+  <div class="users-content">
+    <h3>Gerenciar Usuários</h3>
+    <button class="close-btn" (click)="closeModal()" [disabled]="isLoading">
+      ✕
+    </button>
+    <button
+      class="new-user-btn"
+      (click)="openNewUserForm()"
+      [disabled]="isLoading"
+    >
+      Novo Usuário
+    </button>
+
+    @if (isNewUserFormOpen) {
+    <form class="new-user-form" (ngSubmit)="addUser()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input
+          matInput
+          type="email"
+          [(ngModel)]="newUser.email"
+          name="email"
+          required
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Tipo de Acesso</mat-label>
+        <mat-select [(ngModel)]="newUser.grupo" name="grupo" required>
+          <mat-option value="ADMIN">Administrador</mat-option>
+          <mat-option value="EMPRESA">Empresa</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>Empresas</mat-label>
+        <mat-select
+          multiple
+          [(ngModel)]="newUser.empresa"
+          name="empresa"
+          required
+        >
+          @for (emp of empresas; track emp.id) {
+          <mat-option [value]="emp.id">
+            {{ emp.nome }}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="actions">
+        <button class="btn-primary" type="submit" [disabled]="isLoading">
+          Adicionar
+        </button>
+        <button
+          class="btn-secondary"
+          type="button"
+          (click)="closeNewUserForm()"
+          [disabled]="isLoading"
+        >
+          Cancelar
+        </button>
+      </div>
+
+      @if (isLoading) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="50"></mat-spinner>
+      </div>
+      }
+    </form>
+    } @if (!isNewUserFormOpen) {
+    <div class="user-list">
+      <h3>Lista de Usuários</h3>
+      @if (isLoading) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="50"></mat-spinner>
+      </div>
+      } @for (user of groupedUsers; track user.id) {
+      <div>
+        <div class="user-line">
+          <span class="user-email" (click)="user.expanded = !user.expanded">
+          {{ user.email }} - <small>{{ user.grupo }}</small>
+          <br> 
+            <small>
+              {{
+                user.expanded ? "▼" : "(" + user.empresas.length + " empresas)"
+              }}
+            </small>
+          </span>
+        </div>
+
+        @if (user.expanded) {
+        <div class="user-details">
+          <h4>Empresas vinculadas</h4>
+          <ul>
+            @for (emp of user.empresas; track emp.id) {
+            <li>
+              {{ emp.nome }}
+              <button
+                class="btn-secondary"
+                (click)="removeEmpresa(user, emp.id)"
+              >
+                ✖
+              </button>
+            </li>
+            }
+          </ul>
+
+          <div class="add-company">
+            <mat-form-field>
+              <mat-label>Adicionar empresa</mat-label>
+              <mat-select [(ngModel)]="selectedCompany[user.id]">
+                @for (e of availableCompanies; track e.id) {
+                <mat-option [value]="e.id">
+                  {{ e.nome }}
+                </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <button class="btn-primary" (click)="addEmpresa(user)">
+              Adicionar
+            </button>
+          </div>
+        </div>
+        <div class="btn">
+          <button
+            class="btn-secondary"
+            (click)="deleteUser(user.id)"
+            [disabled]="isLoading"
+          >
+            Excluir Usuário
+          </button>
+        </div>
+
+        }
+      </div>
+      }
+    </div>
+    }
+  </div>
+</div>
