@@ -6,7 +6,7 @@ import { Empresa, EmpresaService } from '../../empresa/empresa.service';
 import { Colaborador, ColaboradorService } from '../../colaborador/colaborador.service';
 import { ExportService } from '../../../services/exports/export.service';
 import { ModalEditarComponent } from '../modais/modal-editar.component';
-import {  MatDialog } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
@@ -22,7 +22,7 @@ export class RegistroPontoComponent implements OnInit {
   colaboradores: Colaborador[] = [];
   empresas: Empresa[] = [];
   searchTerm: string = '';
-  selectedDate: string | null = null;
+  selectedDate: string | null = null; // Mantido para compatibilidade, pode ser removido mais tarde
   selectedEmpresa: number | null = null;
 
   baixandoRelatorio = false;
@@ -66,6 +66,12 @@ export class RegistroPontoComponent implements OnInit {
     this.empresas = await this.empresaService.findAll();
   }
 
+  aplicarFiltros() {
+    // Este método pode ser chamado quando qualquer filtro for alterado
+    // Não precisamos fazer nada aqui, pois o getter registrosFiltrados
+    // aplica os filtros automaticamente quando é acessado
+  }
+
   get registrosFiltrados() {
     return this.registros.filter(r => {
       const colaborador = this.colaboradores.find(c => c.id === r.colaboradorId);
@@ -75,16 +81,40 @@ export class RegistroPontoComponent implements OnInit {
       const cpf = colaborador.cpf || '';
       const termoBusca = this.searchTerm.toLowerCase();
 
-      const registroData = r.data?.split('T')[0];
+      // Filtragem por busca de texto (nome ou CPF)
       const atendeBusca = this.searchTerm === '' || nome.includes(termoBusca) || cpf.includes(termoBusca);
-      const atendeData = !this.selectedDate || registroData === this.selectedDate;
+      
+      // Filtragem por empresa
       const atendeEmpresa = !this.selectedEmpresa || r.empresaId === +this.selectedEmpresa;
 
-      return atendeBusca && atendeData && atendeEmpresa;
+      // Tratamento adequado para a data do registro
+      let registroData: Date | null = null;
+      
+      if (r.data) {
+        // Convertendo a string de data para objeto Date para comparação
+        const dataString = String(r.data);
+        registroData = new Date(dataString.split('T')[0]);
+      }
+      
+      // Filtragem por intervalo de datas
+      let atendeDataInicio = true;
+      let atendeDataFim = true;
+      
+      if (this.filtros.dataInicio && registroData) {
+        const dataInicio = new Date(this.filtros.dataInicio);
+        atendeDataInicio = registroData >= dataInicio;
+      }
+      
+      if (this.filtros.dataFim && registroData) {
+        const dataFim = new Date(this.filtros.dataFim);
+        // Adiciona um dia para incluir o dia final completo
+        dataFim.setDate(dataFim.getDate() + 1);
+        atendeDataFim = registroData < dataFim;
+      }
+
+      return atendeBusca && atendeEmpresa && atendeDataInicio && atendeDataFim;
     });
   }
-
-
 
   getNomeColaborador(id: number) {
     return this.colaboradores.find(c => c.id === id)?.nome || 'Desconhecido';
@@ -124,7 +154,6 @@ export class RegistroPontoComponent implements OnInit {
     });
   }
   
-
   toggleDownloadOptions() {
     this.showDownloadOptions = !this.showDownloadOptions;
   }
@@ -160,7 +189,6 @@ export class RegistroPontoComponent implements OnInit {
       }
     }, 100);
   }
-
   
   async abrirModalEditar(registro: PontoDetalhado) {
       this.dialog.open(ModalEditarComponent, {
@@ -170,5 +198,4 @@ export class RegistroPontoComponent implements OnInit {
         await this.loadColaboradores();
       });
   }
-  
 }

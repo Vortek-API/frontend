@@ -1,3 +1,4 @@
+html
 <div class="ponto-container">
   <div class="ponto-header">
     <div class="right-controls">
@@ -19,9 +20,35 @@
     </div>
 
     <div class="left-controls">
-      <input type="date" class="date-picker" [(ngModel)]="selectedDate" />
+      <div class="date-range-container">
+              
+
+        <div class="date-input">
+          <label>De:</label>
+          <input 
+            type="date" 
+            id="dataInicio"
+            class="date-picker" 
+            [(ngModel)]="filtros.dataInicio" 
+            (change)="aplicarFiltros()"
+          />
+        </div>
+
+       
+        <div class="date-input">
+           <label>Até:</label>
+          <input 
+            type="date" 
+            id="dataFim"
+            class="date-picker" 
+            [(ngModel)]="filtros.dataFim" 
+            (change)="aplicarFiltros()"
+          />
+        </div>
+      </div>
+      
       <div class="ponto-filtros">
-        <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
+        <select class="filter-dropdown" [(ngModel)]="selectedEmpresa" (change)="aplicarFiltros()">
           <option [ngValue]="null">Todas</option>
           <option *ngFor="let empresa of empresas" [value]="empresa.id">
             {{ empresa.nome }}
@@ -29,22 +56,27 @@
         </select>
       </div>
 
-        <div class="filter-actions">
-          <button class="download-btn" (click)="toggleDownloadOptions()">
-            Relatórios
-            <span class="icon-download"></span>
-          </button>
+      <div class="filter-actions">
+        <button class="download-btn" (click)="toggleDownloadOptions()" [disabled]="baixandoRelatorio">
+          {{ baixandoRelatorio ? 'Gerando...' : 'Relatórios' }}
+          <span class="icon-download" *ngIf="!baixandoRelatorio"></span>
+          <span class="loading-icon" *ngIf="baixandoRelatorio"></span>
+        </button>
 
-          <div *ngIf="showDownloadOptions" class="download-options">
-            <button (click)="downloadCSV()">Download CSV</button>
-            <button (click)="downloadPDF()">Download PDF</button>
+        <div *ngIf="showDownloadOptions" class="download-options">
+          <button (click)="downloadCSV()">Download CSV</button>
+          <button (click)="downloadPDF()">Download PDF</button>
         </div>
       </div>
     </div>
   </div>
 
   <div class="table-wrapper">
-    <table class="attendance-table">
+    <div *ngIf="registrosFiltrados.length === 0" class="no-records">
+      Nenhum registro encontrado com os filtros selecionados.
+    </div>
+    
+    <table class="attendance-table" *ngIf="registrosFiltrados.length > 0">
       <thead>
         <tr>
           <th>Colaboradores</th>
@@ -70,5 +102,5 @@
         </tr>
       </tbody>
     </table>
-    </div>
+  </div>
 </div>

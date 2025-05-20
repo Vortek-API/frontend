@@ -128,14 +128,10 @@
 .left-controls {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem; /* Espaçamento uniforme entre todos os elementos */
 }
 
-.left-controls>* {
-  flex: 0 1 auto;
-  min-width: 5rem;
-  max-width: 20rem;
-}
+
 
 .right-controls .search-container {
   flex: 1 1 auto;
@@ -240,6 +236,33 @@
   background-color: #e0e0e0;
   cursor: pointer;
 }
+.date-range-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.date-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Espaço entre o label e o input */
+}
+
+.date-input label {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.date-picker {
+  height: 38px;
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #e6fae9; /* Exemplo de cor, pode ajustar */
+}
+
 
 /* Botão Download */
 .filter-actions {
@@ -490,7 +513,7 @@
   .filter-dropdown,
   .date-picker,
   .download-btn {
-    width: 10.3rem;
+    width: 9.3rem;
     font-size: 0.9rem;
     height: 3rem;
   }
@@ -529,7 +552,7 @@
   .filter-dropdown,
   .date-picker,
   .download-btn {
-    width: 14rem;
+    width: 10rem;
     font-size: 1.2rem;
     height: 3rem;
   }
