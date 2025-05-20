@@ -1,0 +1,102 @@
+<div class="ponto-container">
+  <div class="ponto-content">
+    <!-- Coluna do Perfil do Colaborador -->
+    <div class="perfil-column">
+      <div class="perfil-colaborador">
+        <img src="assets/images/profile.jpg" alt="Foto do Colaborador" class="perfil-foto">
+        <h2 class="perfil-nome">{{ colaborador?.nome }}</h2>
+        <p class="perfil-cargo">{{ colaborador?.cargo }}</p>
+
+        <div class="perfil-info">
+          <div class="info-item">
+            <span class="info-label">CPF:</span>
+           <span class="info-valor">{{ formatarCPF(colaborador?.cpf) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Admissão:</span>
+            <span class="info-valor">{{ colaborador?.dataCadastro | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Jornada:</span>
+            <span class="info-valor">
+              {{ formatarHora(colaborador?.horarioEntrada) }} - {{ formatarHora(colaborador?.horarioSaida) }}
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Status:</span>
+            <span class="info-valor" [ngClass]="colaborador?.statusAtivo ? 'status ativo' : 'status inativo'">
+              {{ colaborador?.statusAtivo ? "Ativo" : "Inativo" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coluna do Histórico de Pontos -->
+    <div class="historico-column">
+      <div class="ponto-header">
+        <div class="right-controls">
+          <h1 class="ponto-title">Histórico de Pontos</h1>
+          <div class="ponto-actions">
+            <div class="search-container">
+              <input type="text" class="search-input" placeholder="Buscar por nome ou CPF" [(ngModel)]="searchTerm"
+                required />
+              <span class="search-icon">
+                <img src="assets/icons/personsearch.svg" alt="Ícone de busca" />
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="left-controls">
+          <input type="date" class="date-picker" />
+          <div class="ponto-filtros">
+            <select class="filter-dropdown">
+              <option value="null">Todas</option>
+              <option value="1">Empresa 1</option>
+              <option value="2">Empresa 2</option>
+            </select>
+          </div>
+
+          <div class="filter-actions">
+            <button class="download-btn">
+              Relatórios
+              <span class="icon-download"></span>
+            </button>
+
+            <div class="download-options" style="display: none;">
+              <button>Download CSV</button>
+              <button>Download PDF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="attendance-table">
+          <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>Data</th>
+              <th>Entrada</th>
+              <th>Saída</th>
+              <th>Tempo Total</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>16/05/2025</td>
+              <td>08:00</td>
+              <td>12:00</td>
+              <td>13:00</td>
+              <td>17:00</td>
+              <td class="buttons-td">
+                <button class="historico-btn">Editar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

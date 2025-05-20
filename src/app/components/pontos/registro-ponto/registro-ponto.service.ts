@@ -21,6 +21,8 @@ export class RegistroPontoService {
 
     private apiUrl = `${environment.apiUrl}/ponto`
 
+    private registroDataTransfer: PontoDetalhado | undefined;
+
     constructor(private http: HttpClient
     ) { }
 
@@ -32,5 +34,15 @@ export class RegistroPontoService {
     }
     async findByColabId(id: number) : Promise<PontoDetalhado[]> {
         return firstValueFrom(this.http.get<PontoDetalhado[]>(`${this.apiUrl}?colaboradorId=${id}`));
+    }
+    
+    setData(registro: PontoDetalhado) {
+        this.registroDataTransfer = registro;
+    }
+
+    getData(): PontoDetalhado | undefined {
+        const registroRet = this.registroDataTransfer;
+        this.registroDataTransfer = undefined;
+        return registroRet;
     }
 }
