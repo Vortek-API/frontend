@@ -9,6 +9,10 @@ import { ModalEditarComponent } from '../modais/modal-editar.component';
 import { MatDialog } from '@angular/material/dialog';
 
 
+import { HistoricoPontosComponent } from '../historico-ponto/historico-ponto.component';
+
+
+
 @Component({
   selector: 'app-registro-ponto',
   standalone: true,
@@ -132,28 +136,29 @@ export class RegistroPontoComponent implements OnInit {
     this.relatorioData = this.registrosFiltrados.map(r => {
       const colaborador = this.colaboradores.find(c => c.id === r.colaboradorId);
       const empresa = this.empresas.find(e => e.id === r.empresaId);
-  
+
       return {
         nomeColaborador: colaborador?.nome || 'Desconhecido',
         cpfColaborador: colaborador?.cpf || '---',
         nomeEmpresa: empresa?.nome || '---',
         dataRegistro: r.data?.split('T')[0] || '',
-        entradaRegistro: r.horaEntrada?.split('T')[0]?.substring(0,5) || '',
-        saidaRegistro: r.horaSaida?.split('T')[0]?.substring(0,5) || '',
+        entradaRegistro: r.horaEntrada?.split('T')[0]?.substring(0, 5) || '',
+        saidaRegistro: r.horaSaida?.split('T')[0]?.substring(0, 5) || '',
         tempoTotal: r.tempoTotal || '',
       };
     })
-    .sort((a, b) => {
-      // Primeiro ordena por nome Empresa (A-Z)
-      if (a.nomeEmpresa.toLowerCase() < b.nomeEmpresa.toLowerCase()) return -1;
-      if (a.nomeEmpresa.toLowerCase() > b.nomeEmpresa.toLowerCase()) return 1;
-      // Se a empresa for igual, ordena por nome Colaborador (A-Z)
-      if (a.nomeColaborador.toLowerCase() < b.nomeColaborador.toLowerCase()) return -1;
-      if (a.nomeColaborador.toLowerCase() > b.nomeColaborador.toLowerCase()) return 1;
-      return 0;
-    });
+      .sort((a, b) => {
+        // Primeiro ordena por nome Empresa (A-Z)
+        if (a.nomeEmpresa.toLowerCase() < b.nomeEmpresa.toLowerCase()) return -1;
+        if (a.nomeEmpresa.toLowerCase() > b.nomeEmpresa.toLowerCase()) return 1;
+        // Se a empresa for igual, ordena por nome Colaborador (A-Z)
+        if (a.nomeColaborador.toLowerCase() < b.nomeColaborador.toLowerCase()) return -1;
+        if (a.nomeColaborador.toLowerCase() > b.nomeColaborador.toLowerCase()) return 1;
+        return 0;
+      });
   }
-  
+
+
   toggleDownloadOptions() {
     this.showDownloadOptions = !this.showDownloadOptions;
   }
@@ -189,13 +194,25 @@ export class RegistroPontoComponent implements OnInit {
       }
     }, 100);
   }
-  
+
   async abrirModalEditar(registro: PontoDetalhado) {
-      this.dialog.open(ModalEditarComponent, {
-        data: registro
-      });
-      this.dialog.afterAllClosed.subscribe(async () => {
-        await this.loadColaboradores();
-      });
+    this.dialog.open(ModalEditarComponent, {
+      data: registro
+    });
+    this.dialog.afterAllClosed.subscribe(async () => {
+      await this.loadColaboradores();
+    });
+  }
+  async abrirModalHistorico(registro: PontoDetalhado) {
+    this.pontoService.setData(registro)
+    this.dialog.open(HistoricoPontosComponent, {
+      panelClass: 'no-scroll-dialog'
+    });
+    this.dialog.afterAllClosed.subscribe(async () => {
+      await this.loadColaboradores();
+      // setTimeout(async () => {
+      //   await this.loadColaboradores();
+      // }, 2000);
+    });
   }
 }

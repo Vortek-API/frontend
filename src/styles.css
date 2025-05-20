@@ -94,3 +94,8 @@ app-root {
   justify-content: center;
   z-index: 10;
 }
+.no-scroll-dialog .mat-mdc-dialog-surface {
+  overflow-y: visible !important;
+ justify-self: center !important;
+  position: relative;
+}

@@ -42,7 +42,10 @@ export class ColaboradorService {
     }
 
     async find(id: number): Promise<Colaborador> {
-        return firstValueFrom(this.http.get<Colaborador>(`${this.apiUrl}/${id}`));
+        const colab = await firstValueFrom(this.http.get<Colaborador>(`${this.apiUrl}/${id}`));
+        if (colab.foto) colab.foto = await this.findFoto(colab.id);
+
+        return colab;
     }
 
     async add(colaborador: Colaborador): Promise<Colaborador> {
