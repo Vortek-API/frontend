@@ -3,14 +3,24 @@
     <!-- Coluna do Perfil do Colaborador -->
     <div class="perfil-column">
       <div class="perfil-colaborador">
-        <img src="assets/images/profile.jpg" alt="Foto do Colaborador" class="perfil-foto">
+        <div class="form-group avatar-group">
+
+          <div class="avatar" *ngIf="imagemPreview; else noImage">
+            <img [src]="imagemPreview" class="avatar-img" />
+          </div>
+
+          <ng-template #noImage>
+            <div class="avatar" [ngStyle]="{'background-image': 'url(assets/images/empty.webp)'}"></div>
+          </ng-template>
+
+        </div>
         <h2 class="perfil-nome">{{ colaborador?.nome }}</h2>
         <p class="perfil-cargo">{{ colaborador?.cargo }}</p>
 
         <div class="perfil-info">
           <div class="info-item">
             <span class="info-label">CPF:</span>
-           <span class="info-valor">{{ formatarCPF(colaborador?.cpf) }}</span>
+            <span class="info-valor">{{ formatarCPF(colaborador?.cpf) }}</span>
           </div>
           <div class="info-item">
             <span class="info-label">Admissão:</span>
@@ -84,12 +94,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>16/05/2025</td>
-              <td>08:00</td>
-              <td>12:00</td>
-              <td>13:00</td>
-              <td>17:00</td>
+            <tr *ngFor="let registro of registros">
+              <td>{{ getNomeEmpresa(registro.empresaId) }}</td>
+              <td>{{ registro.data }}</td>
+              <td>{{ registro.horaEntrada }} </td>
+              <td>{{ registro.horaSaida }} </td>
+              <td>{{ registro.tempoTotal }} </td>
               <td class="buttons-td">
                 <button class="historico-btn">Editar</button>
               </td>

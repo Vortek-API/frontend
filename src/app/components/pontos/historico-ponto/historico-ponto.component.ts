@@ -21,6 +21,7 @@ export class HistoricoPontosComponent implements OnInit {
   searchTerm: string = '';
   selectedDate: string | null = null;
   selectedEmpresa: number | null = null;
+  imagemPreview: string | ArrayBuffer | null = null;
 
   baixandoRelatorio = false;
   showDownloadOptions = false;
@@ -34,34 +35,62 @@ export class HistoricoPontosComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    await this.loadRegistros();
+    await this.loadRegistroSelecionado();
     await this.loadColaborador();
     await this.loadEmpresas();
+    await this.loadRegistros();
   }
 
-  async loadRegistros() {
+  async loadRegistroSelecionado() {
     this.registroSelecionado = this.pontoService.getData();
   }
 
   async loadColaborador() {
     const colabId = this.registroSelecionado?.colaboradorId;
     if (colabId) this.colaborador = await this.colaboradorService.find(colabId);
+    if (this.colaborador?.foto) {
+      if (typeof this.colaborador.foto !== 'string') {
+        // Se for Uint8Array, converte para Base64
+        const binary = this.arrayBufferToBase64(this.colaborador.foto);
+        this.imagemPreview = `data:image/jpeg;base64,${binary}`;
+      } else {
+        this.imagemPreview = `data:image/jpeg;base64,${this.colaborador.foto}`;
+      }
+    }
   }
 
   async loadEmpresas() {
     this.empresas = await this.empresaService.findAll();
   }
 
+  async loadRegistros() {
+    const colabId = this.colaborador?.id;
+    if (colabId)
+      this.registros = await this.pontoService.findByColabId(colabId);
+    console.log(this.registros[1].empresaId);
+  }
+
   formatarHora(hora?: string): string {
     return hora ? hora.substring(0, 5) : '--:--';
   }
   formatarCPF(cpf?: string): string {
-  if (!cpf) return '---';
-  const cpfLimpo = cpf.replace(/\D/g, ''); // Remove não dígitos
-  return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-}
+    if (!cpf) return '---';
+    const cpfLimpo = cpf.replace(/\D/g, ''); // Remove não dígitos
+    return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  }
 
-
+  arrayBufferToBase64(buffer: Uint8Array): string {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  }
+  getNomeEmpresa(id: number) {
+    return this.empresas.find(e => e.id === id)?.nome || '---';
+  }
   // get registrosFiltrados() {
   //   return this.registros.filter(r => {
   //     const colaborador = this.colaborador.find(c => c.id === r.colaboradorId);

@@ -33,7 +33,7 @@ export class RegistroPontoService {
         return firstValueFrom(this.http.get<PontoDetalhado>(`${this.apiUrl}/${id}/detalhado`));
     }
     async findByColabId(id: number) : Promise<PontoDetalhado[]> {
-        return firstValueFrom(this.http.get<PontoDetalhado[]>(`${this.apiUrl}?colaboradorId=${id}`));
+        return firstValueFrom(this.http.get<PontoDetalhado[]>(`${this.apiUrl}/detalhado?colaboradorId=${id}`));
     }
     
     setData(registro: PontoDetalhado) {
