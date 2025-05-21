@@ -139,16 +139,25 @@ export class RegistroPontoComponent implements OnInit {
 
       return {
         nomeColaborador: colaborador?.nome || 'Desconhecido',
-        cpfColaborador: colaborador?.cpf || '---',
+        cpfColaborador: this.formatarCPF(colaborador?.cpf) || '---',
         nomeEmpresa: empresa?.nome || '---',
-        dataRegistro: r.data?.split('T')[0] || '',
+            dataRegistro: r.data
+          ? (() => {
+          const [year, month, day] = r.data.split('T')[0].split('-');
+          return `${day}/${month}/${year}`;
+        })()
+          : '',
         entradaRegistro: r.horaEntrada?.split('T')[0]?.substring(0, 5) || '',
         saidaRegistro: r.horaSaida?.split('T')[0]?.substring(0, 5) || '',
         tempoTotal: r.tempoTotal || '',
       };
     })
       .sort((a, b) => {
-        // Primeiro ordena por nome Empresa (A-Z)
+
+        // Primeiro ordena por data (mais recente primeiro)
+        if (a.dataRegistro > b.dataRegistro) return -1;
+        if (a.dataRegistro < b.dataRegistro) return 1;
+        // Ordena por nome Empresa (A-Z)
         if (a.nomeEmpresa.toLowerCase() < b.nomeEmpresa.toLowerCase()) return -1;
         if (a.nomeEmpresa.toLowerCase() > b.nomeEmpresa.toLowerCase()) return 1;
         // Se a empresa for igual, ordena por nome Colaborador (A-Z)
@@ -214,5 +223,11 @@ export class RegistroPontoComponent implements OnInit {
       //   await this.loadColaboradores();
       // }, 2000);
     });
+  }
+
+    formatarCPF(cpf?: string): string {
+    if (!cpf) return '---';
+    const cpfLimpo = cpf.replace(/\D/g, ''); // Remove não dígitos
+    return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
 }

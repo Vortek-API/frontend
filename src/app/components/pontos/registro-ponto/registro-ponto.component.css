@@ -291,6 +291,15 @@
   font-size: 1rem;
 }
 
+.no-records{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 1.2rem;
+  color: #EF5350;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -506,7 +515,7 @@
 
 
   .search-container:hover {
-    width: 18rem;
+    width: 17rem;
     height: 3rem;
   }
 
