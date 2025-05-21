@@ -65,7 +65,7 @@ export class ColaboradorService {
             colaborador: colaborador,
             empresasId: colaborador.empresas?.map(e => e.id) ?? []
         };
-        colaborador.empresas = undefined;
+        //colaborador.empresas = undefined;
         return firstValueFrom(this.http.put<Colaborador>(`${this.apiUrl}/${id}`, payload, {
             headers: this.jsonHeaders
         }));

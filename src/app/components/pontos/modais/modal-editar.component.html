@@ -24,25 +24,25 @@
         #fileInput 
         style="display: none"
         accept="image/*"
-        (change)="onFileSelected($event)"          
+        (change)="onFileSelected($event)" 
+        disabled         
       />
     </div>
     
     <form>
-      <!-- Apenas acessamos as propriedades se registro existir -->
       <div class="form-group">
         <label for="cpf">CPF</label>
-        <input type="text" id="cpf" [(ngModel)]="registro.cpf" name="cpf" mask="000.000.000-00">
+        <input type="text" id="cpf" [(ngModel)]="registro.cpf" name="cpf" mask="000.000.000-00" disabled>
       </div>
       
       <div class="form-group">
         <label for="nome">Nome</label>
-        <input type="text" id="nome" [(ngModel)]="registro.nome" name="nome">
+        <input type="text" id="nome" [(ngModel)]="registro.nome" name="nome" disabled>
       </div>
       
       <div class="form-group">
         <label for="cargo">Cargo</label>
-        <input type="text" id="cargo" [(ngModel)]="registro.cargo" name="cargo">
+        <input type="text" id="cargo" [(ngModel)]="registro.cargo" name="cargo" disabled>
       </div>
 
       <div class="form-group">
@@ -57,15 +57,33 @@
 
       <div class="form-group">
         <label for="empresas">Empresas</label>
-        <input type="text" id="empresas" [(ngModel)]="registro.empresas" name="empresas">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-select
+            id="empresas"
+            name="empresas"
+            [(ngModel)]="colaborador.empresas"
+            multiple
+            required
+            placeholder="Selecione"
+            panelClass="empresas-select-panel">
+            <mat-option *ngFor="let empresa of colaborador.empresas" [value]="empresa" >
+              {{ empresa.nome }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
       
       <div class="form-group">
         <label for="statusAtivo">Status</label>
-        <select id="statusAtivo" [(ngModel)]="registro.statusAtivo" name="statusAtivo">
+        <select id="statusAtivo" [(ngModel)]="registro.statusAtivo" name="statusAtivo" disabled>
           <option [ngValue]="true">Ativo</option>
           <option [ngValue]="false">Inativo</option>
         </select>
+      </div>
+
+      <div class="form-group">
+        <label for="justificativa">Justificativa</label>
+        <textarea id="justificativa" [(ngModel)]="registro.justificativa" name="justificativa" rows="4"></textarea>
       </div>
     </form>
     

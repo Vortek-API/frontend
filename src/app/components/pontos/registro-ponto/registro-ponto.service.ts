@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { firstValueFrom, Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Colaborador, ColaboradorService } from '../../colaborador/colaborador.service';
 
@@ -12,6 +12,7 @@ export interface PontoDetalhado {
     horaEntrada: string;
     horaSaida: string;
     tempoTotal: string;
+    justificativa: string;
 }
 
 @Injectable({
@@ -20,6 +21,9 @@ export interface PontoDetalhado {
 export class RegistroPontoService {
 
     private apiUrl = `${environment.apiUrl}/ponto`
+    private jsonHeaders = new HttpHeaders({
+        'Content-Type': 'application/json'
+    });
 
     private registroDataTransfer: PontoDetalhado | undefined;
 
@@ -44,5 +48,10 @@ export class RegistroPontoService {
         const registroRet = this.registroDataTransfer;
         this.registroDataTransfer = undefined;
         return registroRet;
+    }
+    async update(id: number,ponto: PontoDetalhado): Promise<PontoDetalhado> {
+        return firstValueFrom(this.http.patch<PontoDetalhado>(`${this.apiUrl}/${id}/editar`, ponto,  {
+            headers: this.jsonHeaders
+        }));
     }
 }
