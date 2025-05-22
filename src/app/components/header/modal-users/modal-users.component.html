@@ -13,7 +13,7 @@
     </button>
 
     @if (isNewUserFormOpen) {
-    <form class="new-user-form" (ngSubmit)="addUser()">
+    <form class="new-user-form" #form="ngForm" (ngSubmit)="addUser(form)">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Email</mat-label>
         <input
@@ -22,15 +22,26 @@
           [(ngModel)]="newUser.email"
           name="email"
           required
+          #email="ngModel"
         />
+        <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error-message">
+          <div *ngIf="email.errors?.['required']">
+            Email é obrigatório.
+          </div>
+        </div>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Tipo de Acesso</mat-label>
-        <mat-select [(ngModel)]="newUser.grupo" name="grupo" required>
+        <mat-select [(ngModel)]="newUser.grupo" name="grupo" required #acesso="ngModel">
           <mat-option value="ADMIN">Administrador</mat-option>
           <mat-option value="EMPRESA">Empresa</mat-option>
         </mat-select>
+        <div *ngIf="acesso.invalid && (acesso.dirty || acesso.touched)" class="error-message">
+          <div *ngIf="acesso.errors?.['required']">
+            Tipo de acesso é obrigatório.
+          </div>
+        </div>
       </mat-form-field>
 
       <mat-form-field class="full-width">
@@ -40,6 +51,7 @@
           [(ngModel)]="newUser.empresa"
           name="empresa"
           required
+          #empresa="ngModel"
         >
           @for (emp of empresas; track emp.id) {
           <mat-option [value]="emp.id">
@@ -47,6 +59,11 @@
           </mat-option>
           }
         </mat-select>
+        <div *ngIf="empresa.invalid && (empresa.dirty || empresa.touched)" class="error-message">
+          <div *ngIf="empresa.errors?.['required']">
+            Empresa é obrigatória.
+          </div>
+        </div>
       </mat-form-field>
 
       <div class="actions">

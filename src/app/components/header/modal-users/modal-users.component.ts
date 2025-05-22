@@ -4,10 +4,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import Swal from 'sweetalert2';
 import { UsersService } from './service/users.service';
+import { CommonModule } from '@angular/common';
 
 interface UserWithEmpresas {
   id: number;
@@ -26,7 +27,9 @@ interface UserWithEmpresas {
     MatInputModule,
     MatSelectModule,
     FormsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    FormsModule, 
+    CommonModule
   ],
   templateUrl: './modal-users.component.html',
   styleUrls: ['./modal-users.component.css'],
@@ -93,18 +96,14 @@ export class ModalUsersComponent implements OnInit {
     this.closeNewUserForm();
   }
 
-  async addUser() {
-    if (
-      !this.newUser.email.trim() ||
-      !this.newUser.grupo.trim() ||
-      this.newUser.empresa.length === 0
-    ) {
-      await Swal.fire({
-        icon: 'warning',
-        title: 'Preencha todos os campos corretamente!',
-        confirmButtonColor: '#3085d6'
+  async addUser(form: NgForm) {
+    if (form.invalid) {
+      Object.values(form.controls).forEach(control => {
+        control.markAsTouched(); 
       });
-      return;
+
+      Swal.fire('Atenção', 'Por favor, preencha todos os campos obrigatórios corretamente.', 'warning');
+      return; 
     }
 
     this.isLoading = true;
