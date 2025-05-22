@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Empresa, EmpresaService } from '../../empresa.service';
 import Swal from 'sweetalert2';
@@ -77,15 +77,15 @@ export class ModalEditarDeletarComponent implements OnInit {
     }
   }
 
-  async save(): Promise<void> {
+  async save(form:NgForm): Promise<void> {
 
-    if (!this.empresa.nome.trim() || !this.empresa.cnpj.trim()) {
-      await Swal.fire({
-        icon: 'error',
-        title: 'Erro',
-        text: 'Preencha todos os campos obrigatórios!',
+    if (form.invalid) {
+      Object.values(form.controls).forEach(control => {
+        control.markAsTouched(); 
       });
-      return
+
+      Swal.fire('Atenção', 'Por favor, preencha todos os campos obrigatórios corretamente.', 'warning');
+      return; 
     }
 
     try {

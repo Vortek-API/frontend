@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { Empresa, EmpresaService } from '../../../empresa/empresa.service';
 import { Colaborador, ColaboradorService } from '../../colaborador.service';
 import { CommonModule } from '@angular/common';
@@ -54,13 +54,15 @@ export class ModalEditarDeletarComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  async save(): Promise<void> {
-    // const primeiraEmpresa = this.colaborador.empresas?.[0];
+  async save(form:NgForm): Promise<void> {
+    if (form.invalid) {
+      Object.values(form.controls).forEach(control => {
+        control.markAsTouched(); 
+      });
 
-    // if (!primeiraEmpresa) {
-    //   await Swal.fire('Atenção', 'Selecione ao menos uma empresa antes de salvar.', 'warning');
-    //   return;
-    // }
+      Swal.fire('Atenção', 'Por favor, preencha todos os campos obrigatórios corretamente.', 'warning');
+      return; 
+    }
 
     const colaboradorEnviado: Colaborador = {
       ...this.colaborador,

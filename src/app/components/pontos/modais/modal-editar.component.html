@@ -76,12 +76,17 @@
             multiple
             required
             placeholder="Selecione"
-            panelClass="empresas-select-panel">
+            panelClass="empresas-select-panel" #empresaField="ngModel">
             <mat-option *ngFor="let empresa of colaborador.empresas" [value]="empresa" >
               {{ empresa.nome }}
             </mat-option>
           </mat-select>
         </mat-form-field>
+          <div *ngIf="empresaField.invalid && (empresaField.dirty || empresaField.touched)" class="error-message">
+            <div *ngIf="empresaField.errors?.['required']">
+              Empresa é obrigatória.
+            </div>
+          </div>
       </div>
       
       <div class="form-group">

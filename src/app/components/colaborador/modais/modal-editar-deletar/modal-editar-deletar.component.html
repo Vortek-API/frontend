@@ -17,47 +17,78 @@
       <input type="file" #fileInput style="display: none" accept="image/*" (change)="onFileSelected($event)" />
     </div>
 
-    <form>
+    <form #colaboradorForm="ngForm">
       <div class="form-group">
         <label for="cpf">CPF</label>
-        <input type="text" id="cpf" [(ngModel)]="colaborador.cpf" name="cpf" mask="000.000.000-00">
+        <input type="text" id="cpf" [(ngModel)]="colaborador.cpf" name="cpf" mask="000.000.000-00" required #cpfField="ngModel">
+          <div *ngIf="cpfField.invalid && (cpfField.dirty || cpfField.touched)" class="error-message">
+            <div *ngIf="cpfField.errors?.['required']">
+              CPF é obrigatório.
+            </div>
+          </div>
       </div>
 
       <div class="form-group">
         <label for="nome">Nome</label>
-        <input type="text" id="nome" [(ngModel)]="colaborador.nome" name="nome">
+        <input type="text" id="nome" [(ngModel)]="colaborador.nome" name="nome" required #nomeField="ngModel">
+          <div *ngIf="nomeField.invalid && (nomeField.dirty || nomeField.touched)" class="error-message">
+            <div *ngIf="nomeField.errors?.['required']">
+              Nome é obrigatório.
+            </div>
+          </div>
       </div>
 
       <div class="form-group">
         <label for="cargo">Cargo</label>
-        <input type="text" id="cargo" [(ngModel)]="colaborador.cargo" name="cargo">
+        <input type="text" id="cargo" [(ngModel)]="colaborador.cargo" name="cargo" required #cargoField="ngModel">
+          <div *ngIf="cargoField.invalid && (cargoField.dirty || cargoField.touched)" class="error-message">
+            <div *ngIf="cargoField.errors?.['required']">
+              Cargo é obrigatório.
+            </div>
+          </div>
       </div>
 
       <div class="form-group">
         <label for="horarioEntrada">Hora de entrada</label>
-        <input type="text" id="horarioEntrada" [(ngModel)]="colaborador.horarioEntrada" name="horarioEntrada">
+        <input type="text" id="horarioEntrada" [(ngModel)]="colaborador.horarioEntrada" name="horarioEntrada" required #horaEntradaField="ngModel"> 
+          <div *ngIf="horaEntradaField.invalid && (horaEntradaField.dirty || horaEntradaField.touched)" class="error-message">
+            <div *ngIf="horaEntradaField.errors?.['required']">
+              Hora de Entrada é obrigatória.
+            </div>
+          </div>
       </div>
 
       <div class="form-group">
         <label for="horarioSaida">Hora de saída</label>
-        <input type="text" id="horarioSaida" [(ngModel)]="colaborador.horarioSaida" name="horarioSaida">
+        <input type="text" id="horarioSaida" [(ngModel)]="colaborador.horarioSaida" name="horarioSaida" required #horaSaidaField="ngModel">
+          <div *ngIf="horaSaidaField.invalid && (horaSaidaField.dirty || horaSaidaField.touched)" class="error-message">
+            <div *ngIf="horaSaidaField.errors?.['required']">
+              Hora de Saída é obrigatória.
+            </div>
+          </div>
       </div>
 
       <div class="form-group">
         <label for="empresas">Empresas</label>
         <mat-form-field appearance="outline" class="full-width">
           <mat-select id="empresas" name="empresas" [(ngModel)]="colaborador.empresas" multiple required
-            placeholder="Selecione" panelClass="empresas-select-panel">
+            placeholder="Selecione" panelClass="empresas-select-panel" #empresasField="ngModel">
             <mat-option *ngFor="let empresa of empresas" [value]="empresa">
               {{ empresa.nome }}
             </mat-option>
           </mat-select>
         </mat-form-field>
+          <div *ngIf="empresasField.invalid && (empresasField.dirty || empresasField.touched)" class="error-message">
+            <div *ngIf="empresasField.errors?.['required']">
+              Empresa é obrigatória.
+            </div>
+          </div>
       </div>
 
       <div class="form-group">
         <label for="statusAtivo">Status</label>
-        <select id="statusAtivo" [(ngModel)]="colaborador.statusAtivo" name="statusAtivo">
+        <select id="statusAtivo" [(ngModel)]="colaborador.statusAtivo" name="statusAtivo" required
+            placeholder="Selecione" panelClass="empresas-select-panel" #statusField="ngModel">
           <option [ngValue]="true">Ativo</option>
           <option [ngValue]="false">Inativo</option>
         </select>
@@ -65,7 +96,7 @@
     </form>
 
     <div class="actions">
-      <button class="btn-primary" (click)="save()">Ok</button>
+      <button class="btn-primary" (click)="save(colaboradorForm)">Ok</button>
       <button class="btn-secondary" (click)="deletar()">Deletar</button>
       <button class="btn-cancel" (click)="close()">Cancelar</button>
     </div>

@@ -40,6 +40,11 @@
           class="form-control"
           #cpf="ngModel"
         />
+          <div *ngIf="cpf.invalid && (cpf.dirty || cpf.touched)" class="error-message">
+            <div *ngIf="cpf.errors?.['required']">
+              CPF é obrigatório.
+            </div>
+          </div>
       </div>
     
       <div class="form-group">
@@ -53,6 +58,11 @@
           class="form-control"
           #nome="ngModel"
         />
+        <div *ngIf="nome.invalid && (nome.dirty || nome.touched)" class="error-message">
+          <div *ngIf="nome.errors?.['required']">
+            Nome é obrigatório.
+          </div>
+        </div>
       </div>
     
       <div class="form-group">
@@ -66,6 +76,11 @@
           class="form-control"
           #cargo="ngModel"
         />
+        <div *ngIf="cargo.invalid && (cargo.dirty || cargo.touched)" class="error-message">
+          <div *ngIf="cargo.errors?.['required']">
+            Cargo é obrigatório.
+          </div>
+        </div>
       </div>
     
       <div class="form-group">
@@ -79,6 +94,11 @@
           class="form-control"
           #hora_ent="ngModel"
         />
+        <div *ngIf="hora_ent.invalid && (hora_ent.dirty || hora_ent.touched)" class="error-message">
+          <div *ngIf="hora_ent.errors?.['required']">
+            Hora de Entrada é obrigatória.
+          </div>
+        </div>
       </div>
     
       <div class="form-group">
@@ -92,6 +112,11 @@
           class="form-control"
           #hora_sai="ngModel"
         />
+        <div *ngIf="hora_sai.invalid && (hora_sai.dirty || hora_sai.touched)" class="error-message">
+          <div *ngIf="hora_sai.errors?.['required']">
+            Hora de Saída é obrigatória.
+          </div>
+        </div>
       </div>
     
       <div class="form-group">
@@ -104,12 +129,18 @@
             multiple
             required
             placeholder="Selecione"
-            panelClass="empresas-select-panel">
+            panelClass="empresas-select-panel"
+            #empresa="ngModel">
             <mat-option *ngFor="let empresa of empresas" [value]="empresa">
               {{ empresa.nome }}
             </mat-option>
           </mat-select>
         </mat-form-field>
+          <div *ngIf="empresa.invalid && (empresa.dirty || empresa.touched)" class="error-message">
+            <div *ngIf="empresa.errors?.['required']">
+              Empresa é obrigatória.
+            </div>
+          </div>
       </div>
     
       <div class="form-group">
@@ -129,7 +160,7 @@
     </form>
     
     <div class="actions">
-      <button class="btn-primary" (click)="save()">Ok</button>
+      <button class="btn-primary" (click)="save(form)">Ok</button>
       <button class="btn-secondary" (click)="close()">Cancelar</button>
     </div>
   </div>

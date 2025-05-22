@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ColaboradorService, Colaborador } from '../../../colaborador/colaborador.service';
 import { Empresa, EmpresaService } from '../../empresa.service';
@@ -35,15 +35,15 @@ export class ModalCadastroComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  async save(): Promise<void> {
+  async save(form: NgForm): Promise<void> {
 
-    if (!this.empresa.nome.trim() || !this.empresa.cnpj.trim()) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro',
-        text: 'Preencha todos os campos obrigatórios!',
-      });
-      return;
+    if (form.invalid) {
+          Object.values(form.controls).forEach(control => {
+            control.markAsTouched(); 
+          });
+    
+          Swal.fire('Atenção', 'Por favor, preencha todos os campos obrigatórios corretamente.', 'warning');
+          return; 
     }
 
     try {
