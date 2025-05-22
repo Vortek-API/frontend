@@ -89,7 +89,7 @@ html
       <tbody>
         <tr *ngFor="let registro of registrosFiltrados">
           <td>{{ getNomeColaborador(registro.colaboradorId) }}</td>
-          <td>{{ getCpfColaborador(registro.colaboradorId) }}</td>
+          <td>{{ formatarCPF(getCpfColaborador(registro.colaboradorId)) }}</td>
           <td>{{ getNomeEmpresa(registro.empresaId) }}</td>
           <td>{{ registro.data | date:'dd/MM/yyyy' }}</td>
           <td>{{ registro.horaEntrada }}</td>
