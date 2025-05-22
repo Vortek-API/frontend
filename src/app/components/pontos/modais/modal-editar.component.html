@@ -23,13 +23,12 @@
         type="file" 
         #fileInput 
         style="display: none"
-        accept="image/*"
-        (change)="onFileSelected($event)" 
+        accept="image/*" 
         disabled         
       />
     </div>
     
-    <form>
+    <form #pontoForm="ngForm">
       <div class="form-group">
         <label for="cpf">CPF</label>
         <input type="text" id="cpf" [(ngModel)]="registro.cpf" name="cpf" mask="000.000.000-00" disabled>
@@ -47,12 +46,24 @@
 
       <div class="form-group">
         <label for="horarioEntrada">Hora de entrada</label>
-        <input type="text" id="horarioEntrada" [(ngModel)]="registro.horaEntrada" name="horarioEntrada">
+        <input type="text" id="horarioEntrada" [(ngModel)]="registro.horaEntrada" name="horarioEntrada"
+        required #horaEntradaField="ngModel"> 
+          <div *ngIf="horaEntradaField.invalid && (horaEntradaField.dirty || horaEntradaField.touched)" class="error-message">
+            <div *ngIf="horaEntradaField.errors?.['required']">
+              Hora de Entrada é obrigatória.
+            </div>
+          </div>
       </div>
 
       <div class="form-group">
         <label for="horarioSaida">Hora de saída</label>
-        <input type="text" id="horarioSaida" [(ngModel)]="registro.horaSaida" name="horarioSaida">
+        <input type="text" id="horarioSaida" [(ngModel)]="registro.horaSaida" name="horarioSaida"
+        required #horaSaidaField="ngModel">
+          <div *ngIf="horaSaidaField.invalid && (horaSaidaField.dirty || horaSaidaField.touched)" class="error-message">
+            <div *ngIf="horaSaidaField.errors?.['required']">
+              Hora de Saída é obrigatória.
+            </div>
+          </div>
       </div>
 
       <div class="form-group">
@@ -83,12 +94,17 @@
 
       <div class="form-group">
         <label for="justificativa">Justificativa</label>
-        <textarea id="justificativa" [(ngModel)]="registro.justificativa" name="justificativa" rows="4"></textarea>
+        <textarea id="justificativa" [(ngModel)]="registro.justificativa" name="justificativa" rows="4" required #justificativaField="ngModel"> </textarea>
+        <div *ngIf="justificativaField.invalid && (justificativaField.dirty || justificativaField.touched)" class="error-message">
+          <div *ngIf="justificativaField.errors?.['required']">
+            Justificativa é obrigatória.
+          </div>
+        </div>
       </div>
     </form>
     
     <div class="actions">
-      <button class="btn-primary" (click)="editarPontos()">Ok</button>
+      <button class="btn-primary" (click)="editarPontos(pontoForm)">Salvar</button>
       <button class="btn-cancel" (click)="close()">Cancelar</button>
     </div>
   </div>

@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, Inject, OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, NgForm } from "@angular/forms";
 import { MatOptionModule } from "@angular/material/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -153,7 +153,6 @@ export class ModalEditarComponent implements OnInit {
           return empresa || empColab;
         })
       };
-      console.log(colaborador)
 
       if (this.colaborador.foto && this.colaborador.foto.length > 0) {
         if (typeof this.colaborador.foto !== 'string') {
@@ -168,15 +167,21 @@ export class ModalEditarComponent implements OnInit {
     }
   }
 
-  async editarPontos() : Promise<void>{
+  async editarPontos(form: NgForm) : Promise<void>{
+    if (form.invalid) {
+      Object.values(form.controls).forEach(control => {
+        control.markAsTouched(); 
+      });
+
+      Swal.fire('Atenção', 'Por favor, preencha todos os campos obrigatórios corretamente.', 'warning');
+      return; 
+    }
 
     // Verificar e garantir que empresas é um array
     if (!this.colaborador.empresas || !Array.isArray(this.colaborador.empresas)) {
       // Se empresas não existe ou não é um array, inicialize como array vazio
       this.colaborador.empresas = [];
-      console.warn('Propriedade empresas não é um array ou está undefined. Inicializando como array vazio.');
     }
-    //empresas: Array.isArray(this.colaborador.empresas) ? [...this.colaborador.empresas] : [],
 
     let tempoTotalString: string = '00:00:00'; // Valor padrão caso haja algum problema
 
@@ -190,9 +195,6 @@ export class ModalEditarComponent implements OnInit {
         diffMs += (24 * 60 * 60 * 1000); // Adiciona 24 horas em milissegundos
     }
         tempoTotalString = this.formatDuration(diffMs);
-    } else {
-        // Caso um dos horários não seja válido (ex: null, undefined, ou formato errado)
-        console.warn('Não foi possível calcular o tempo total. Verifique os horários de entrada e saída do colaborador.');
     }
 
     const colaboradorEnviado: PontoDetalhado = {
@@ -247,7 +249,7 @@ export class ModalEditarComponent implements OnInit {
     return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
   }
 
-  // Função auxiliar:
+
   arrayBufferToBase64(buffer: Uint8Array): string {
     let binary = '';
     const bytes = new Uint8Array(buffer);
@@ -258,28 +260,5 @@ export class ModalEditarComponent implements OnInit {
     return window.btoa(binary);
   }
 
-
-  onFileSelected(event: any): void {
-    const file: File = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imagemBase64 = e.target.result as string;  // A imagem será manipulada como string Base64
-        this.imagemPreview = e.target.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  removerImagem(): void {
-    this.imagemBase64 = null;
-    this.imagemPreview = new Uint8Array();
-    this.colaborador.foto = '';  // Alterado para string vazia
-  }
-
-  removeBase64Prefix(base64: string): string {
-    return base64.split(',')[1]; // Remove a parte `data:image/jpeg;base64,`
-  }
-
-  
+ 
 }
