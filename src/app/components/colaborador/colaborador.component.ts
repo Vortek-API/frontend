@@ -9,6 +9,7 @@ import { Empresa, EmpresaService } from '../empresa/empresa.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { provideNgxMask } from 'ngx-mask';
+import { AuthService, UserLogado } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-colaborador',
@@ -24,6 +25,7 @@ import { provideNgxMask } from 'ngx-mask';
 })
 export class ColaboradorComponent implements OnInit {
   colaboradores: Colaborador[] = [];
+  usuarioLogado: UserLogado | undefined;
   empresas: Empresa[] = [];
   selectedEmpresa: number | null = null;
   colaborador: any;
@@ -35,9 +37,11 @@ export class ColaboradorComponent implements OnInit {
     public dialog: MatDialog,
     private colaboradorService: ColaboradorService,
     private empresaService: EmpresaService,
+    private authService: AuthService
   ) { }
 
   async ngOnInit() {
+    await this.loadUserLogado();
     await this.loadColaboradores();
     await this.loadEmpresas();
   }
@@ -67,41 +71,61 @@ export class ColaboradorComponent implements OnInit {
   async loadEmpresas() {
     this.empresas = await this.empresaService.findAll();
   }
+  async loadUserLogado() {
+    this.usuarioLogado = await this.authService.getUserLogado();
+  }
 
   clickRow(colaborador: Colaborador) {
     this.colaboradorService.setData(colaborador);
     this.abrirModalEditar();
   }
-  get colaboradoesFiltrados(): Colaborador[] {
-    let filtrados = this.colaboradores.filter(colaborador =>
-      colaborador.nome.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
 
-    if(this.ordenacao == 'alfab') {
+  get colaboradoesFiltrados(): Colaborador[] {
+    if (!this.usuarioLogado) {
+      return [];
+    }
+
+    let empresasDoUsuario: number[] = [];
+
+    // ✅ Só define empresas se for EMPRESA
+    if (this.usuarioLogado.grupo === 'EMPRESA') {
+      empresasDoUsuario = this.usuarioLogado.empresas.map(e => e.id);
+    }
+
+    let filtrados = this.colaboradores.filter(colaborador => {
+      const empresasColaborador = colaborador.empresas?.map(e => e.id) || [];
+
+      // ✅ Se for ADMIN → não precisa verificar empresas
+      const temEmpresaEmComum = this.usuarioLogado?.grupo === 'ADMIN' ||
+        empresasColaborador.some(id => empresasDoUsuario.includes(id));
+
+      return temEmpresaEmComum &&
+        colaborador.nome.toLowerCase().includes(this.searchTerm.toLowerCase());
+    });
+
+    if (this.ordenacao === 'alfab') {
       filtrados.sort((a, b) => a.nome.localeCompare(b.nome));
     }
 
-    if(this.ordenacao == 'cadastro' && this.selectedDate){
+    if (this.ordenacao === 'cadastro' && this.selectedDate) {
       filtrados = filtrados.filter(colaborador => {
-        const dataColaborador = colaborador.dataCadastro?.split('T')[0]; // pega só "2025-04-14"
+        const dataColaborador = colaborador.dataCadastro?.split('T')[0];
         return dataColaborador === this.selectedDate;
       });
     }
 
-    if(this.ordenacao == 'ativo' ){
-      filtrados = filtrados.filter( colaborador => {
-        return colaborador.statusAtivo == true;
-      })
+    if (this.ordenacao === 'ativo') {
+      filtrados = filtrados.filter(colaborador => colaborador.statusAtivo === true);
     }
 
-    if(this.ordenacao == 'inativo' ){
-      filtrados = filtrados.filter( colaborador => {
-        return colaborador.statusAtivo == false;
-      })
+    if (this.ordenacao === 'inativo') {
+      filtrados = filtrados.filter(colaborador => colaborador.statusAtivo === false);
     }
 
     return filtrados;
   }
+
+
 
   handleOrdenacaoChange() {// Resetar data se saiu da ordenação por cadastro
     if (this.ordenacao !== 'cadastro') {

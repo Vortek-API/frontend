@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 
 import { HistoricoPontosComponent } from '../historico-ponto/historico-ponto.component';
+import { AuthService, UserLogado } from '../../../services/auth/auth.service';
 
 
 
@@ -24,6 +25,7 @@ import { HistoricoPontosComponent } from '../historico-ponto/historico-ponto.com
 export class RegistroPontoComponent implements OnInit {
   registros: PontoDetalhado[] = [];
   colaboradores: Colaborador[] = [];
+  usuarioLogado: UserLogado | undefined;
   empresas: Empresa[] = [];
   searchTerm: string = '';
   selectedDate: string | null = null; // Mantido para compatibilidade, pode ser removido mais tarde
@@ -49,10 +51,12 @@ export class RegistroPontoComponent implements OnInit {
     private pontoService: RegistroPontoService,
     private empresaService: EmpresaService,
     private colaboradorService: ColaboradorService,
-    private exportService: ExportService
+    private exportService: ExportService,
+    private authService: AuthService
   ) { }
 
   async ngOnInit() {
+    await this.loadUserLogado();
     await this.loadEmpresas();
     await this.loadColaboradores();
     await this.loadRegistros();
@@ -68,6 +72,9 @@ export class RegistroPontoComponent implements OnInit {
 
   async loadEmpresas() {
     this.empresas = await this.empresaService.findAll();
+  }
+  async loadUserLogado() {
+    this.usuarioLogado = await this.authService.getUserLogado();
   }
 
   aplicarFiltros() {
@@ -87,38 +94,44 @@ export class RegistroPontoComponent implements OnInit {
 
       // Filtragem por busca de texto (nome ou CPF)
       const atendeBusca = this.searchTerm === '' || nome.includes(termoBusca) || cpf.includes(termoBusca);
-      
-      // Filtragem por empresa
-      const atendeEmpresa = !this.selectedEmpresa || r.empresaId === +this.selectedEmpresa;
+
+      // Filtragem por empresa selecionada
+      const atendeEmpresaSelecionada = !this.selectedEmpresa || r.empresaId === +this.selectedEmpresa;
+
+      // ✅ Filtragem por empresas do usuário logado apenas se for EMPRESA
+      let atendeEmpresasUsuario = true;
+      if (this.usuarioLogado && this.usuarioLogado.grupo === 'EMPRESA') {
+        atendeEmpresasUsuario = this.usuarioLogado.empresas.some(e => e.id === r.empresaId);
+      }
 
       // Tratamento adequado para a data do registro
       let registroData: Date | null = null;
-      
+
       if (r.data) {
-        // Convertendo a string de data para objeto Date para comparação
         const dataString = String(r.data);
         registroData = new Date(dataString.split('T')[0]);
       }
-      
+
       // Filtragem por intervalo de datas
       let atendeDataInicio = true;
       let atendeDataFim = true;
-      
+
       if (this.filtros.dataInicio && registroData) {
         const dataInicio = new Date(this.filtros.dataInicio);
         atendeDataInicio = registroData >= dataInicio;
       }
-      
+
       if (this.filtros.dataFim && registroData) {
         const dataFim = new Date(this.filtros.dataFim);
-        // Adiciona um dia para incluir o dia final completo
         dataFim.setDate(dataFim.getDate() + 1);
         atendeDataFim = registroData < dataFim;
       }
 
-      return atendeBusca && atendeEmpresa && atendeDataInicio && atendeDataFim;
+      return atendeBusca && atendeEmpresaSelecionada && atendeEmpresasUsuario && atendeDataInicio && atendeDataFim;
     });
   }
+
+
 
   getNomeColaborador(id: number) {
     return this.colaboradores.find(c => c.id === id)?.nome || 'Desconhecido';

@@ -16,7 +16,7 @@
           </span>
         </a>
       </li>
-      <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">
+      <li [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}" *ngIf="!(userLogado?.grupo == 'EMPRESA')">
         <a routerLink="/empresa">
           <span class="icon">
             <img src="assets/icons/enterprise.svg" alt="Empresas">
