@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { Empresa } from '../../components/empresa/empresa.service';
 
 
@@ -22,8 +22,6 @@ export class AuthService {
   async login(login: string, senha: string): Promise<UserLogado> {
     let user: UserLogado = await firstValueFrom(this.http.post<UserLogado>(`${this.apiUrl}/login`, { login, senha }));
     this.userLogado = user;
-
-    console.log(user.empresas);
 
     return user;
   }

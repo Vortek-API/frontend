@@ -1,13 +1,17 @@
 import { Component } from '@angular/core';
-import { FormGroup, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, 
+    CommonModule, 
+    FormsModule
+  ],
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -30,7 +34,6 @@ export class LoginComponent {
   async onSubmit() {
     if (this.loginForm.invalid) return;
     const { login, senha } = this.loginForm.value;
-    // const cleanedLogin = login.replace(/\D/g, '');
 
     try {
       const response = await this.authService.login(login, senha);
@@ -45,6 +48,7 @@ export class LoginComponent {
         panelClass: ['glass-snackbar']
       });
     } catch (error) {
+      console.log(error)
       this.snackBar.open('Usuário ou Senha inválido.', 'Fechar', {
         duration: 6000,
         horizontalPosition: 'center',

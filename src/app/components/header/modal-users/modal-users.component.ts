@@ -28,7 +28,6 @@ interface UserWithEmpresas {
     MatSelectModule,
     FormsModule,
     MatProgressSpinnerModule,
-    FormsModule, 
     CommonModule
   ],
   templateUrl: './modal-users.component.html',
