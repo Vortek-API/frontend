@@ -7,36 +7,34 @@ import { Colaborador, ColaboradorService } from '../../colaborador/colaborador.s
 import { ExportService } from '../../../services/exports/export.service';
 import { ModalEditarComponent } from '../modais/modal-editar.component';
 import { MatDialog } from '@angular/material/dialog';
-
-
+import { NgxPaginationModule } from 'ngx-pagination';
 import { HistoricoPontosComponent } from '../historico-ponto/historico-ponto.component';
 import { AuthService, UserLogado } from '../../../services/auth/auth.service';
-
-
 
 @Component({
   selector: 'app-registro-ponto',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgxPaginationModule],
   templateUrl: './registro-ponto.component.html',
-  styleUrl: './registro-ponto.component.css'
+  styleUrls: ['./registro-ponto.component.css']  // corrigido: plural e array
 })
-
 export class RegistroPontoComponent implements OnInit {
   registros: PontoDetalhado[] = [];
   colaboradores: Colaborador[] = [];
   usuarioLogado: UserLogado | undefined;
   empresas: Empresa[] = [];
   searchTerm: string = '';
-  selectedDate: string | null = null; // Mantido para compatibilidade, pode ser removido mais tarde
+  selectedDate: string | null = null; // Pode remover se não usar mais
   selectedEmpresa: number | null = null;
 
   baixandoRelatorio = false;
   showDownloadOptions = false;
 
-  relatorioData: any[] = []; // Os dados do seu relatório (preenchidos após a filtragem)
+  itensPorPagina = 10;    // <- definido para controlar paginação
+  paginaAtual = 1;
 
-  // Objeto de filtros
+  relatorioData: any[] = [];
+
   filtros = {
     empresa: '',
     dataInicio: '',
@@ -73,14 +71,13 @@ export class RegistroPontoComponent implements OnInit {
   async loadEmpresas() {
     this.empresas = await this.empresaService.findAll();
   }
+
   async loadUserLogado() {
     this.usuarioLogado = await this.authService.getUserLogado();
   }
 
   aplicarFiltros() {
-    // Este método pode ser chamado quando qualquer filtro for alterado
-    // Não precisamos fazer nada aqui, pois o getter registrosFiltrados
-    // aplica os filtros automaticamente quando é acessado
+    // Deixe vazio, pois o getter registrosFiltrados já faz o filtro dinâmico
   }
 
   get registrosFiltrados() {
@@ -92,19 +89,15 @@ export class RegistroPontoComponent implements OnInit {
       const cpf = colaborador.cpf || '';
       const termoBusca = this.searchTerm.toLowerCase();
 
-      // Filtragem por busca de texto (nome ou CPF)
       const atendeBusca = this.searchTerm === '' || nome.includes(termoBusca) || cpf.includes(termoBusca);
 
-      // Filtragem por empresa selecionada
       const atendeEmpresaSelecionada = !this.selectedEmpresa || r.empresaId === +this.selectedEmpresa;
 
-      // ✅ Filtragem por empresas do usuário logado apenas se for EMPRESA
       let atendeEmpresasUsuario = true;
       if (this.usuarioLogado && this.usuarioLogado.grupo === 'EMPRESA') {
         atendeEmpresasUsuario = this.usuarioLogado.empresas.some(e => e.id === r.empresaId);
       }
 
-      // Tratamento adequado para a data do registro
       let registroData: Date | null = null;
 
       if (r.data) {
@@ -112,7 +105,6 @@ export class RegistroPontoComponent implements OnInit {
         registroData = new Date(dataString.split('T')[0]);
       }
 
-      // Filtragem por intervalo de datas
       let atendeDataInicio = true;
       let atendeDataFim = true;
 
@@ -130,8 +122,6 @@ export class RegistroPontoComponent implements OnInit {
       return atendeBusca && atendeEmpresaSelecionada && atendeEmpresasUsuario && atendeDataInicio && atendeDataFim;
     });
   }
-
-
 
   getNomeColaborador(id: number) {
     return this.colaboradores.find(c => c.id === id)?.nome || 'Desconhecido';
@@ -154,32 +144,30 @@ export class RegistroPontoComponent implements OnInit {
         nomeColaborador: colaborador?.nome || 'Desconhecido',
         cpfColaborador: this.formatarCPF(colaborador?.cpf) || '---',
         nomeEmpresa: empresa?.nome || '---',
-            dataRegistro: r.data
+        dataRegistro: r.data
           ? (() => {
-          const [year, month, day] = r.data.split('T')[0].split('-');
-          return `${day}/${month}/${year}`;
-        })()
+              const [year, month, day] = r.data.split('T')[0].split('-');
+              return `${day}/${month}/${year}`;  // corrigido para template literal
+            })()
           : '',
         entradaRegistro: r.horaEntrada?.split('T')[0]?.substring(0, 5) || '',
         saidaRegistro: r.horaSaida?.split('T')[0]?.substring(0, 5) || '',
         tempoTotal: r.tempoTotal || '',
       };
     })
-      .sort((a, b) => {
+    .sort((a, b) => {
+      if (a.dataRegistro > b.dataRegistro) return -1;
+      if (a.dataRegistro < b.dataRegistro) return 1;
 
-        // Primeiro ordena por data (mais recente primeiro)
-        if (a.dataRegistro > b.dataRegistro) return -1;
-        if (a.dataRegistro < b.dataRegistro) return 1;
-        // Ordena por nome Empresa (A-Z)
-        if (a.nomeEmpresa.toLowerCase() < b.nomeEmpresa.toLowerCase()) return -1;
-        if (a.nomeEmpresa.toLowerCase() > b.nomeEmpresa.toLowerCase()) return 1;
-        // Se a empresa for igual, ordena por nome Colaborador (A-Z)
-        if (a.nomeColaborador.toLowerCase() < b.nomeColaborador.toLowerCase()) return -1;
-        if (a.nomeColaborador.toLowerCase() > b.nomeColaborador.toLowerCase()) return 1;
-        return 0;
-      });
+      if (a.nomeEmpresa.toLowerCase() < b.nomeEmpresa.toLowerCase()) return -1;
+      if (a.nomeEmpresa.toLowerCase() > b.nomeEmpresa.toLowerCase()) return 1;
+
+      if (a.nomeColaborador.toLowerCase() < b.nomeColaborador.toLowerCase()) return -1;
+      if (a.nomeColaborador.toLowerCase() > b.nomeColaborador.toLowerCase()) return 1;
+
+      return 0;
+    });
   }
-
 
   toggleDownloadOptions() {
     this.showDownloadOptions = !this.showDownloadOptions;
@@ -225,22 +213,20 @@ export class RegistroPontoComponent implements OnInit {
       await this.loadColaboradores();
     });
   }
+
   async abrirModalHistorico(registro: PontoDetalhado) {
-    this.pontoService.setData(registro)
+    this.pontoService.setData(registro);
     this.dialog.open(HistoricoPontosComponent, {
       panelClass: 'no-scroll-dialog'
     });
     this.dialog.afterAllClosed.subscribe(async () => {
       await this.loadColaboradores();
-      // setTimeout(async () => {
-      //   await this.loadColaboradores();
-      // }, 2000);
     });
   }
 
-    formatarCPF(cpf?: string): string {
+  formatarCPF(cpf?: string): string {
     if (!cpf) return '---';
-    const cpfLimpo = cpf.replace(/\D/g, ''); // Remove não dígitos
+    const cpfLimpo = cpf.replace(/\D/g, '');
     return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
 }
