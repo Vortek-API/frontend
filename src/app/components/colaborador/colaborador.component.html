@@ -52,7 +52,7 @@
             </tr>
         </thead>
         <tbody>
-            <ng-container *ngFor="let colaborador of colaboradoesFiltrados">
+            <ng-container *ngFor="let colaborador of colaboradoesFiltrados | paginate: { itemsPerPage: itensPorPagina, currentPage: paginaAtual }">
                 <tr *ngIf="selectedEmpresa == null || selectedEmpresa == colaborador.empresas?.[0]?.id" 
                 (click)="clickRow(colaborador)" 
                 style="cursor: pointer;">
@@ -70,6 +70,17 @@
             </ng-container>
           </tbody>          
     </table>
+
+    <!-- Paginação -->
+    <div class="pagination-wrapper" *ngIf="colaboradoesFiltrados.length > itensPorPagina">
+      <pagination-controls
+        (pageChange)="paginaAtual = $event"
+        [responsive]="true"
+        previousLabel="Anterior"
+        nextLabel="Próxima"
+        [autoHide]="true">
+      </pagination-controls>
+    </div>
     </div>
 </div>
 

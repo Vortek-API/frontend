@@ -10,6 +10,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { provideNgxMask } from 'ngx-mask';
 import { AuthService, UserLogado } from '../../services/auth/auth.service';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-colaborador',
@@ -19,6 +20,7 @@ import { AuthService, UserLogado } from '../../services/auth/auth.service';
     MatDialogModule,
     MatButtonModule,
     FormsModule,
+    NgxPaginationModule
   ],
   templateUrl: './colaborador.component.html',
   styleUrls: ['./colaborador.component.css']
@@ -32,6 +34,9 @@ export class ColaboradorComponent implements OnInit {
   searchTerm: string = '';
   selectedDate: string | null = null;
   ordenacao: string | null = null;
+
+  itensPorPagina = 10;    // <- definido para controlar paginação
+  paginaAtual = 1;
 
   constructor(
     public dialog: MatDialog,
