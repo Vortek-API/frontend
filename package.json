@@ -27,6 +27,7 @@
     "modules": "^0.4.0",
     "ngx-echarts": "^19.0.0",
     "ngx-mask": "^19.0.6",
+    "ngx-pagination": "^6.0.3",
     "node": "^24.0.1",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.6.13",
