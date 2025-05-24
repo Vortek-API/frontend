@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Empresa } from '../../components/empresa/empresa.service';
+import { UsersService } from '../../components/header/modal-users/service/users.service';
 
 
 export interface UserLogado {
@@ -15,21 +16,21 @@ export interface UserLogado {
 })
 export class AuthService {
   private apiUrl = 'http://localhost:8080/api/auth';
-  private userLogado: UserLogado | undefined;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    private userService: UsersService
+  ) { }
+
 
   async login(login: string, senha: string): Promise<UserLogado> {
     let user: UserLogado = await firstValueFrom(this.http.post<UserLogado>(`${this.apiUrl}/login`, { login, senha }));
-    this.userLogado = user;
 
+    sessionStorage.setItem('userId', user.id.toString());
+    console.log(sessionStorage.getItem('userId'))
     return user;
   }
-  getUserLogado() {
-    return this.userLogado;
-  }
 
-  setUserLogado(user: UserLogado) {
-    this.userLogado = user;
+  async getUserLogado() {
+    return await this.userService.find(sessionStorage.getItem('userId') as unknown as number);
   }
 }

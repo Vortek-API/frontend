@@ -29,7 +29,7 @@ export class EmpresaService {
     ) { }
 
     async findAll(): Promise<Empresa[]> {
-    let userLogado: UserLogado | undefined = this.authService.getUserLogado();
+    let userLogado: UserLogado | undefined = await this.authService.getUserLogado();
     let emp: Promise<Empresa[]> = [] as unknown as Promise<Empresa[]>;
 
     if (userLogado?.grupo == "ADMIN") {

@@ -18,8 +18,8 @@ export class SidebarComponent implements OnInit{
   ) {}
 
   userLogado: UserLogado | undefined;
-  ngOnInit(): void {
-    this.userLogado = this.authService.getUserLogado();
+  async ngOnInit(): Promise<void> {
+    this.userLogado = await this.authService.getUserLogado();
   }
   
   logout() {
