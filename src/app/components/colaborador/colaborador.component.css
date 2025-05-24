@@ -568,4 +568,34 @@
     .attendance-table tr td {
         font-size: 1.2rem;
       }
-  }
+
+    .pagination-controls .ngx-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.ngx-pagination li a,
+.ngx-pagination li span {
+  background-color: #0C6834 !important; /* seu tom de verde */
+  color: white !important;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  margin: 0 0.25rem;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.ngx-pagination li a:hover,
+.ngx-pagination li span:hover {
+  transform: scale(1.1);
+  background-color: #0a5a2c !important;
+}
+
+/* Customização do ngx-pagination com cor verde */
+.ngx-pagination .current {
+  background-color: #0C6834 !important;
+  color: white !important;
+  border-radius: 4px;
+}
+ }

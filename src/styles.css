@@ -99,3 +99,10 @@ app-root {
  justify-self: center !important;
   position: relative;
 }
+
+/* Customização do ngx-pagination com cor verde */
+.ngx-pagination .current {
+  background-color: #0C6834 !important;
+  color: white !important;
+  border-radius: 4px;
+}
