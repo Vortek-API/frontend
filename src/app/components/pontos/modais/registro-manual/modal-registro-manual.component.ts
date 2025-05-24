@@ -6,6 +6,7 @@ import { Empresa, EmpresaService } from '../../../empresa/empresa.service';
 import { Colaborador, ColaboradorService } from '../../../colaborador/colaborador.service';
 import { AuthService, UserLogado } from '../../../../services/auth/auth.service';
 import { PontoDetalhado, RegistroPontoService } from '../../registro-ponto/registro-ponto.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-modal-registro-manual',
@@ -93,12 +94,29 @@ export class ModalRegistroManualComponent implements OnInit {
     return entrada < saida;
   }
 
-  onConfirmar() {
-    // if (this.isFormValid() && this.isHorarioValid()) {
-      this.pontoService.add(this.registroData);
+  async onConfirmar() {
+    try {
+      await this.pontoService.add(this.registroData);
       console.log(this.registroData);
+      
+      // Exibe o pop-up de sucesso
+      await Swal.fire({
+        icon: 'success',
+        title: 'Registro salvo com sucesso!',
+        confirmButtonColor: '#3085d6',
+      });
+      
       this.dialogRef.close(this.registroData);
-    // }
+    } catch (error) {
+      // Opcional: tratar erros com outro pop-up
+      console.error('Erro ao salvar registro:', error);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Erro ao salvar registro',
+        text: 'Tente novamente mais tarde.',
+        confirmButtonColor: '#d33',
+      });
+    }
   }
 
   onCancelar() {
