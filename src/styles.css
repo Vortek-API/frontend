@@ -106,3 +106,15 @@ app-root {
   color: white !important;
   border-radius: 4px;
 }
+
+/* Estilos globais para <select> */
+select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important; 
+}
+
+select option {
+  background-color: #f0f0f0 !important;
+  color: #333 !important;
+}
