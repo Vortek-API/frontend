@@ -10,7 +10,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { provideNgxMask } from 'ngx-mask';
 import { AuthService, UserLogado } from '../../services/auth/auth.service';
-import { NgxPaginationModule } from 'ngx-pagination';
+import{ ImagePipe } from '../../image.pipe';
 
 @Component({
   selector: 'app-colaborador',
@@ -20,7 +20,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     MatDialogModule,
     MatButtonModule,
     FormsModule,
-    NgxPaginationModule
+    ImagePipe
   ],
   templateUrl: './colaborador.component.html',
   styleUrls: ['./colaborador.component.css']
@@ -142,5 +142,11 @@ export class ColaboradorComponent implements OnInit {
       this.selectedDate = null;
       this.searchTerm = '';
     }
+  }
+
+    formatarCPF(cpf?: string): string {
+    if (!cpf) return '---';
+    const cpfLimpo = cpf.replace(/\D/g, ''); // Remove não dígitos
+    return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
 }
