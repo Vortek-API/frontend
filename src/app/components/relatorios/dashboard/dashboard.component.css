@@ -506,3 +506,67 @@
     height: 30em;
   }
 }
+
+/*FILTROS NOVOS*/
+
+.date-picker {
+  border: 0.1rem solid #d1d5db;
+  border-radius: 0.3rem;
+  background-color: rgba(2, 201, 62, 0.129);
+  color: rgb(0, 74, 0);
+  padding: 0.7rem;
+}
+
+.date-picker:focus {
+  outline: none;
+  border-color: #0C6834;
+  box-shadow: 0 0 5px rgba(2, 201, 62, 0.129);
+}
+
+.ordenar-btn,
+.filter-dropdown,
+.add-employee-btn {
+  padding: 0.7rem;
+  background: #0C6834;
+  color: #fff;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+  text-align: center;
+}
+
+.ordenar-btn:hover,
+.filter-dropdown:hover,
+.add-employee-btn:hover,
+.date-picker:hover,
+.search-container:hover {
+  transform: scale(1.02);
+}
+
+.left-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.ordenar-btn,
+.filter-dropdown {
+  appearance: none;
+  background-image: url('/assets/icons/arrow.svg');
+  background-repeat: no-repeat;
+  background-position: right 0.1rem center;
+}
+
+.ordenar-btn option,
+.filter-dropdown option {
+  background-color: #8bae9a20;
+}

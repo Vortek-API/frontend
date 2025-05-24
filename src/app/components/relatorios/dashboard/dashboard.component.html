@@ -4,66 +4,26 @@
       <h1 id="titleRelatorios">Relatórios</h1>
     </div>
 
-    <div class="filtros-container">
-      <!-- Filtros avançados -->
-      <div class="advanced-filters">
-        <div class="filter-group">
-          <label>Data Início:</label>
-          <input
-            type="date"
-            [(ngModel)]="filtros.dataInicio"
-            (change)="aplicarFiltros()"
-            class="date-input"
-          />
-        </div>
+    <div class="left-controls">
+      <input type="date" class="date-picker" [(ngModel)]="filtros.dataInicio" />
+      <input type="date" class="date-picker" [(ngModel)]="filtros.dataFim" />
 
-        <div class="filter-group">
-          <label>Data Fim:</label>
-          <input
-            type="date"
-            [(ngModel)]="filtros.dataFim"
-            (change)="aplicarFiltros()"
-            class="date-input"
-          />
-        </div>
-
-         <div class="ordenar-container">
-                <select class="ordenar-btn" [(ngModel)]="selectedStatus">
-
-                    <option [ngValue]="'ativo'">Status Ativo</option>
-                    <option [ngValue]="'inativo'">Status Inativo</option>
-                </select>
-            </div>
-
-       <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
-                <option [ngValue]="null">Todas</option>
-                <option *ngFor="let empresa of empresas" [value]="empresa.id">
-                  {{ empresa.nome }}
-                </option>
-            </select>
-
-        <div class="filter-group">
-          <label>Ordenar por:</label>
-          <select
-            [(ngModel)]="filtros.ordenacao"
-            (change)="aplicarFiltros()"
-            class="ordenar-select"
-          >
-            <option value="">Padrão</option>
-            <option value="empresa_asc">Empresa (A-Z)</option>
-            <option value="empresa_desc">Empresa (Z-A)</option>
-            <option value="data_asc">Data (Mais antiga)</option>
-            <option value="data_desc">Data (Mais recente)</option>
-            <option value="colaboradores_asc">Colaboradores (Menor)</option>
-            <option value="colaboradores_desc">Colaboradores (Maior)</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <button class="limpar-btn" (click)="limparFiltros()">
-            Limpar Filtros
-          </button>
-        </div>
+      <div class="ordenar-container">
+        <select class="ordenar-btn" [(ngModel)]="selectedStatus">
+          <option [ngValue]="null">Ordenar por</option>
+          <option [ngValue]="'ativo'">Status Ativo</option>
+          <option [ngValue]="'inativo'">Status Inativo</option>
+        </select>
       </div>
+
+      <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
+        <option [ngValue]="null">Todas</option>
+        <option *ngFor="let empresa of empresas" [value]="empresa.id">
+          {{ empresa.nome }}
+        </option>
+      </select>
+
+      <button class="add-employee-btn" (click)="limparFiltros()">Limpar Filtros</button>
     </div>
   </div>
 
