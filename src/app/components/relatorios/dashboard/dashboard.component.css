@@ -246,6 +246,56 @@
   background-color: #0C6834;
 }
 
+
+.date-picker2 {
+  border: 0.1rem solid #d1d5db;
+  border-radius: 0.3rem;
+  background-color: rgba(2, 201, 62, 0.129);
+  color: rgb(0, 74, 0);
+  padding: 0.3rem;
+  margin: 0.1rem;
+}
+
+.date-picker2:focus {
+  outline: none;
+  border-color: #0C6834;
+  box-shadow: 0 0 5px rgba(2, 201, 62, 0.129);
+}
+
+.dash2-label {
+  color: #0C6834;
+  margin: 0.2rem;
+}
+
+.dash2-btn {
+    flex: 1 1 auto;
+    padding: 0.4rem;
+    background: #0C6834;
+    color: #fff;
+    border: none;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    text-align: center;
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+    margin: 0.1rem;
+}
+
+.empresaxcolab-container {
+    flex: 1 1 auto;
+    padding-top: 2rem !important;
+    padding: 0.4rem;
+    color: #fff;
+    border: none;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    text-align: center;
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+    margin: 0.1rem;
+    box-shadow: 0 0 0.5rem 0.1rem rgba(20, 131, 61, 0.184);
+}
+
 /* Responsividade */
 @media (min-width: 1024px) {
   .container {
@@ -522,6 +572,7 @@
   border-color: #0C6834;
   box-shadow: 0 0 5px rgba(2, 201, 62, 0.129);
 }
+
 
 .ordenar-btn,
 .filter-dropdown,

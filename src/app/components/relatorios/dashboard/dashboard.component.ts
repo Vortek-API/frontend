@@ -5,6 +5,7 @@ import { EchartsConfigModule } from '../../../echarts-config.module';
 import { FormsModule } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { jsPDF } from 'jspdf';
+import { EChartsOption } from 'echarts';
 import { Empresa, EmpresaService } from '../../empresa/empresa.service';
 
 @Component({
@@ -30,7 +31,7 @@ export class DashboardComponent implements OnInit {
   // Gráficos para horas por empresa
   horasEmpresaBarChartOptions: any;
   horasEmpresaPieChartOptions: any;
- selectedEmpresa: number | null = null;
+  selectedEmpresa: number | null = null;
 
   selectedStatus: string | null = null;
   // Estado de carregamento
@@ -55,6 +56,12 @@ export class DashboardComponent implements OnInit {
     ordenacao: ''
   };
 
+  //variaveis para empresa x colaborador por horario
+  empresaColabChartOption: any;
+  dataSelecionada: Date = new Date();
+  horaInicio: string = '08:00:00';
+  horaFim: string = '18:00:00';
+
   constructor(private dashboardService: DashboardService,
     private empresaService: EmpresaService
   ) {}
@@ -62,6 +69,8 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.carregarDadosIniciais();
     this.loadEmpresas();
+    this.carregarColaboradoresPorHorario();
+
 
     console.log(this.empresas)
   }
@@ -516,5 +525,99 @@ export class DashboardComponent implements OnInit {
         }
       ]
     };
+
+    
   }
+
+  // grafico empresa x colaborador por horario
+
+  carregarColaboradoresPorHorario(): void {
+    if (!this.dataSelecionada || !this.horaInicio || !this.horaFim) {
+      console.warn('Por favor, selecione data e intervalo de horário.');
+      this.empresaColabChartOption = this.graficoVazioEmpresaColaborador();
+      return;
+    }
+
+    const dataFormatada = this.formatarData(this.dataSelecionada); // "YYYY-MM-DD"
+
+    this.dashboardService.getColaboradoresPorHorario(dataFormatada, this.horaInicio, this.horaFim).subscribe({
+      next: (data) => {
+        if (!data || data.length === 0) {
+          this.empresaColabChartOption = this.graficoVazioEmpresaColaborador();
+          return;
+        }
+
+        const empresas = data.map((item: any) => item.empresaNome);
+        const quantidades = data.map((item: any) => item.quantidade);
+
+        this.empresaColabChartOption = {
+          title: {
+            text: `Colaboradores por Empresa`,
+            left: 'center',
+            top: 20,
+            textStyle: { fontSize: 16 }
+          },
+          tooltip: { trigger: 'axis' },
+          xAxis: {
+            type: 'category',
+            data: empresas,
+            axisLabel: { rotate: 30, interval: 0 }
+          },
+          yAxis: {
+            type: 'value',
+            name: 'Colaboradores'
+          },
+          series: [{
+            data: quantidades,
+            type: 'bar',
+            itemStyle: { color: '#3b82f6' }
+          }]
+        };
+      },
+      error: (err) => {
+        console.error('Erro ao buscar colaboradores por horário:', err);
+        this.empresaColabChartOption = this.graficoVazioEmpresaColaborador();
+      }
+    });
+  }
+
+  
+  formatarData(data: any): string {
+    const dataObj = new Date(data);  // <- garante que é um objeto Date
+    if (isNaN(dataObj.getTime())) {
+      console.error('Data inválida:', data);
+      return '';
+    }
+    return dataObj.toISOString().split('T')[0]; // Retorna só a parte da data (aaaa-mm-dd)
+  }
+
+
+  graficoVazioEmpresaColaborador(): EChartsOption {
+  return {
+    title: {
+      text: 'Sem dados disponíveis',
+      top: 20,
+      bottom: 20,
+      left: 'center'
+    },
+    tooltip: {},
+    xAxis: {
+      type: 'category',
+      data: []
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: 'Colaboradores',
+        type: 'bar',
+        data: [],
+        itemStyle: { color: '#e67e22' }
+      }
+    ]
+  };
+}
+
+
 }

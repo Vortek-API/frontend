@@ -8,7 +8,6 @@ import { Observable } from 'rxjs';
 export class DashboardService {
   private apiUrl = 'http://localhost:8080/api/dashboard';
   private pontoApiUrl = 'http://localhost:8080/ponto';
-
   constructor(private http: HttpClient) {}
 
   getResumoDashboard(filtros?: any): Observable<any> {
@@ -59,4 +58,15 @@ export class DashboardService {
       responseType: 'blob' 
     });
   }
+
+  getColaboradoresPorHorario(data: string, horaInicio: string, horaFim: string): Observable<any> {
+    const url = `${this.pontoApiUrl}/contar-colaboradores`;
+    const params = new HttpParams()
+      .set('data', data)
+      .set('horaInicio', horaInicio)
+      .set('horaFim', horaFim);
+
+    return this.http.get(url, { params });
+  }
+
 }

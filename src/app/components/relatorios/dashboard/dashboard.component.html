@@ -49,6 +49,24 @@
       [options]="horasEmpresaPieChartOptions"
       class="chart-box"
     ></div>
+    <!-- graf empresa x colaborador por hora -->
+    <div class="empresaxcolab-container">
+      <label class="dash2-label">Data:
+        <input class="date-picker2" type="date" [(ngModel)]="dataSelecionada" />
+      </label>
+      <label class="dash2-label">Hora Início:
+        <input class="date-picker2" type="time" [(ngModel)]="horaInicio">
+      </label>
+      <label class="dash2-label">Hora Fim:
+        <input class="date-picker2" type="time" [(ngModel)]="horaFim">
+      </label>
+      <button class="dash2-btn" (click)="carregarColaboradoresPorHorario()">Atualizar Gráfico</button>
+
+      <div echarts [options]="empresaColabChartOption" class="chart" style="height: 400px"></div>
+    </div>
+
+    
+
   </div>
 
   <div class="loading-container" *ngIf="carregandoHorasEmpresa">
