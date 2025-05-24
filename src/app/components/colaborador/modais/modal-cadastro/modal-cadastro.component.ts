@@ -42,7 +42,7 @@ export class ModalCadastroComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         this.imagemPreview = reader.result as string;
-        this.imagemBase64 = (reader.result as string)?.split(',')[1] || null; // <<< AQUI!
+        this.imagemBase64 = (reader.result as string)?.split(',')[1] || null; 
       };
       reader.readAsDataURL(file);
     }
@@ -76,14 +76,20 @@ export class ModalCadastroComponent implements OnInit {
     }
 
     try {
+      const colaboradorDtoToSend: Colaborador = { ...this.colaborador };
+
       // Limpa o CPF antes de enviar
-      this.colaborador.cpf = this.colaborador.cpf.replace(/\D/g, '');
+      colaboradorDtoToSend.cpf = colaboradorDtoToSend.cpf.replace(/\D/g, '');
 
       // Adiciona a imagem base64 ao colaborador
-      (this.colaborador as any).foto = this.imagemBase64;
+      colaboradorDtoToSend.foto = this.imagemBase64;
+
+      //
+      const empresasIds: number[] = colaboradorDtoToSend.empresas?.map((empresa) => empresa.id) ?? [];
+      delete colaboradorDtoToSend.empresas;
 
       // Chama o serviço para salvar
-      await this.colaboradorService.add(this.colaborador);
+      await this.colaboradorService.add(colaboradorDtoToSend,empresasIds);
 
       // Mensagem de sucesso
       await Swal.fire({

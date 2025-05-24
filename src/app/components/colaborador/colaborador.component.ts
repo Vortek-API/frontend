@@ -10,7 +10,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { provideNgxMask } from 'ngx-mask';
 import { AuthService, UserLogado } from '../../services/auth/auth.service';
-import { NgxPaginationModule } from 'ngx-pagination';
+import{ ImagePipe } from '../../image.pipe';
 
 @Component({
   selector: 'app-colaborador',
@@ -20,7 +20,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     MatDialogModule,
     MatButtonModule,
     FormsModule,
-    NgxPaginationModule
+    ImagePipe
   ],
   templateUrl: './colaborador.component.html',
   styleUrls: ['./colaborador.component.css']
@@ -51,12 +51,12 @@ export class ColaboradorComponent implements OnInit {
 
   async ngOnInit() {
     await this.loadUserLogado();
-    await this.carregarColaboradores();
+    await this.loadColaboradores();
     await this.loadEmpresas();
   }
 
   // Marque a função como 'async'
-  async carregarColaboradores(): Promise<void> {
+  async loadColaboradores(): Promise<void> {
     this.isLoading = true;
     this.hasNoData = false;
 
@@ -74,6 +74,13 @@ export class ColaboradorComponent implements OnInit {
     }
   }
 
+  async loadEmpresas() {
+    this.empresas = await this.empresaService.findAll();
+  }
+  async loadUserLogado() {
+    this.usuarioLogado = await this.authService.getUserLogado();
+  }
+
   async abrirModalCadastro() {
     this.dialog.open(ModalCadastroComponent, {});
 
@@ -86,15 +93,6 @@ export class ColaboradorComponent implements OnInit {
     this.dialog.afterAllClosed.subscribe(async () => {
       await this.loadColaboradores();
     });
-  }
-  async loadColaboradores() {
-    this.colaboradores = await this.colaboradorService.findAll();
-  }
-  async loadEmpresas() {
-    this.empresas = await this.empresaService.findAll();
-  }
-  async loadUserLogado() {
-    this.usuarioLogado = await this.authService.getUserLogado();
   }
 
   clickRow(colaborador: Colaborador) {
@@ -159,5 +157,11 @@ export class ColaboradorComponent implements OnInit {
       this.selectedDate = null;
       this.searchTerm = '';
     }
+  }
+
+    formatarCPF(cpf?: string): string {
+    if (!cpf) return '---';
+    const cpfLimpo = cpf.replace(/\D/g, ''); // Remove não dígitos
+    return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
 }

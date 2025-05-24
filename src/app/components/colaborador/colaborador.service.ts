@@ -14,8 +14,25 @@ export interface Colaborador {
     horarioSaida: string;
     statusAtivo: boolean;
     dataCadastro?: string;
-    foto?: string | Uint8Array;
+    foto?: string | Uint8Array | null;
     empresas?: Empresa[];
+}
+
+export interface ColaboradorDto {
+    id: number;
+    cpf: string;
+    nome: string;
+    cargo: string;
+    horarioEntrada: string;
+    horarioSaida: string;
+    statusAtivo: boolean;
+    dataCadastro?: string;
+    foto?: string | Uint8Array | null;
+}
+
+export interface ColaboradorRequest {
+  colaborador: ColaboradorDto; 
+  empresasId: number[];  
 }
 
 @Injectable({
@@ -48,13 +65,15 @@ export class ColaboradorService {
         return colab;
     }
 
-    async add(colaborador: Colaborador): Promise<Colaborador> {
-        const payload = {
-            colaborador: colaborador,
-            empresasId: colaborador.empresas?.map(e => e.id) ?? []
+    async add(colaboradorData: ColaboradorDto, empresasIdArray : number[]): Promise<ColaboradorDto> {
+        //const empresasIdArray = empresasAssociadas?.map(e => e.id) ?? [];
+
+        const requestPayload: ColaboradorRequest = {
+            colaborador: colaboradorData, 
+            empresasId: empresasIdArray   
         };
 
-        return firstValueFrom(this.http.post<Colaborador>(this.apiUrl, payload, {
+        return firstValueFrom(this.http.post<ColaboradorDto>(this.apiUrl, requestPayload, {
             headers: this.jsonHeaders
         }));
 
