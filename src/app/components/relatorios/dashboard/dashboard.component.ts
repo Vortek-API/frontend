@@ -5,6 +5,7 @@ import { EchartsConfigModule } from '../../../echarts-config.module';
 import { FormsModule } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { jsPDF } from 'jspdf';
+import { Empresa, EmpresaService } from '../../empresa/empresa.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,8 +30,9 @@ export class DashboardComponent implements OnInit {
   // Gráficos para horas por empresa
   horasEmpresaBarChartOptions: any;
   horasEmpresaPieChartOptions: any;
+ selectedEmpresa: number | null = null;
 
-
+  selectedStatus: string | null = null;
   // Estado de carregamento
   carregando = false;
   carregandoHorasEmpresa = false;
@@ -42,6 +44,7 @@ export class DashboardComponent implements OnInit {
   // Dados de horas por empresa
   horasEmpresaData: any[] = [];
   
+  empresas: Empresa[] | undefined
   // Objeto de filtros
   filtros = {
     empresa: '',
@@ -52,11 +55,19 @@ export class DashboardComponent implements OnInit {
     ordenacao: ''
   };
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(private dashboardService: DashboardService,
+    private empresaService: EmpresaService
+  ) {}
 
   ngOnInit(): void {
     this.carregarDadosIniciais();
+    this.loadEmpresas();
+
+    console.log(this.empresas)
   }
+   async loadEmpresas() {
+    this.empresas = await this.empresaService.findAll();
+   }
 
   carregarDadosIniciais(): void {
     this.carregando = true;

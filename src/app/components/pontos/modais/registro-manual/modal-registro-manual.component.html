@@ -1,0 +1,111 @@
+<div class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>Registrar Ponto Manualmente</h2>
+      <button class="close-btn" (click)="onCancelar()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <form class="registro-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="colaborador">Colaborador</label>
+            <select 
+              id="colaborador"
+              class="form-select"
+              [(ngModel)]="registroData.colaboradorId"
+              name="colaborador"
+              required>
+              <option value="0">Selecione um colaborador</option>
+              <option *ngFor="let colaborador of colaboradores" [value]="colaborador.id">
+                {{ colaborador.nome }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="empresa">Empresa</label>
+            <select 
+              id="empresa"
+              class="form-select"
+              [(ngModel)]="registroData.empresaId"
+              name="empresa"
+              required>
+              <option value="0">Selecione uma empresa</option>
+              <option *ngFor="let empresa of empresasFiltradas" [value]="empresa.id">
+                {{ empresa.nome }}
+              </option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="data">Data</label>
+            <input 
+              type="date"
+              id="data"
+              class="form-input"
+              [(ngModel)]="registroData.data"
+              name="data"
+              required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="horaEntrada">Horário de Entrada</label>
+            <input 
+              type="time"
+              id="horaEntrada"
+              class="form-input"
+              [(ngModel)]="registroData.horaEntrada"
+              name="horaEntrada"
+              required>
+          </div>
+          
+          <div class="form-group">
+            <label for="horaSaida">Horário de Saída</label>
+            <input 
+              type="time"
+              id="horaSaida"
+              class="form-input"
+              [(ngModel)]="registroData.horaSaida"
+              name="horaSaida"
+              required>
+          </div>
+        </div>
+        
+        <div class="form-row" *ngIf="!isHorarioValid()">
+          <div class="error-message">
+            O horário de saída deve ser posterior ao horário de entrada.
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="justificativa">Justificativa</label>
+            <textarea 
+              id="justificativa"
+              class="form-textarea"
+              [(ngModel)]="registroData.justificativa"
+              name="justificativa"
+              placeholder="Informe o motivo do registro manual..."
+              rows="3"
+              required></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-cancelar" (click)="onCancelar()">Cancelar</button>
+      <button 
+        class="btn-confirmar" 
+        (click)="onConfirmar()"
+        [disabled]="!isFormValid() || !isHorarioValid()">
+        Confirmar
+      </button>
+    </div>
+  </div>
+</div>

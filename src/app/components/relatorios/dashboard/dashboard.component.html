@@ -27,33 +27,20 @@
           />
         </div>
 
-        <div class="filter-group">
-          <label>Status:</label>
-          <select
-            [(ngModel)]="filtros.status"
-            (change)="aplicarFiltros()"
-            class="select-filter"
-          >
-            <option value="">Todos os status</option>
-            <option *ngFor="let status of listaStatus" [value]="status">
-              {{ status }}
-            </option>
-          </select>
-        </div>
+         <div class="ordenar-container">
+                <select class="ordenar-btn" [(ngModel)]="selectedStatus">
 
-        <div class="filter-group">
-          <label>Empresa:</label>
-          <select
-            [(ngModel)]="filtros.empresa"
-            (change)="aplicarFiltros()"
-            class="select-filter"
-          >
-            <option value="">Todas as empresas</option>
-            <option *ngFor="let empresa of listaEmpresas" [value]="empresa">
-              {{ empresa }}
-            </option>
-          </select>
-        </div>
+                    <option [ngValue]="'ativo'">Status Ativo</option>
+                    <option [ngValue]="'inativo'">Status Inativo</option>
+                </select>
+            </div>
+
+       <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
+                <option [ngValue]="null">Todas</option>
+                <option *ngFor="let empresa of empresas" [value]="empresa.id">
+                  {{ empresa.nome }}
+                </option>
+            </select>
 
         <div class="filter-group">
           <label>Ordenar por:</label>

@@ -6,6 +6,7 @@ import { Empresa, EmpresaService } from '../../empresa/empresa.service';
 import { Colaborador, ColaboradorService } from '../../colaborador/colaborador.service';
 import { ExportService } from '../../../services/exports/export.service';
 import { ModalEditarComponent } from '../modais/modal-editar.component';
+import { ModalRegistroManualComponent } from '../modais/registro-manual/modal-registro-manual.component';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { HistoricoPontosComponent } from '../historico-ponto/historico-ponto.component';
@@ -135,6 +136,16 @@ export class RegistroPontoComponent implements OnInit {
     return this.empresas.find(e => e.id === id)?.nome || '---';
   }
 
+  formatarCPF(cpf: string | undefined): string {
+  if (!cpf) return '';
+  
+  const numeros = cpf.replace(/\D/g, '');
+  
+  if (numeros.length !== 11) return cpf;
+  
+  return numeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+}
+
   prepararRelatorio() {
     this.relatorioData = this.registrosFiltrados.map(r => {
       const colaborador = this.colaboradores.find(c => c.id === r.colaboradorId);
@@ -224,9 +235,16 @@ export class RegistroPontoComponent implements OnInit {
     });
   }
 
-  formatarCPF(cpf?: string): string {
-    if (!cpf) return '---';
-    const cpfLimpo = cpf.replace(/\D/g, '');
-    return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  abrirModalRegistroManual() {
+    const dialogRef = this.dialog.open(ModalRegistroManualComponent, {
+      width: '600px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe((resultado: PontoDetalhado) => {
+      if (resultado) {
+        console.log('Dados do registro manual recebidos:', resultado);
+      }
+    });
   }
 }

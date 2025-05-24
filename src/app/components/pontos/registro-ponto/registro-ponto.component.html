@@ -1,7 +1,7 @@
 <div class="ponto-container">
   <div class="ponto-header">
     <div class="right-controls">
-      <h1 class="ponto-title">Registro de Pontos</h1>
+      <h1 class="ponto-title">Pontos</h1>
       <div class="ponto-actions">
         <div class="search-container">
           <input
@@ -50,6 +50,12 @@
           </option>
         </select>
       </div>
+
+      <div class="registro-class"> 
+        <button class="registro-manual-btn" (click)="abrirModalRegistroManual()">
+          + Ponto
+        </button>
+        </div>
 
       <div class="filter-actions">
         <button class="download-btn" (click)="toggleDownloadOptions()" [disabled]="baixandoRelatorio">

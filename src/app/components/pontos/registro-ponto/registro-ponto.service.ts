@@ -5,13 +5,13 @@ import { environment } from '../../../environments/environment';
 import { Colaborador, ColaboradorService } from '../../colaborador/colaborador.service';
 
 export interface PontoDetalhado {
-    id: number;
+    id?: number;
     colaboradorId: number;
     empresaId: number;
     data: string;
     horaEntrada: string;
     horaSaida: string;
-    tempoTotal: string;
+    tempoTotal?: string;
     justificativa: string;
 }
 
@@ -38,6 +38,12 @@ export class RegistroPontoService {
     }
     async findByColabId(id: number) : Promise<PontoDetalhado[]> {
         return firstValueFrom(this.http.get<PontoDetalhado[]>(`${this.apiUrl}/detalhado?colaboradorId=${id}`));
+    }
+    async add(ponto: PontoDetalhado): Promise<PontoDetalhado> {
+            return firstValueFrom(this.http.post<PontoDetalhado>(`${this.apiUrl}/${ponto.colaboradorId}/${ponto.empresaId}`, ponto, {
+            headers: this.jsonHeaders
+        }));
+
     }
     
     setData(registro: PontoDetalhado) {
