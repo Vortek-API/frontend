@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Empresa, EmpresaService } from '../../empresa.service';
@@ -20,14 +20,17 @@ export class ModalEditarDeletarComponent implements OnInit {
     dataCadastro: '',
   }
   empresas: Empresa[] = [];
+  empresaSelecionada: Empresa;
 
   constructor(
     private empresaService: EmpresaService,
     public dialogRef: MatDialogRef<ModalEditarDeletarComponent>,
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public data: { empresaSelecionada: Empresa }, // Injete os dados recebidos da empresa clicada
+  ) { 
+    this.empresaSelecionada = data.empresaSelecionada;
+   }
 
   async ngOnInit() {
-    this.loadEditData();
   }
 
   close(): void {
@@ -48,8 +51,7 @@ export class ModalEditarDeletarComponent implements OnInit {
 
     if (confirmacao.isConfirmed) {
       try {
-        const empresaExistente = this.empresas.find(emp => emp.id === this.empresa.id);
-        console.log(empresaExistente)
+        const empresaExistente = this.empresas.find(emp => emp.id === this.empresaSelecionada.id);
 
         if (((Array.isArray(empresaExistente?.colaboradores) && empresaExistente.colaboradores.length > 0))) {
           await Swal.fire({
@@ -59,7 +61,7 @@ export class ModalEditarDeletarComponent implements OnInit {
           });
         }
         else {
-          await this.empresaService.delete(this.empresa.id);
+          await this.empresaService.delete(this.empresaSelecionada.id);
           await Swal.fire({
             icon: 'success',
             title: 'Empresa excluída com sucesso!',
@@ -118,11 +120,4 @@ export class ModalEditarDeletarComponent implements OnInit {
     }
   }
 
-  async loadEditData() {
-    const { empRet, empsRet } = this.empresaService.getData();
-    if (empRet != undefined) {
-      this.empresa = empRet;
-    }
-    this.empresas = empsRet;
-  }
 }

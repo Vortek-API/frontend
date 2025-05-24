@@ -35,6 +35,10 @@ export class ColaboradorComponent implements OnInit {
   selectedDate: string | null = null;
   ordenacao: string | null = null;
 
+  isLoading: boolean = true; // Para mostrar um carregando enquanto espera os dados
+  hasNoData: boolean = false; // Propriedade para controlar a exibição da mensagem
+
+
   itensPorPagina = 10;    // <- definido para controlar paginação
   paginaAtual = 1;
 
@@ -47,8 +51,27 @@ export class ColaboradorComponent implements OnInit {
 
   async ngOnInit() {
     await this.loadUserLogado();
-    await this.loadColaboradores();
+    await this.carregarColaboradores();
     await this.loadEmpresas();
+  }
+
+  // Marque a função como 'async'
+  async carregarColaboradores(): Promise<void> {
+    this.isLoading = true;
+    this.hasNoData = false;
+
+    try {
+      // Use await para esperar a Promise ser resolvida
+      const data: Colaborador[] = await this.colaboradorService.findAll();
+      this.colaboradores = data;
+      this.isLoading = false;
+      this.hasNoData = this.colaboradores.length === 0;
+    } catch (error) {
+      console.error('Erro ao carregar colaboradores:', error);
+      this.isLoading = false;
+      this.hasNoData = true; // Exibir "sem dados" ou "erro ao carregar" em caso de erro
+      // Opcional: exibir uma mensagem de erro ao usuário, talvez com MatSnackBar ou SweetAlert2
+    }
   }
 
   async abrirModalCadastro() {
@@ -56,18 +79,12 @@ export class ColaboradorComponent implements OnInit {
 
     this.dialog.afterAllClosed.subscribe(async () => {
       await this.loadColaboradores();
-      // setTimeout(async () => {
-      //   await this.loadColaboradores();
-      // }, 2000);
     });
   }
   async abrirModalEditar() {
     this.dialog.open(ModalEditarDeletarComponent, {});
     this.dialog.afterAllClosed.subscribe(async () => {
       await this.loadColaboradores();
-      // setTimeout(async () => {
-      //   await this.loadColaboradores();
-      // }, 2000);
     });
   }
   async loadColaboradores() {
@@ -92,7 +109,7 @@ export class ColaboradorComponent implements OnInit {
 
     let empresasDoUsuario: number[] = [];
 
-    // ✅ Só define empresas se for EMPRESA
+    // Só define empresas se for EMPRESA
     if (this.usuarioLogado.grupo === 'EMPRESA') {
       empresasDoUsuario = this.usuarioLogado.empresas.map(e => e.id);
     }
@@ -100,7 +117,7 @@ export class ColaboradorComponent implements OnInit {
     let filtrados = this.colaboradores.filter(colaborador => {
       const empresasColaborador = colaborador.empresas?.map(e => e.id) || [];
 
-      // ✅ Se for ADMIN → não precisa verificar empresas
+      // Se for ADMIN → não precisa verificar empresas
       const temEmpresaEmComum = this.usuarioLogado?.grupo === 'ADMIN' ||
         empresasColaborador.some(id => empresasDoUsuario.includes(id));
 

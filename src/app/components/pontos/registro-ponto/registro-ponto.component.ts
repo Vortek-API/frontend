@@ -15,7 +15,11 @@ import { AuthService, UserLogado } from '../../../services/auth/auth.service';
 @Component({
   selector: 'app-registro-ponto',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgxPaginationModule],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    NgxPaginationModule
+  ],
   templateUrl: './registro-ponto.component.html',
   styleUrls: ['./registro-ponto.component.css']  // corrigido: plural e array
 })

@@ -46,12 +46,19 @@
       </div>
     </div>
   </div>
+  <div *ngIf="isLoading" class="loading-message">
+            <p>Carregando colaboradores...</p>
+        </div>
 
+        <div *ngIf="!isLoading && hasNoData" class="no-data-message">
+            <p>Nenhuma empresa cadastrada ainda. Clique em "+Empresa" para adicionar!</p>
+        </div>
   <div class="wrapper">
+        
     <div class="empresa-list">
       <div
         class="empresa-button"
-        *ngFor="let empresa of empresasFiltradas | paginate: { itemsPerPage: itensPorPagina, currentPage: paginaAtual }"
+        *ngFor="let empresa of empresasExibidas  | paginate: { itemsPerPage: itensPorPagina, currentPage: paginaAtual }"
         (click)="clickRow(empresa)"
         style="cursor: pointer"
       >
@@ -69,7 +76,7 @@
     <!-- Paginação -->
     <div
       class="pagination-wrapper"
-      *ngIf="empresasFiltradas.length > itensPorPagina"
+      *ngIf="empresasExibidas.length > itensPorPagina"
     >
       <pagination-controls
         [(ngModel)]="paginaAtual"

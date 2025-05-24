@@ -56,6 +56,8 @@ export class ModalCadastroComponent implements OnInit {
         }
       };
 
+      console.log(empresaEnviado)
+
       await this.empresaService.add(empresaEnviado);
 
       await Swal.fire({

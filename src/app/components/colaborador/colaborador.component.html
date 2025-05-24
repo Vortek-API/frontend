@@ -11,6 +11,7 @@
             </div>
         </div>
     
+        
       
         <div class="left-controls">
             <input *ngIf="ordenacao=='cadastro'" type="date" class="date-picker" [(ngModel)]="selectedDate">
@@ -37,6 +38,13 @@
     </div>
 
     <div class="table-wrapper">
+        <div *ngIf="isLoading" class="loading-message">
+            <p>Carregando colaboradores...</p>
+        </div>
+
+        <div *ngIf="!isLoading && hasNoData" class="no-data-message">
+            <p>Nenhum colaborador cadastrado ainda. Clique em "+Colaborador" para adicionar!</p>
+        </div>
     <table class="attendance-table">
         <thead>
             <tr>

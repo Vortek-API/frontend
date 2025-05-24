@@ -4,7 +4,7 @@
     <form #empresaForm="ngForm">
       <div class="form-group">
         <label for="cnpj">CNPJ</label>
-        <input type="text" id="cnpj" [(ngModel)]="empresa.cnpj" name="cnpj" required #cnpjField="ngModel">
+        <input type="text" id="cnpj" [(ngModel)]="empresaSelecionada.cnpj" name="cnpj" required #cnpjField="ngModel">
           <div *ngIf="cnpjField.invalid && (cnpjField.dirty || cnpjField.touched)" class="error-message">
             <div *ngIf="cnpjField.errors?.['required']">
               CNPJ é obrigatório.
@@ -14,7 +14,7 @@
 
       <div class="form-group">
         <label for="nome">Nome</label>
-        <input type="text" id="nome" [(ngModel)]="empresa.nome" name="nome" required #nomeField="ngModel">
+        <input type="text" id="nome" [(ngModel)]="empresaSelecionada.nome" name="nome" required #nomeField="ngModel">
           <div *ngIf="nomeField.invalid && (nomeField.dirty || nomeField.touched)" class="error-message">
             <div *ngIf="nomeField.errors?.['required']">
               Nome é obrigatório.

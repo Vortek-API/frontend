@@ -20,6 +20,11 @@ export class EmpresaComponent implements OnInit {
   ordenacao: string | null = null;
   selectedDate: string | null = null;
 
+  empresasExibidas: Empresa[] = []; 
+
+  isLoading: boolean = true; // Para mostrar um carregando enquanto espera os dados
+  hasNoData: boolean = false; // Propriedade para controlar a exibição da mensagem
+
   itensPorPagina = 20;
   paginaAtual = 1;
 
@@ -29,7 +34,55 @@ export class EmpresaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadEmpresas();
+    this.carregarEmpresas();
+  }
+
+  async carregarEmpresas(): Promise<void> {
+    this.isLoading = true;
+    this.hasNoData = false;
+    this.paginaAtual = 1;
+
+    try {
+      const data: Empresa[] = await this.empresaService.findAll();
+      this.empresas = data || []; 
+      this.isLoading = false;
+      this.hasNoData = this.empresas.length === 0;
+
+      this.aplicarFiltrosEOrdenacao();
+
+    } catch (error) {
+      console.error('Erro ao carregar empresas:', error);
+      this.empresas = []; // Limpa a lista em caso de erro
+      this.empresasExibidas = []; // Limpa também a lista exibida
+      this.isLoading = false;
+      this.hasNoData = true; // Exibe a mensagem de "sem dados" ou "erro ao carregar"
+    }
+  }
+
+  aplicarFiltrosEOrdenacao(): void {
+    let filtradas = [...this.empresas]; // Começa com a lista completa
+
+    // Aplica filtro por termo de busca
+    if (this.searchTerm) {
+      filtradas = filtradas.filter(empresa =>
+        empresa.nome.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        empresa.cnpj.includes(this.searchTerm) // Supondo que cnpj é string
+      );
+    }
+
+    // Aplica ordenação
+    if (this.ordenacao === 'alfab') {
+      filtradas.sort((a, b) => a.nome.localeCompare(b.nome));
+    } else if (this.ordenacao === 'cadastro' && this.selectedDate) {
+      // Filtrar por data de cadastro
+      filtradas = filtradas.filter(empresa => {
+        // Assegura que dataCadastro existe e é uma string antes de tentar split
+        const dataEmpresa = empresa.dataCadastro ? new Date(empresa.dataCadastro).toISOString().split('T')[0] : null;
+        return dataEmpresa === this.selectedDate;
+      });
+    }
+
+    this.empresasExibidas = filtradas; // Atualiza a lista que será usada no *ngFor
   }
 
   async loadEmpresas() {
@@ -38,36 +91,24 @@ export class EmpresaComponent implements OnInit {
 
   openModalCadastro() {
     this.dialog.open(ModalCadastroComponent, {});
-    this.dialog.afterAllClosed.subscribe(() => this.loadEmpresas());
+    this.dialog.afterAllClosed.subscribe(() => this.carregarEmpresas());
   }
 
   openModalEditar() {
     this.dialog.open(ModalEditarDeletarComponent, {});
-    this.dialog.afterAllClosed.subscribe(() => this.loadEmpresas());
+    this.dialog.afterAllClosed.subscribe(() => this.carregarEmpresas());
   }
 
   clickRow(empresa: Empresa) {
-    this.empresaService.setData(empresa, this.empresas);
-    this.openModalEditar();
-  }
+    const dialogRef = this.dialog.open(ModalEditarDeletarComponent, {
+       data: { empresaSelecionada: empresa }
+    });
 
-  get empresasFiltradas(): Empresa[] {
-    let filtradas = this.empresas.filter(empresa =>
-      empresa.nome.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
-
-    if (this.ordenacao === 'alfab') {
-      filtradas.sort((a, b) => a.nome.localeCompare(b.nome));
-    }
-
-    if (this.ordenacao === 'cadastro' && this.selectedDate) {
-      filtradas = filtradas.filter(empresa => {
-        const dataEmpresa = empresa.dataCadastro?.split('T')[0];
-        return dataEmpresa === this.selectedDate;
-      });
-    }
-
-    return filtradas;
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) { 
+        this.carregarEmpresas(); // Recarrega os dados
+      }
+    });
   }
 
   handleOrdenacaoChange() {
@@ -81,5 +122,10 @@ export class EmpresaComponent implements OnInit {
       this.selectedDate = null;
       this.searchTerm = '';
     }
+  }
+
+  onSearchTermChange(): void {
+    this.paginaAtual = 1;
+    this.aplicarFiltrosEOrdenacao(); // Aplica filtros ao digitar na busca
   }
 }
