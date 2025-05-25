@@ -12,7 +12,7 @@
           required
         />
         <span class="search-icon">
-          <img src="assets/icons/personsearch.svg" alt="Ícone de busca" />
+          <img src="assets/icons/searchIconEnterprise.svg" alt="Ícone de busca" />
         </span>
       </div>
     </div>
@@ -47,45 +47,49 @@
     </div>
   </div>
   <div *ngIf="isLoading" class="loading-message">
-            <p>Carregando empresas...</p>
-        </div>
+    <p>Carregando empresas...</p>
+  </div>
 
-        <div *ngIf="!isLoading && hasNoData" class="no-data-message">
-            <p>Nenhuma empresa cadastrada ainda. Clique em "+Empresa" para adicionar!</p>
-        </div>
+  <div *ngIf="!isLoading && hasNoData" class="no-data-message">
+    <p>
+      Nenhuma empresa cadastrada ainda. Clique em "+Empresa" para adicionar!
+    </p>
+  </div>
   <div class="wrapper">
-        
     <div class="empresa-list">
       <div
         class="empresa-button"
-        *ngFor="let empresa of empresasExibidas  | paginate: { itemsPerPage: itensPorPagina, currentPage: paginaAtual }"
+        *ngFor="
+          let empresa of empresasExibidas
+            | paginate
+              : { itemsPerPage: itensPorPagina, currentPage: paginaAtual }
+        "
         (click)="clickRow(empresa)"
         style="cursor: pointer"
       >
         <div class="empresa-info">
           <h1>{{ empresa.colaboradores?.length }}</h1>
           <h2>{{ empresa.nome }}</h2>
-          <p><span class="icon"></span> {{ empresa.cnpj }}</p>
+          <p><span class="icon"></span> {{ formatarCNPJ(empresa.cnpj) }}</p>
         </div>
         <div class="icon-container">
           <i class="user-icon"></i>
         </div>
       </div>
     </div>
-
-    <!-- Paginação -->
-    <div
-      class="pagination-wrapper"
-      *ngIf="empresasExibidas.length > itensPorPagina"
+  </div>
+  <!-- Paginação -->
+  <div
+    class="pagination-wrapper"
+    *ngIf="empresasExibidas.length > itensPorPagina"
+  >
+    <pagination-controls
+      (pageChange)="paginaAtual = $event"
+      [responsive]="true"
+      previousLabel="Anterior"
+      nextLabel="Próxima"
+      [autoHide]="true"
     >
-      <pagination-controls
-        (pageChange)="paginaAtual = $event" 
-        [responsive]="true"
-        previousLabel="Anterior"
-        nextLabel="Próxima"
-        [autoHide]="true"
-      >
-      </pagination-controls>
-    </div>
+    </pagination-controls>
   </div>
 </div>

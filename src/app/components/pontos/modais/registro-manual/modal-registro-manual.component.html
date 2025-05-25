@@ -4,107 +4,119 @@
       <h2>Registrar Ponto Manualmente</h2>
       <button class="close-btn" (click)="onCancelar()">×</button>
     </div>
-    
+
     <div class="modal-body">
       <form class="registro-form">
         <div class="form-row">
           <div class="form-group">
             <label for="colaborador">Colaborador</label>
-            <select 
+            <select
               id="colaborador"
               class="form-select"
               [(ngModel)]="registroData.colaboradorId"
               name="colaborador"
               (change)="onColaboradorChange()"
-              required>
+              required
+            >
               <option value="0">Selecione um colaborador</option>
-              <option *ngFor="let colaborador of colaboradoresFiltrados" [value]="colaborador.id">
+              <option
+                *ngFor="let colaborador of colaboradoresFiltrados"
+                [value]="colaborador.id"
+              >
                 {{ colaborador.nome }}
               </option>
             </select>
           </div>
-          
+
           <div class="form-group">
             <label for="empresa">Empresa</label>
-            <select 
+            <select
               id="empresa"
               class="form-select"
               [(ngModel)]="registroData.empresaId"
               name="empresa"
               (change)="onEmpresaChange()"
-              required>
+              required
+            >
               <option value="0">Selecione uma empresa</option>
-              <option *ngFor="let empresa of empresasFiltradas" [value]="empresa.id">
+              <option
+                *ngFor="let empresa of empresasFiltradas"
+                [value]="empresa.id"
+              >
                 {{ empresa.nome }}
               </option>
             </select>
           </div>
         </div>
-        
+
         <div class="form-row">
           <div class="form-group">
             <label for="data">Data</label>
-            <input 
+            <input
               type="date"
               id="data"
               class="form-input"
               [(ngModel)]="registroData.data"
               name="data"
-              required>
+              required
+            />
           </div>
         </div>
-        
-      <div class="form-row">
-        <div class="form-group">
-          <label for="horaEntrada">Horário de Entrada</label>
-          <input 
-            type="time"
-            id="horaEntrada"
-            class="form-input"
-            [(ngModel)]="registroData.horaEntrada"
-            name="horaEntrada"
-            step="1"
-            required>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="horaEntrada">Horário de Entrada</label>
+            <input
+              type="time"
+              id="horaEntrada"
+              class="form-input"
+              [(ngModel)]="registroData.horaEntrada"
+              name="horaEntrada"
+              step="1"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="horaSaida">Horário de Saída</label>
+            <input
+              type="time"
+              id="horaSaida"
+              class="form-input"
+              [(ngModel)]="registroData.horaSaida"
+              name="horaSaida"
+              step="1"
+              required
+            />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="horaSaida">Horário de Saída</label>
-          <input 
-            type="time"
-            id="horaSaida"
-            class="form-input"
-            [(ngModel)]="registroData.horaSaida"
-            name="horaSaida"
-            step="1"
-            required>
-        </div>
-      </div>
-
-        
         <div class="form-row">
           <div class="form-group full-width">
             <label for="justificativa">Justificativa</label>
-            <textarea 
+            <textarea
               id="justificativa"
               class="form-textarea"
               [(ngModel)]="registroData.justificativa"
               name="justificativa"
               placeholder="Informe o motivo do registro manual..."
               rows="3"
-              required></textarea>
+              required
+            ></textarea>
           </div>
         </div>
       </form>
     </div>
-    
+
     <div class="modal-footer">
-      <button class="btn-cancelar" (click)="onCancelar()">Cancelar</button>
-      <button 
-        class="btn-confirmar" 
+      <button
+        class="btn-confirmar"
         (click)="onConfirmar()"
-        [disabled]="!isFormValid()">
+        [disabled]="!isFormValid()"
+      >
         Confirmar
       </button>
+      <button class="btn-cancelar" (click)="onCancelar()">Cancelar</button>
     </div>
   </div>
 </div>

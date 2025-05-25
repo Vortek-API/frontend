@@ -524,11 +524,11 @@
 
 @media (min-width: 1440px) {
   .ponto-title {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
   }
 
   .ponto-title::after {
-    width: 10em
+    width: 9em
   }
 
   .search-container,
@@ -542,7 +542,7 @@
 
 
   .search-container:hover {
-    width: 17rem;
+    width: 16rem;
     height: 3rem;
   }
 
@@ -681,6 +681,11 @@
   gap: 10%;
   display: flex;
   justify-content: center;
+}
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 ngx-pagination li a,
