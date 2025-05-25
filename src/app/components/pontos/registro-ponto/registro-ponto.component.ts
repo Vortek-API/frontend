@@ -226,6 +226,7 @@ export class RegistroPontoComponent implements OnInit {
     });
     this.dialog.afterAllClosed.subscribe(async () => {
       await this.loadColaboradores();
+      await this.loadRegistros();
     });
   }
 

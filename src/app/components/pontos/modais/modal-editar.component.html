@@ -72,12 +72,11 @@
           <mat-select
             id="empresas"
             name="empresas"
-            [(ngModel)]="colaborador.empresas"
-            multiple
+            [(ngModel)]="registro.empresaId"
             required
             placeholder="Selecione"
             panelClass="empresas-select-panel" #empresaField="ngModel">
-            <mat-option *ngFor="let empresa of colaborador.empresas" [value]="empresa" >
+            <mat-option *ngFor="let empresa of colaborador.empresas" [value]="empresa.id" >
               {{ empresa.nome }}
             </mat-option>
           </mat-select>

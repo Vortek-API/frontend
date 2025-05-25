@@ -15,21 +15,21 @@ interface PontoDetalhadoComColaborador extends PontoDetalhado {
   nome?: string;
   cargo?: string;
   statusAtivo?: boolean;
-  empresas?: string[];
+  empresas?: Empresa[];
 }
 
 
 @Component({
-    selector: 'app-modal-editar',
-    imports: [
-      FormsModule,
-      CommonModule,
-      MatFormFieldModule,
-      MatSelectModule,
-      MatOptionModule
-    ],
-    templateUrl: './modal-editar.component.html',
-    styleUrls: ['./modal-editar.component.css']
+  selector: 'app-modal-editar',
+  imports: [
+    FormsModule,
+    CommonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatOptionModule
+  ],
+  templateUrl: './modal-editar.component.html',
+  styleUrls: ['./modal-editar.component.css']
 })
 
 
@@ -46,7 +46,7 @@ export class ModalEditarComponent implements OnInit {
     foto: new Uint8Array()
   };
 
-   registro: PontoDetalhadoComColaborador = {
+  registro: PontoDetalhadoComColaborador = {
     id: 0,
     colaboradorId: 0,
     empresaId: 0,
@@ -58,7 +58,6 @@ export class ModalEditarComponent implements OnInit {
     nome: '',
     cargo: '',
     statusAtivo: true,
-    empresas: [],
     justificativa: ''
   };
 
@@ -75,14 +74,13 @@ export class ModalEditarComponent implements OnInit {
     private colaboradorService: ColaboradorService,
     private empresaService: EmpresaService,
     private registroPontoService: RegistroPontoService
-  ) {}
+  ) { }
 
-  
+
 
   async ngOnInit() {
+    await this.loadColaboradores();
     await this.loadEmpresas();
-    await this.loadColaboradores();  
-    
 
     if (this.data) {
       this.registro = {
@@ -90,20 +88,19 @@ export class ModalEditarComponent implements OnInit {
         cpf: '',
         nome: '',
         cargo: '',
-        statusAtivo: true,
-        empresas: []
+        statusAtivo: true
       };
-    
+
       const colaborador = this.colaboradores.find(c => c.id === this.registro.colaboradorId);
-    
+
       if (colaborador) {
-        this.registro.cpf = colaborador.cpf; 
+        this.registro.cpf = colaborador.cpf;
         this.registro.nome = colaborador.nome;
         this.registro.cargo = colaborador.cargo;
         this.registro.statusAtivo = colaborador.statusAtivo;
         this.loadEditData()
       }
-    
+
     }
   }
 
@@ -124,6 +121,7 @@ export class ModalEditarComponent implements OnInit {
       this.empresas = [];
     }
   }
+
 
   close(): void {
     this.dialogRef.close();
@@ -167,14 +165,14 @@ export class ModalEditarComponent implements OnInit {
     }
   }
 
-  async editarPontos(form: NgForm) : Promise<void>{
+  async editarPontos(form: NgForm): Promise<void> {
     if (form.invalid) {
       Object.values(form.controls).forEach(control => {
-        control.markAsTouched(); 
+        control.markAsTouched();
       });
 
       Swal.fire('Atenção', 'Por favor, preencha todos os campos obrigatórios corretamente.', 'warning');
-      return; 
+      return;
     }
 
     // Verificar e garantir que empresas é um array
@@ -187,14 +185,14 @@ export class ModalEditarComponent implements OnInit {
 
     const entradaMs = this.timeToMilliseconds(this.registro.horaEntrada);
     const saidaMs = this.timeToMilliseconds(this.registro.horaSaida);
-    
-    if (entradaMs !== 0 || saidaMs !== 0) {
-    let diffMs = saidaMs - entradaMs;
 
-    if (diffMs < 0) {
+    if (entradaMs !== 0 || saidaMs !== 0) {
+      let diffMs = saidaMs - entradaMs;
+
+      if (diffMs < 0) {
         diffMs += (24 * 60 * 60 * 1000); // Adiciona 24 horas em milissegundos
-    }
-        tempoTotalString = this.formatDuration(diffMs);
+      }
+      tempoTotalString = this.formatDuration(diffMs);
     }
 
     const colaboradorEnviado: PontoDetalhado = {
@@ -202,12 +200,12 @@ export class ModalEditarComponent implements OnInit {
       colaboradorId: this.colaborador.id,
       empresaId: this.registro.empresaId,
       data: this.registro.data,
-      horaEntrada: this.registro.horaEntrada|| '',
+      horaEntrada: this.registro.horaEntrada || '',
       horaSaida: this.registro.horaSaida || '',
       tempoTotal: tempoTotalString,
       justificativa: this.registro.justificativa
     };
-      
+
     console.log(colaboradorEnviado)
 
     try {
@@ -260,5 +258,5 @@ export class ModalEditarComponent implements OnInit {
     return window.btoa(binary);
   }
 
- 
+
 }
