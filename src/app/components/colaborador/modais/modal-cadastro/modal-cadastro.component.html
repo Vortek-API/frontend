@@ -86,7 +86,7 @@
       <div class="form-group">
         <label for="horarioEntrada">Hora de entrada</label>
         <input 
-          type="text" 
+          type="time" step="1" 
           id="horarioEntrada" 
           name="horarioEntrada" 
           [(ngModel)]="colaborador.horarioEntrada" 
@@ -104,7 +104,7 @@
       <div class="form-group">
         <label for="horarioSaida">Hora de saída</label>
         <input 
-          type="text" 
+          type="time" step="1" 
           id="horarioSaida" 
           name="horarioSaida" 
           [(ngModel)]="colaborador.horarioSaida" 

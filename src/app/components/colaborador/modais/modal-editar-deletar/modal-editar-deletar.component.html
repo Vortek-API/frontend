@@ -50,7 +50,7 @@
 
       <div class="form-group">
         <label for="horarioEntrada">Hora de entrada</label>
-        <input type="text" id="horarioEntrada" [(ngModel)]="colaborador.horarioEntrada" name="horarioEntrada" required #horaEntradaField="ngModel"> 
+        <input type="time" step="1" id="horarioEntrada" [(ngModel)]="colaborador.horarioEntrada" name="horarioEntrada" required #horaEntradaField="ngModel"> 
           <div *ngIf="horaEntradaField.invalid && (horaEntradaField.dirty || horaEntradaField.touched)" class="error-message">
             <div *ngIf="horaEntradaField.errors?.['required']">
               Hora de Entrada é obrigatória.
@@ -60,7 +60,7 @@
 
       <div class="form-group">
         <label for="horarioSaida">Hora de saída</label>
-        <input type="text" id="horarioSaida" [(ngModel)]="colaborador.horarioSaida" name="horarioSaida" required #horaSaidaField="ngModel">
+        <input type="time" step="1" id="horarioSaida" [(ngModel)]="colaborador.horarioSaida" name="horarioSaida" required #horaSaidaField="ngModel">
           <div *ngIf="horaSaidaField.invalid && (horaSaidaField.dirty || horaSaidaField.touched)" class="error-message">
             <div *ngIf="horaSaidaField.errors?.['required']">
               Hora de Saída é obrigatória.
