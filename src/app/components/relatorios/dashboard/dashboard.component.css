@@ -270,32 +270,32 @@
 }
 
 .dash2-btn {
-    flex: 1 1 auto;
-    padding: 0.4rem;
-    background: #0C6834;
-    color: #fff;
-    border: none;
-    border-radius: 0.3rem;
-    cursor: pointer;
-    text-align: center;
-    font-size: 0.9rem;
-    transition: transform 0.3s ease;
-    margin: 0.1rem;
+  flex: 1 1 auto;
+  padding: 0.4rem;
+  background: #0C6834;
+  color: #fff;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  text-align: center;
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+  margin: 0.1rem;
 }
 
 .empresaxcolab-container {
-    flex: 1 1 auto;
-    padding-top: 2rem !important;
-    padding: 0.4rem;
-    color: #fff;
-    border: none;
-    border-radius: 0.3rem;
-    cursor: pointer;
-    text-align: center;
-    font-size: 0.9rem;
-    transition: transform 0.3s ease;
-    margin: 0.1rem;
-    box-shadow: 0 0 0.5rem 0.1rem rgba(20, 131, 61, 0.184);
+  flex: 1 1 auto;
+  padding-top: 2rem !important;
+  padding: 0.4rem;
+  color: #fff;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  text-align: center;
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+  margin: 0.1rem;
+  box-shadow: 0 0 0.5rem 0.1rem rgba(20, 131, 61, 0.184);
 }
 
 /* Responsividade */
@@ -482,7 +482,7 @@
 }
 
 @media (min-width: 1920px) {
-   #titleRelatorios {
+  #titleRelatorios {
     font-size: 2rem;
     transform: translateY(-1.1rem);
   }
@@ -507,7 +507,7 @@
     font-size: 0.9rem;
     width: 13rem;
   }
-  
+
   .section-title h2 {
     font-size: 1.5rem;
   }
@@ -622,4 +622,129 @@
 .ordenar-btn option,
 .filter-dropdown option {
   background-color: #8bae9a20;
+}
+
+
+/* CONTAINER MODAL */
+.container-filtros {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.modal-filtros {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 40vw;
+  max-height: 90vh;
+  padding: 1rem;
+  gap: 1rem;
+  background: #fff;
+  color: #333;
+  text-align: left;
+  border-radius: 0.3rem;
+  box-shadow: 0 0 1rem 0.5rem rgba(20, 131, 61, 0.184);
+  overflow-y: auto;
+}
+
+.modal-filtros h3 {
+  font-weight: 600;
+  color: #0C6834;
+  margin: 0;
+  padding: 0.5rem 0;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+
+
+.modal-filtros mat-form-field.full-width {
+  width: 80%;
+}
+
+.modal-filtros mat-select,
+.modal-filtros select,
+.modal-filtros input[type="text"] {
+  border: 1px solid #ccc;
+  text-align: center;
+  border-radius: 0.3rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.optionGrafic .filter-dropdown {
+  width: 8rem;
+}
+
+.optionGrafic .filter-dropdown1 {
+  width: 10rem;
+}
+
+.modal-filtros mat-select:focus,
+.modal-filtros select:focus,
+.modal-filtros input[type="text"]:focus {
+  outline: none;
+  border-color: #0C6834;
+  box-shadow: 0 0 0.5rem rgba(20, 131, 61, 0.184);
+}
+
+.modal-filtros mat-select:hover,
+.modal-filtros select:hover,
+.modal-filtros input[type="text"]:hover {
+  border-color: #0C6834;
+  box-shadow: 0 0 0.5rem rgba(20, 131, 61, 0.184);
+}
+
+.optionGrafic {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+
+.buttons-controls {
+  display: inline-flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  width: 100%;
+}
+
+.buttons-controls button {
+  width: 10rem;
+}
+
+button {
+  padding: 0.6rem 1rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.3rem;
+  font-size: 0.9rem;
+  width: 8rem;
+  height: 2.5rem;
+  transform: transition 0.3s ease;
+  color: #fff;
+}
+
+button:hover {
+  transform: scale(1.02);
+}
+
+.btn-primary {
+  background-color: #0C6834;
+}
+
+.btn-cancel {
+  background-color: #F43333;
+  color: white;
 }

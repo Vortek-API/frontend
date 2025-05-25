@@ -27,6 +27,33 @@ export class DashboardComponent implements OnInit {
     dataFim: ''
   };
 
+  mostrarModal = false;
+
+abrirModal() {
+  this.mostrarModal = true;
+}
+
+fecharModal() {
+  this.mostrarModal = false;
+}
+
+confirmarModal() {
+  this.mostrarModal = false;
+  this.onFiltroChange();
+}
+
+selecionarTodasEmpresas() {
+  this.selectedEmpresas = this.empresas.map(empresa => empresa.id);
+  this.onFiltroChange();
+}
+
+desmarcarTodasEmpresas() {
+  this.selectedEmpresas = [];
+  this.onFiltroChange();
+}
+
+
+
   selectedEmpresas: number[] = [];
 
   tipoGrafico: 'bar' | 'pie' | 'line' = 'bar';
