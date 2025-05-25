@@ -27,6 +27,15 @@ export class HistoricoPontosComponent implements OnInit {
   showDownloadOptions = false;
   relatorioData: any[] = [];
 
+  filtros = {
+    empresa: '',
+    dataInicio: '',
+    dataFim: '',
+    status: '',
+    categoria: '',
+    ordenacao: ''
+  };
+
   constructor(
     private pontoService: RegistroPontoService,
     private empresaService: EmpresaService,
@@ -60,7 +69,7 @@ export class HistoricoPontosComponent implements OnInit {
   }
 
   async loadEmpresas() {
-    this.empresas = await this.empresaService.findAll();
+    this.empresas = this.colaborador?.empresas ?? [];
   }
 
   async loadRegistros() {
@@ -90,86 +99,24 @@ export class HistoricoPontosComponent implements OnInit {
   getNomeEmpresa(id: number) {
     return this.empresas.find(e => e.id === id)?.nome || '---';
   }
-  // get registrosFiltrados() {
-  //   return this.registros.filter(r => {
-  //     const colaborador = this.colaborador.find(c => c.id === r.colaboradorId);
-  //     if (!colaborador) return false;
+  get registrosFiltrados() {
+    const termoBusca = this.searchTerm?.toLowerCase() || '';
+    return this.registros.filter(r => {
+      const registroData = new Date(r.data.split('T')[0]);
+      const dataInicio = this.filtros.dataInicio ? new Date(this.filtros.dataInicio) : null;
+      const dataFim = this.filtros.dataFim ? new Date(this.filtros.dataFim) : null;
 
-  //     const nome = colaborador.nome?.toLowerCase() || '';
-  //     const cpf = colaborador.cpf || '';
-  //     const termoBusca = this.searchTerm.toLowerCase();
+      if (dataInicio && registroData < dataInicio) return false;
+      if (dataFim) {
+        const dataFimMaisUm = new Date(dataFim);
+        dataFimMaisUm.setDate(dataFimMaisUm.getDate() + 1);
+        if (registroData >= dataFimMaisUm) return false;
+      }
 
-  //     const registroData = r.data?.split('T')[0];
-  //     const atendeBusca = this.searchTerm === '' || nome.includes(termoBusca) || cpf.includes(termoBusca);
-  //     const atendeData = !this.selectedDate || registroData === this.selectedDate;
-  //     const atendeEmpresa = !this.selectedEmpresa || r.empresaId === +this.selectedEmpresa;
+      if (this.selectedEmpresa && r.empresaId !== +this.selectedEmpresa) return false;
 
-  //     return atendeBusca && atendeData && atendeEmpresa;
-  //   });
-  // }
+      return true;
+    });
+  }
 
-  // getNomeColaborador(id: number) {
-  //   return this.colaboradores.find(c => c.id === id)?.nome || 'Desconhecido';
-  // }
-
-  // getCpfColaborador(id: number) {
-  //   return this.colaboradores.find(c => c.id === id)?.cpf || '---';
-  // }
-
-  // getNomeEmpresa(id: number) {
-  //   return this.empresas.find(e => e.id === id)?.nome || '---';
-  // }
-
-  // prepararRelatorio() {
-  //   this.relatorioData = this.registrosFiltrados.map(r => {
-  //     const colaborador = this.colaboradores.find(c => c.id === r.colaboradorId);
-  //     const empresa = this.empresas.find(e => e.id === r.empresaId);
-
-  //     return {
-  //       nomeColaborador: colaborador?.nome || 'Desconhecido',
-  //       cpfColaborador: colaborador?.cpf || '---',
-  //       nomeEmpresa: empresa?.nome || '---',
-  //       dataRegistro: r.data?.split('T')[0] || '',
-  //       entradaRegistro: r.horaEntrada?.substring(11, 16) || '',
-  //       saidaRegistro: r.horaSaida?.substring(11, 16) || '',
-  //       tempoTotal: r.tempoTotal || ''
-  //     };
-  //   });
-  // }
-
-  // toggleDownloadOptions() {
-  //   this.showDownloadOptions = !this.showDownloadOptions;
-  // }
-
-  // downloadCSV() {
-  //   this.baixandoRelatorio = true;
-  //   setTimeout(() => {
-  //     try {
-  //       this.prepararRelatorio();
-  //       this.exportService.exportToCSV('historico-ponto', this.relatorioData);
-  //     } catch (error) {
-  //       console.error('Erro ao gerar CSV:', error);
-  //       alert('Erro ao gerar CSV.');
-  //     } finally {
-  //       this.baixandoRelatorio = false;
-  //       this.showDownloadOptions = false;
-  //     }
-  //   }, 100);
-  // }
-
-  // downloadPDF() {
-  //   this.baixandoRelatorio = true;
-  //   setTimeout(() => {
-  //     try {
-  //       this.prepararRelatorio();
-  //       this.exportService.exportToPDF('historico-ponto', this.relatorioData);
-  //     } catch (error) {
-  //       console.error('Erro ao gerar PDF:', error);
-  //       alert('Erro ao gerar PDF.');
-  //     } finally {
-  //       this.baixandoRelatorio = false;
-  //       this.showDownloadOptions = false;
-  //     }
-  //   }, 100);
-  // }
 }

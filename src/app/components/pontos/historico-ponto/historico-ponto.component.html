@@ -58,12 +58,16 @@
         </div>
 
         <div class="left-controls">
-          <input type="date" class="date-picker" />
+          De: 
+          <input type="date" class="date-picker" [(ngModel)]="filtros.dataInicio"/>
+          Até:
+          <input type="date" class="date-picker" [(ngModel)]="filtros.dataFim"/>
           <div class="ponto-filtros">
-            <select class="filter-dropdown">
-              <option value="null">Todas</option>
-              <option value="1">Empresa 1</option>
-              <option value="2">Empresa 2</option>
+            <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
+              <option [ngValue]="null">Todas</option>
+              <option *ngFor="let empresa of empresas" [value]="empresa.id">
+                {{ empresa.nome }}
+              </option>
             </select>
           </div>
 
@@ -72,11 +76,6 @@
               Relatórios
               <span class="icon-download"></span>
             </button>
-
-            <div class="download-options" style="display: none;">
-              <button>Download CSV</button>
-              <button>Download PDF</button>
-            </div>
           </div>
         </div>
       </div>
@@ -90,19 +89,15 @@
               <th>Entrada</th>
               <th>Saída</th>
               <th>Tempo Total</th>
-              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let registro of registros">
+            <tr *ngFor="let registro of registrosFiltrados">
               <td>{{ getNomeEmpresa(registro.empresaId) }}</td>
-              <td>{{ registro.data }}</td>
+              <td>{{ registro.data | date:'dd/MM/yyyy' }}</td>
               <td>{{ registro.horaEntrada }} </td>
               <td>{{ registro.horaSaida }} </td>
               <td>{{ registro.tempoTotal }} </td>
-              <td class="buttons-td">
-                <button class="historico-btn">Editar</button>
-              </td>
             </tr>
           </tbody>
         </table>
