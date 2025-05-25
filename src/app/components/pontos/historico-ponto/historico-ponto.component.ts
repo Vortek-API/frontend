@@ -5,11 +5,12 @@ import { PontoDetalhado, RegistroPontoService } from '../registro-ponto/registro
 import { Empresa, EmpresaService } from '../../empresa/empresa.service';
 import { Colaborador, ColaboradorService } from '../../colaborador/colaborador.service';
 import { ExportService } from '../../../services/exports/export.service';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-historico-ponto',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgxPaginationModule],
   templateUrl: './historico-ponto.component.html',
   styleUrls: ['./historico-ponto.component.css']
 })
@@ -36,6 +37,9 @@ export class HistoricoPontosComponent implements OnInit {
     ordenacao: ''
   };
 
+  itensPorPagina: number = 10;
+  paginaAtual: number = 1;
+
   constructor(
     private pontoService: RegistroPontoService,
     private empresaService: EmpresaService,
@@ -59,7 +63,6 @@ export class HistoricoPontosComponent implements OnInit {
     if (colabId) this.colaborador = await this.colaboradorService.find(colabId);
     if (this.colaborador?.foto) {
       if (typeof this.colaborador.foto !== 'string') {
-        // Se for Uint8Array, converte para Base64
         const binary = this.arrayBufferToBase64(this.colaborador.foto);
         this.imagemPreview = `data:image/jpeg;base64,${binary}`;
       } else {

@@ -70,13 +70,6 @@
               </option>
             </select>
           </div>
-
-          <div class="filter-actions">
-            <button class="download-btn">
-              Relatórios
-              <span class="icon-download"></span>
-            </button>
-          </div>
         </div>
       </div>
 
@@ -92,7 +85,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let registro of registrosFiltrados">
+            <tr *ngFor="let registro of registrosFiltrados | paginate: { itemsPerPage: itensPorPagina, currentPage: paginaAtual }">
               <td>{{ getNomeEmpresa(registro.empresaId) }}</td>
               <td>{{ registro.data | date:'dd/MM/yyyy' }}</td>
               <td>{{ registro.horaEntrada }} </td>
@@ -101,6 +94,13 @@
             </tr>
           </tbody>
         </table>
+        <pagination-controls
+          (pageChange)="paginaAtual = $event"
+          [responsive]="true"
+          previousLabel="Anterior"
+          nextLabel="Próxima"
+          [autoHide]="true">
+        </pagination-controls>
       </div>
     </div>
   </div>
