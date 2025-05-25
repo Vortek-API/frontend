@@ -1,621 +1,332 @@
 import { Component, OnInit } from '@angular/core';
-import { DashboardService } from '../dashboard.service';
-import { CommonModule } from '@angular/common';
-import { EchartsConfigModule } from '../../../echarts-config.module';
-import { FormsModule } from '@angular/forms';
-import { saveAs } from 'file-saver';
-import { jsPDF } from 'jspdf';
-import { EChartsOption } from 'echarts';
+import { DashboardService, HorasPorEmpresa } from '../dashboard.service';
 import { Empresa, EmpresaService } from '../../empresa/empresa.service';
+import { EChartsOption } from 'echarts';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { EchartsConfigModule } from '../../../echarts-config.module';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+
+interface ColaboradoresPorEmpresa {
+  empresa: Empresa;
+  colaboradoresAtivos: number;
+}
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
-  imports: [CommonModule, EchartsConfigModule, FormsModule],
+  imports: [CommonModule, EchartsConfigModule, FormsModule, MatFormFieldModule, MatSelectModule, MatOptionModule],
 })
 export class DashboardComponent implements OnInit {
-  // Dados do resumo
-  resumo: any;
-
-  baixandoRelatorio = false;
-  showDownloadOptions = false;
-  
-  // Configurações dos gráficos
-  barChartOptions: any;
-  pieChartOptions: any;
-  lineChartOptions: any;
-  radarChartOptions: any;
-  
-  // Gráficos para horas por empresa
-  horasEmpresaBarChartOptions: any;
-  horasEmpresaPieChartOptions: any;
-  selectedEmpresa: number | null = null;
-
-  selectedStatus: string | null = null;
-  // Estado de carregamento
-  carregando = false;
-  carregandoHorasEmpresa = false;
-  
-  // Listas para os filtros
-  listaEmpresas: string[] = [];
-  listaStatus: string[] = [];
-
-  // Dados de horas por empresa
-  horasEmpresaData: any[] = [];
-  
-  empresas: Empresa[] | undefined
-  // Objeto de filtros
   filtros = {
-    empresa: '',
     dataInicio: '',
-    dataFim: '',
-    status: '',
-    categoria: '',
-    ordenacao: ''
+    dataFim: ''
   };
 
-  //variaveis para empresa x colaborador por horario
-  empresaColabChartOption: any;
-  dataSelecionada: Date = new Date();
-  horaInicio: string = '08:00:00';
-  horaFim: string = '18:00:00';
+  selectedEmpresas: number[] = [];
 
-  constructor(private dashboardService: DashboardService,
+  tipoGrafico: 'bar' | 'pie' | 'line' = 'bar';
+
+
+  empresas: Empresa[] = [];
+
+  horasEmpresaData: HorasPorEmpresa[] = [];
+  horasEmpresaBarChartOptions: EChartsOption = {};
+  carregandoHorasEmpresa = false;
+
+  colaboradoresData: ColaboradoresPorEmpresa[] = [];
+  colaboradoresBarChartOptions: EChartsOption = {};
+  carregandoColaboradores = false;
+
+  constructor(
+    private dashboardService: DashboardService,
     private empresaService: EmpresaService
-  ) {}
+  ) { }
 
-  ngOnInit(): void {
-    this.carregarDadosIniciais();
-    this.loadEmpresas();
-    this.carregarColaboradoresPorHorario();
-
+  async ngOnInit() {
+    await this.loadEmpresas();
+    await this.buscarDados();
   }
-   async loadEmpresas() {
+
+  async loadEmpresas() {
     this.empresas = await this.empresaService.findAll();
-   }
+    this.selectedEmpresas = this.empresas.map(empresa => empresa.id);
+  }
 
-  carregarDadosIniciais(): void {
-    this.carregando = true;
-    
-    // Carregar lista de empresas para o filtro
-    this.dashboardService.getEmpresas().subscribe({
-      next: (empresas) => {
-        this.listaEmpresas = empresas;
-      },
-      error: (err) => console.error('Erro ao carregar empresas:', err)
-    });
-    
-    // Carregar lista de status para o filtro
-    this.dashboardService.getStatus().subscribe({
-      next: (status) => {
-        this.listaStatus = status;
-      },
-      error: (err) => console.error('Erro ao carregar status:', err)
-    });
-    
-    // Carregar dados do dashboard com filtros vazios inicialmente
-    this.carregarDadosDashboard();
-    
-    // Carregar dados de horas por empresa
-    this.carregarHorasPorEmpresa();
-  }
-  
-  carregarDadosDashboard(): void {  
-    this.carregando = true;
-    
-    this.dashboardService.getResumoDashboard(this.filtros).subscribe({
-      next: (data) => {
-        this.resumo = data;
-        this.atualizarGraficos(data);
-        this.carregando = false;
-      },
-      error: (err) => {
-        console.error('Erro ao buscar resumo:', err);
-        this.carregando = false;
-      }
-    });
-  }
-  
-  carregarHorasPorEmpresa(): void {
+  async buscarDados() {
     this.carregandoHorasEmpresa = true;
-    
-    this.dashboardService.getHorasPorEmpresa(this.filtros.dataInicio, this.filtros.dataFim).subscribe({
-      next: (data) => {
-        this.horasEmpresaData = data;
-        this.atualizarGraficosHorasEmpresa(data);
-        this.carregandoHorasEmpresa = false;
-      },
-      error: (err) => {
-        console.error('Erro ao buscar horas por empresa:', err);
-        this.carregandoHorasEmpresa = false;
+    this.carregandoColaboradores = true;
+
+    try {
+      // Buscar horas trabalhadas
+      const todasHoras = await this.dashboardService.getHorasPorEmpresa(
+        this.filtros.dataInicio,
+        this.filtros.dataFim
+      );
+      let horasFiltradas = todasHoras;
+      if (this.selectedEmpresas && this.selectedEmpresas.length > 0) {
+        horasFiltradas = todasHoras.filter(h => this.selectedEmpresas.includes(h.empresa.id));
       }
-    });
-  }
-  
-  aplicarFiltros(): void {
-    this.carregarDadosDashboard();
-    this.carregarHorasPorEmpresa();
-  }
+      this.horasEmpresaData = horasFiltradas;
+      this.montarGraficoHorasEmpresa(horasFiltradas);
 
-  limparFiltros(): void {
-    this.filtros = {
-      empresa: '',
-      dataInicio: '',
-      dataFim: '',
-      status: '',
-      categoria: '',
-      ordenacao: ''
-    };
-    
-    this.carregarDadosDashboard();
-    this.carregarHorasPorEmpresa();
-  }
+      // Buscar colaboradores ativos
+      const todosColaboradores = await this.dashboardService.getColaboradoresAtivosPorEmpresa(
+        this.filtros.dataInicio,
+        this.filtros.dataFim
+      );
+      let colaboradoresFiltrados = todosColaboradores;
+      if (this.selectedEmpresas && this.selectedEmpresas.length > 0) {
+        colaboradoresFiltrados = todosColaboradores.filter(c => this.selectedEmpresas.includes(c.empresa.id));
+      }
 
-  
-  atualizarGraficosHorasEmpresa(data: any[]): void {
-    if (!data || data.length === 0) {
-      this.configurarGraficosHorasEmpresaVazios();
-      return;
+      // Filtrar só quem tem > 0
+      colaboradoresFiltrados = colaboradoresFiltrados.filter(c => c.colaboradoresAtivos > 0);
+      this.colaboradoresData = colaboradoresFiltrados;
+      this.montarGraficoColaboradores(colaboradoresFiltrados);
+    } catch (error) {
+      console.error('Erro ao buscar dados do dashboard', error);
+    } finally {
+      this.carregandoHorasEmpresa = false;
+      this.carregandoColaboradores = false;
     }
-    
-    // Preparar dados para o gráfico de barras
-    const empresas = data.map(item => item.empresaNome);
-    const horasTotais = data.map(item => item.horasTotais + (item.minutosTotais / 60) + (item.segundosTotais / 3600));
-    const formatoHoras = data.map(item => {
-      const horas = item.horasTotais;
-      const minutos = item.minutosTotais;
-      const segundos = item.segundosTotais;
-      
-      return `${horas}h ${minutos}m ${segundos}s`;
-    });
-    
-    // Configurar gráfico de barras
-    this.horasEmpresaBarChartOptions = {
-      title: { 
-        text: 'Horas Trabalhadas por Empresa',
-        left: 'center',
-        textStyle: {
-          fontSize: 16,
-          fontWeight: 'bold'
-        }
-      },
-      tooltip: {
-        trigger: 'axis',
-        formatter: function(params: any) {
-          const dataIndex = params[0].dataIndex;
-          return `${empresas[dataIndex]}: ${formatoHoras[dataIndex]}`;
-        }
-      },
-      grid: {
-        left: '5%',
-        right: '5%',
-        bottom: '10%',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        data: empresas,
-        axisLabel: {
-          interval: 0,
-          rotate: 45,
-          textStyle: {
-            fontSize: 12
-          }
-        }
-      },
-      yAxis: {
-        type: 'value',
-        name: 'Horas',
-        axisLabel: {
-          formatter: '{value} h'
-        }
-      },
-      series: [
-        {
-          name: 'Horas Trabalhadas',
-          type: 'bar',
-          data: horasTotais,
-          itemStyle: {
-            color: '#3498db'
-          },
-          label: {
-            show: true,
-            position: 'top',
-            formatter: function(params: any) {
-              const dataIndex = params.dataIndex;
-              return formatoHoras[dataIndex];
-            }
-          }
-        }
-      ]
-    };
-    
-    // Configurar gráfico de pizza
-    this.horasEmpresaPieChartOptions = {
-      title: { 
-        text: 'Distribuição de Horas por Empresa', 
-        left: 'center',
-        textStyle: {
-          fontSize: 16,
-          fontWeight: 'bold'
-        }
-      },
-      tooltip: {
-        trigger: 'item',
-        formatter: function(params: any) {
-          const index = empresas.indexOf(params.name);
-          if (index !== -1) {
-            return `${params.name}: ${formatoHoras[index]} (${params.percent}%)`;
-          }
-          return params.name;
-        }
-      },
-      legend: {
-        orient: 'vertical',
-        left: 'left',
-        type: 'scroll',
-        textStyle: {
-          fontSize: 12
-        }
-      },
-      series: [
-        {
-          name: 'Horas Trabalhadas',
-          type: 'pie',
-          radius: '60%',
-          center: ['50%', '60%'],
-          data: data.map((item, index) => ({
-            name: item.empresaNome,
-            value: horasTotais[index]
-          })),
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-          },
-          label: {
-            formatter: '{b}: {d}%'
-          }
-        }
-      ]
-    };
   }
-  
-  configurarGraficosHorasEmpresaVazios(): void {
-    // Gráfico de barras vazio
-    this.horasEmpresaBarChartOptions = {
-      title: { 
-        text: 'Horas Trabalhadas por Empresa',
-        left: 'center',
-        textStyle: {
-          fontSize: 16,
-          fontWeight: 'bold'
-        }
-      },
-      tooltip: {},
-      xAxis: {
-        type: 'category',
-        data: []
-      },
-      yAxis: {
-        type: 'value',
-        name: 'Horas'
-      },
-      series: [
-        {
-          name: 'Horas Trabalhadas',
-          type: 'bar',
-          data: [],
-          itemStyle: {
-            color: '#3498db'
-          }
-        }
-      ]
-    };
-    
-    // Gráfico de pizza vazio
-    this.horasEmpresaPieChartOptions = {
-      title: { 
-        text: 'Distribuição de Horas por Empresa', 
-        left: 'center',
-        textStyle: {
-          fontSize: 16,
-          fontWeight: 'bold'
-        }
-      },
-      tooltip: { trigger: 'item' },
-      legend: {
-        orient: 'vertical',
-        left: 'left'
-      },
-      series: [
-        {
-          name: 'Horas Trabalhadas',
-          type: 'pie',
-          radius: '60%',
-          center: ['50%', '60%'],
-          data: [],
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-          }
-        }
-      ]
-    };
-  }
-  
-  atualizarGraficos(data: any): void {
-    // Implementação existente dos gráficos principais
-    // Gráfico de barras - Colaboradores por Empresa
-    if (data && data.colaboradoresPorEmpresa) {
-      const empresas = data.colaboradoresPorEmpresa.map((item: any) => item.empresa);
-      const valores = data.colaboradoresPorEmpresa.map((item: any) => item.quantidade);
-      
-      this.barChartOptions = {
-        title: { text: 'Colaboradores por Empresa' },
-        tooltip: {},
-        xAxis: { data: empresas },
-        yAxis: {},
-        series: [{
-          name: 'Colaboradores',
-          type: 'bar',
-          data: valores,
-          itemStyle: {
-            color: '#0C6834'
-          }
-        }]
-      };
-    } else {
-      // Dados fictícios caso não venham da API
-      this.barChartOptions = {
-        title: { text: 'Colaboradores por Empresa' },
-        tooltip: {},
-        xAxis: {
-          data: ['Empresa A', 'Empresa B', 'Empresa C']
+
+  montarGraficoHorasEmpresa(horas: HorasPorEmpresa[]) {
+    const horasFiltradas = horas.filter(h => h.tempo !== '00:00:00');
+
+    const empresas = horasFiltradas.map(h => h.empresa.nome);
+    const horasTotais = horasFiltradas.map(h => this.tempoParaDecimal(h.tempo));
+    const formatoHoras = horasFiltradas.map(h => h.tempo);
+
+    if (this.tipoGrafico === 'pie') {
+      this.horasEmpresaBarChartOptions = {
+        title: {
+          text: 'Horas Trabalhadas por Empresa (Relação)',
+          left: 'center',
+          textStyle: { fontSize: 16, fontWeight: 'bold' }
         },
-        yAxis: {},
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}: {c} h ({d}%)'
+        },
         series: [
           {
-            name: 'Colaboradores',
-            type: 'bar',
-            data: [10, 20, 15],
-            itemStyle: {
-              color: '#0C6834'
-            }
-          }
-        ]
-      };
-    }
-    
-    // Gráfico de pizza - Distribuição de Status
-    if (data && data.distribuicaoStatus) {
-      const statusDados = data.distribuicaoStatus.map((item: any) => ({
-        value: item.quantidade,
-        name: item.status
-      }));
-      
-      this.pieChartOptions = {
-        title: { text: 'Distribuição de Status', left: 'center' },
-        tooltip: { trigger: 'item' },
-        legend: { orient: 'vertical', left: 'left' },
-        series: [
-          {
-            name: 'Status',
+            name: 'Horas Trabalhadas',
             type: 'pie',
-            radius: '60%',
-            center: ['50%', '50%'],
-            data: statusDados,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            },
+            radius: '50%',
+            data: empresas.map((nome, i) => ({ name: nome, value: horasTotais[i] })),
             label: {
-              formatter: '{b}: {c} ({d}%)'
+              formatter: '{b}: ({d}%)'  // Exibe nome, valor e %
             }
           }
         ]
       };
-    } else {
-      // Dados fictícios caso não venham da API
-      this.pieChartOptions = {
-        title: { text: 'Distribuição de Status', left: 'center' },
-        tooltip: { trigger: 'item' },
-        legend: { orient: 'vertical', left: 'left' },
-        series: [
-          {
-            name: 'Status',
-            type: 'pie',
-            radius: '60%',
-            center: ['50%', '50%'],
-            data: [
-              { value: 30, name: 'Ativo' },
-              { value: 15, name: 'Inativo' },
-              { value: 10, name: 'Férias' }
-            ],
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            },
-            label: {
-              formatter: '{b}: {d}%'
-            }
-          }
-        ]
-      };
-    }
-                
-    // Gráfico de linha - Histórico de registros
-    if (data && data.historicoRegistros) {
-      const datas = data.historicoRegistros.map((item: any) => item.data);
-      const valores = data.historicoRegistros.map((item: any) => item.quantidade);
-                
-      this.lineChartOptions = {
-        title: { text: 'Histórico de Registros' },
+    } else if (this.tipoGrafico === 'line') {
+      this.horasEmpresaBarChartOptions = {
+        title: {
+          text: 'Horas Trabalhadas por Empresa',
+          left: 'center',
+          textStyle: { fontSize: 16, fontWeight: 'bold' },
+        },
         tooltip: {
           trigger: 'axis'
         },
         xAxis: {
           type: 'category',
-          data: datas
+          data: empresas,
+          axisLabel: { interval: 0, rotate: 45, fontSize: 12 }
         },
         yAxis: {
-          type: 'value'
+          type: 'value',
+          name: 'Horas',
+          axisLabel: { formatter: '{value} h' }
         },
-        series: [{
-          name: 'Registros',
-          type: 'line',
-          data: valores,
-          itemStyle: {
-            color: '#e67e22'
-          },
-          lineStyle: {
-            width: 2
+        series: [
+          {
+            name: 'Horas Trabalhadas',
+            type: 'line',
+            smooth: true,
+            data: horasTotais,
+            label: {
+              show: true,
+              position: 'top',
+              formatter: (params: any) => formatoHoras[params.dataIndex]
+            },
+            itemStyle: { color: '#3498db' }
           }
-        }]
+        ]
+      };
+    } else {
+      // padrão barra
+      this.horasEmpresaBarChartOptions = {
+        title: {
+          text: 'Horas Trabalhadas por Empresa',
+          left: 'center',
+          textStyle: { fontSize: 16, fontWeight: 'bold' }
+        },
+        tooltip: {
+          trigger: 'axis',
+          formatter: function (params: any) {
+            const dataIndex = params[0].dataIndex;
+            return `${empresas[dataIndex]}: ${formatoHoras[dataIndex]}`;
+          }
+        },
+        grid: {
+          left: '5%',
+          right: '5%',
+          bottom: '10%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: empresas,
+          axisLabel: { interval: 0, rotate: 45, fontSize: 12 }
+        },
+        yAxis: {
+          type: 'value',
+          name: 'Horas',
+          axisLabel: { formatter: '{value} h' }
+        },
+        series: [
+          {
+            name: 'Horas Trabalhadas',
+            type: 'bar',
+            data: horasTotais,
+            itemStyle: { color: '#3498db' },
+            label: {
+              show: true,
+              position: 'top',
+              formatter: function (params: any) {
+                const dataIndex = params.dataIndex;
+                return formatoHoras[dataIndex];
+              }
+            }
+          }
+        ]
       };
     }
-                
-    // Gráfico radar - Critérios de desempenho
-    this.radarChartOptions = {
-      title: { text: 'Indicadores de Desempenho' },
-      tooltip: {},
-      radar: {
-        indicator: [
-          { name: 'Pontualidade', max: 100 },
-          { name: 'Horas Extras', max: 100 },
-          { name: 'Ausências', max: 100 },
-          { name: 'Pausas', max: 100 },
-          { name: 'Inconsistências', max: 100 }
-        ]
-      },
-      series: [
-        {
-          name: 'Desempenho',
-          type: 'radar',
-          data: [
-            {
-              value: [
-                data?.indicePontualidade || 0,
-                data?.taxaHorasExtras || 0,
-                data?.frequenciaAusencias || 0,
-                data?.tempoMedioPausas || 0,
-                data?.taxaInconsistencias || 0
-              ],
-              name: 'Empresa'
-            }
-          ],
-          itemStyle: {
-            color: '#9b59b6'
-          }
-        }
-      ]
-    };
-
-    
   }
 
-  // grafico empresa x colaborador por horario
-
-  carregarColaboradoresPorHorario(): void {
-    if (!this.dataSelecionada || !this.horaInicio || !this.horaFim) {
-      console.warn('Por favor, selecione data e intervalo de horário.');
-      this.empresaColabChartOption = this.graficoVazioEmpresaColaborador();
+  montarGraficoColaboradores(colaboradores: ColaboradoresPorEmpresa[]) {
+    if (!colaboradores.length) {
+      this.colaboradoresBarChartOptions = {};
       return;
     }
 
-    const dataFormatada = this.formatarData(this.dataSelecionada); // "YYYY-MM-DD"
+    const empresas = colaboradores.map(c => c.empresa.nome);
+    const colaboradoresAtivos = colaboradores.map(c => c.colaboradoresAtivos);
 
-    this.dashboardService.getColaboradoresPorHorario(dataFormatada, this.horaInicio, this.horaFim).subscribe({
-      next: (data) => {
-        if (!data || data.length === 0) {
-          this.empresaColabChartOption = this.graficoVazioEmpresaColaborador();
-          return;
-        }
+    if (this.tipoGrafico === 'pie') {
+      // Para gráfico de pizza, os dados precisam ser [{value: number, name: string}]
+      const pieData = colaboradores.map(c => ({
+        value: c.colaboradoresAtivos,
+        name: c.empresa.nome
+      }));
 
-        const empresas = data.map((item: any) => item.empresaNome);
-        const quantidades = data.map((item: any) => item.quantidade);
-
-        this.empresaColabChartOption = {
-          title: {
-            text: `Colaboradores por Empresa`,
-            left: 'center',
-            top: 20,
-            textStyle: { fontSize: 16 }
-          },
-          tooltip: { trigger: 'axis' },
-          xAxis: {
-            type: 'category',
-            data: empresas,
-            axisLabel: { rotate: 30, interval: 0 }
-          },
-          yAxis: {
-            type: 'value',
-            name: 'Colaboradores'
-          },
-          series: [{
-            data: quantidades,
-            type: 'bar',
-            itemStyle: { color: '#3b82f6' }
-          }]
-        };
-      },
-      error: (err) => {
-        console.error('Erro ao buscar colaboradores por horário:', err);
-        this.empresaColabChartOption = this.graficoVazioEmpresaColaborador();
-      }
-    });
-  }
-
-  
-  formatarData(data: any): string {
-    const dataObj = new Date(data);  // <- garante que é um objeto Date
-    if (isNaN(dataObj.getTime())) {
-      console.error('Data inválida:', data);
-      return '';
+      this.colaboradoresBarChartOptions = {
+        title: {
+          text: 'Colaboradores Ativos por Empresa (Relação)',
+          left: 'center',
+          textStyle: {
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}: {c} ({d}%)'  // Mostrar nome, valor e %
+        },
+        series: [
+          {
+            name: 'Colaboradores Ativos',
+            type: 'pie',
+            radius: '50%',
+            data: pieData,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            },
+            label: {
+              formatter: '{b}: ({d}%)'  // Exibir nome, valor e %
+            }
+          }
+        ]
+      };
+    } else {
+      // Para 'bar' e 'line'
+      this.colaboradoresBarChartOptions = {
+        title: {
+          text: 'Colaboradores Ativos por Empresa',
+          left: 'center',
+          textStyle: {
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' }
+        },
+        grid: {
+          left: '5%',
+          right: '5%',
+          bottom: '10%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: empresas,
+          axisLabel: {
+            interval: 0,
+            rotate: 45,
+            fontSize: 12
+          }
+        },
+        yAxis: {
+          type: 'value',
+          name: 'Colaboradores',
+          axisLabel: {
+            formatter: '{value}'
+          }
+        },
+        series: [
+          {
+            name: 'Colaboradores Ativos',
+            type: this.tipoGrafico, // 'bar' ou 'line'
+            data: colaboradoresAtivos,
+            itemStyle: {
+              color: '#2ecc71'
+            },
+            label: {
+              show: true,
+              position: 'top'
+            }
+          }
+        ]
+      };
     }
-    return dataObj.toISOString().split('T')[0]; // Retorna só a parte da data (aaaa-mm-dd)
   }
 
+  private tempoParaDecimal(tempo: string): number {
+    const [h, m, s] = tempo.split(':').map(Number);
+    return h + m / 60 + s / 3600;
+  }
 
-  graficoVazioEmpresaColaborador(): EChartsOption {
-  return {
-    title: {
-      text: 'Sem dados disponíveis',
-      top: 20,
-      bottom: 20,
-      left: 'center'
-    },
-    tooltip: {},
-    xAxis: {
-      type: 'category',
-      data: []
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        name: 'Colaboradores',
-        type: 'bar',
-        data: [],
-        itemStyle: { color: '#e67e22' }
-      }
-    ]
-  };
-}
-
-
+  onFiltroChange() {
+    this.buscarDados();
+  }
+  limparFiltros() {
+    this.filtros.dataInicio='';
+    this.filtros.dataFim='';
+    this.selectedEmpresas=[];
+    this.onFiltroChange();
+  }
 }

@@ -39,16 +39,21 @@ export class RegistroPontoService {
     async find(id: number): Promise<PontoDetalhado> {
         return firstValueFrom(this.http.get<PontoDetalhado>(`${this.apiUrl}/${id}/detalhado`));
     }
-    async findByColabId(id: number) : Promise<PontoDetalhado[]> {
+    async findByColabId(id: number): Promise<PontoDetalhado[]> {
         return firstValueFrom(this.http.get<PontoDetalhado[]>(`${this.apiUrl}/detalhado?colaboradorId=${id}`));
     }
+    async findByEmpId(id: number): Promise<PontoDetalhado[]> {
+        return firstValueFrom(this.http.get<PontoDetalhado[]>(`${this.apiUrl}/detalhado?empresasId=${id}`));
+    }
+    async findByEmpIdIntervData(id: number, dataInicio: string, dataFim: string): Promise<PontoDetalhado[]> { // dataInicio=2025-04-14&dataFim=2025-04-16
+        return firstValueFrom(this.http.get<PontoDetalhado[]>(`${this.apiUrl}/detalhado?empresasId=${id}&dataInicio=${dataInicio}&dataFim=${dataFim}`));
+    }
     async add(ponto: PontoDetalhado): Promise<PontoDetalhado> {
-            return firstValueFrom(this.http.post<PontoDetalhado>(`${this.apiUrl}/${ponto.colaboradorId}/${ponto.empresaId}`, ponto, {
+        return firstValueFrom(this.http.post<PontoDetalhado>(`${this.apiUrl}/${ponto.colaboradorId}/${ponto.empresaId}`, ponto, {
             headers: this.jsonHeaders
         }));
 
     }
-    
     setData(registro: PontoDetalhado) {
         this.registroDataTransfer = registro;
     }
@@ -58,8 +63,8 @@ export class RegistroPontoService {
         this.registroDataTransfer = undefined;
         return registroRet;
     }
-    async update(id: number,ponto: PontoDetalhado): Promise<PontoDetalhado> {
-        return firstValueFrom(this.http.patch<PontoDetalhado>(`${this.apiUrl}/${id}/editar`, ponto,  {
+    async update(id: number, ponto: PontoDetalhado): Promise<PontoDetalhado> {
+        return firstValueFrom(this.http.patch<PontoDetalhado>(`${this.apiUrl}/${id}/editar`, ponto, {
             headers: this.jsonHeaders
         }));
     }

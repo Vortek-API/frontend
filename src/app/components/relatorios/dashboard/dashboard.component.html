@@ -5,32 +5,28 @@
     </div>
 
     <div class="left-controls">
-      <input type="date" class="date-picker" [(ngModel)]="filtros.dataInicio" />
-      <input type="date" class="date-picker" [(ngModel)]="filtros.dataFim" />
+      <input type="date" class="date-picker" [(ngModel)]="filtros.dataInicio" (ngModelChange)="onFiltroChange()" />
+      <input type="date" class="date-picker" [(ngModel)]="filtros.dataFim" (ngModelChange)="onFiltroChange()" />
 
-      <div class="ordenar-container">
-        <select class="ordenar-btn" [(ngModel)]="selectedStatus">
-          <option [ngValue]="null">Ordenar por</option>
-          <option [ngValue]="'ativo'">Status Ativo</option>
-          <option [ngValue]="'inativo'">Status Inativo</option>
-        </select>
-      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Empresas</mat-label>
+        <mat-select [(ngModel)]="selectedEmpresas" multiple (ngModelChange)="onFiltroChange()" placeholder="Selecione"
+          panelClass="empresas-select-panel">
 
-      <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
-        <option [ngValue]="null">Todas</option>
-        <option *ngFor="let empresa of empresas" [value]="empresa.id">
-          {{ empresa.nome }}
-        </option>
+          <mat-option *ngFor="let empresa of empresas" [value]="empresa.id">
+            {{ empresa.nome }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <select class="filter-dropdown" [(ngModel)]="tipoGrafico" (ngModelChange)="onFiltroChange()">
+        <option [ngValue]="'bar'">Barraㅤ</option>
+        <option [ngValue]="'pie'">Pizzaㅤ</option>
+        <option [ngValue]="'line'">Linhaㅤ</option>
       </select>
 
       <button class="add-employee-btn" (click)="limparFiltros()">Limpar Filtros</button>
-    </div>
-  </div>
-
-  <div class="filter-group">
-    <div class="loading-container-dwd" *ngIf="showDownloadOptions">
-      <div class="spinner-dwd"></div>
-      <p>Gerando Relatório</p>
+      
     </div>
   </div>
 
@@ -38,39 +34,13 @@
     <h2>Indicadores</h2>
   </div>
 
-  <div class="charts-container" *ngIf="!carregandoHorasEmpresa">
-    <div
-      echarts
-      [options]="horasEmpresaBarChartOptions"
-      class="chart-box"
-    ></div>
-    <div
-      echarts
-      [options]="horasEmpresaPieChartOptions"
-      class="chart-box"
-    ></div>
-    <!-- graf empresa x colaborador por hora -->
-    <div class="empresaxcolab-container">
-      <label class="dash2-label">Data:
-        <input class="date-picker2" type="date" [(ngModel)]="dataSelecionada" />
-      </label>
-      <label class="dash2-label">Hora Início:
-        <input class="date-picker2" type="time" [(ngModel)]="horaInicio">
-      </label>
-      <label class="dash2-label">Hora Fim:
-        <input class="date-picker2" type="time" [(ngModel)]="horaFim">
-      </label>
-      <button class="dash2-btn" (click)="carregarColaboradoresPorHorario()">Atualizar Gráfico</button>
-
-      <div echarts [options]="empresaColabChartOption" class="chart" style="height: 400px"></div>
-    </div>
-
-    
-
+  <div class="charts-container" *ngIf="!carregandoHorasEmpresa && horasEmpresaBarChartOptions">
+    <div echarts [options]="horasEmpresaBarChartOptions" class="chart-box"></div>
+    <div echarts [options]="colaboradoresBarChartOptions" class="chart-box"></div>
   </div>
 
   <div class="loading-container" *ngIf="carregandoHorasEmpresa">
     <div class="spinner"></div>
-    <p>Carregando dados</p>
+    <p>Carregando dados...</p>
   </div>
 </div>
