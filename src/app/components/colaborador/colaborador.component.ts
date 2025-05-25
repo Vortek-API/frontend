@@ -58,8 +58,7 @@ export class ColaboradorComponent implements OnInit {
     this.isLoading = true;
     this.hasNoData = false;
     try {
-      const data: Colaborador[] = await this.colaboradorService.findAll();
-      this.colaboradores = data || []; // Garante que seja um array
+      this.colaboradores = await this.colaboradorService.findAll();
       this.isLoading = false;
       // hasNoData será determinado pelo getter após filtros
     } catch (error) {
