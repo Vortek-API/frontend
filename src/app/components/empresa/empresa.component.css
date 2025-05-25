@@ -320,4 +320,9 @@ h2 {
   color: white !important;
   border-radius: 4px;
 }
+.pagination-wrapper {
+  position: relative; 
+  z-index: 5; 
+}
+
 }

@@ -8,10 +8,11 @@
           class="search-input"
           placeholder="Buscar"
           [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchTermChange()"
           required
-        />
+        /> <!-- Fechado -->
         <span class="search-icon">
-          <img src="assets/icons/personsearch.svg" alt="Ícone de busca" />
+          <img src="assets/icons/personsearch.svg" alt="Ícone de busca" /> <!-- Fechado (implícito, mas ok) -->
         </span>
       </div>
     </div>
@@ -22,7 +23,8 @@
         type="date"
         class="date-picker"
         [(ngModel)]="selectedDate"
-      />
+        (ngModelChange)="onDateChange()"
+      /> <!-- Fechado -->
       <div class="ordenar-container">
         <select
           class="ordenar-btn"
@@ -38,8 +40,8 @@
         </select>
       </div>
 
-      <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
-        <option [ngValue]="null">Todas</option>
+      <select class="filter-dropdown" [(ngModel)]="selectedEmpresa" (ngModelChange)="onEmpresaChange()">
+        <option [ngValue]="null">Todas as Empresas</option>
         <option *ngFor="let empresa of empresas" [value]="empresa.id">
           {{ empresa.nome }}
         </option>
@@ -56,52 +58,47 @@
             <p>Carregando colaboradores...</p>
         </div>
 
-        <div *ngIf="!isLoading && hasNoData" class="no-data-message">
-            <p>Nenhum colaborador cadastrado ainda. Clique em "+Colaborador" para adicionar!</p>
+    <div *ngIf="hasNoData" class="no-data-message">
+            <p>Nenhum colaborador encontrado com os filtros aplicados ou nenhum cadastrado ainda.</p>
         </div>
-    <table class="attendance-table">
+
+    <table class="attendance-table" *ngIf="!isLoading && !hasNoData">
       <thead>
         <tr>
           <th>Foto</th>
           <th>Colaborador</th>
           <th>CPF</th>
           <th>Cargo</th>
-          <!-- <th>Empresa</th> -->
-          <!-- <th>Data</th> -->
           <th>Status</th>
           <th>Entrada</th>
           <th>Saída</th>
-          <!-- <th>Horas trabalhadas</th> -->
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngFor="let colaborador of colaboradoesFiltrados">
-          <tr
-            *ngIf="selectedEmpresa == null || selectedEmpresa == colaborador.empresas?.[0]?.id"
+        <tr *ngFor="let colaborador of colaboradoesFiltrados | paginate: { itemsPerPage: itensPorPagina, currentPage: paginaAtual }"
             (click)="clickRow(colaborador)"
             style="cursor: pointer"
-          >
+            >
             <td class="colab-photo">
               <img
                 *ngIf="colaborador.foto; else noPhoto"
                 class="colab-photo"
                 [src]="colaborador.foto | base64Image : 'jpeg'"
                 alt="Foto do colaborador"
-              />
+              /> <!-- Fechamento corrigido -->
               <ng-template #noPhoto>
                 <img
                   src="assets/icons/noPicture.svg"
                   alt="Sem foto"
                   class="colab-photo"
                   style="border-color: #ef5350"
-                />
+                /> <!-- Fechamento corrigido -->
               </ng-template>
             </td>
 
             <td>{{ colaborador.nome }}</td>
             <td>{{ formatarCPF(colaborador.cpf) }}</td>
             <td>{{ colaborador.cargo }}</td>
-            <!-- <td>{{colaborador.empresa.nome}}</td> -->
             <td class="status-colab">
               <span
                 class="status"
@@ -114,10 +111,19 @@
             <td>{{ colaborador.horarioEntrada }}</td>
             <td>{{ colaborador.horarioSaida }}</td>
           </tr>
-        </ng-container>
       </tbody>
     </table>
+
+    <div class="pagination-wrapper" *ngIf="!isLoading && !hasNoData && colaboradoesFiltrados.length > itensPorPagina">
+      <pagination-controls
+        (pageChange)="paginaAtual = $event"
+        [responsive]="true"
+        previousLabel="Anterior"
+        nextLabel="Próxima"
+        [autoHide]="true">
+      </pagination-controls> <!-- Tag única -->
   </div>
 </div>
 
 <div class="modal-colab-crud"></div>
+

@@ -79,7 +79,7 @@
       *ngIf="empresasExibidas.length > itensPorPagina"
     >
       <pagination-controls
-        [(ngModel)]="paginaAtual"
+        (pageChange)="paginaAtual = $event" 
         [responsive]="true"
         previousLabel="Anterior"
         nextLabel="Próxima"

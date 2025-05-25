@@ -6,11 +6,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { Colaborador, ColaboradorService } from './colaborador.service';
 import { ModalEditarDeletarComponent } from '../colaborador/modais/modal-editar-deletar/modal-editar-deletar.component';
 import { Empresa, EmpresaService } from '../empresa/empresa.service';
-import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { provideNgxMask } from 'ngx-mask';
 import { AuthService, UserLogado } from '../../services/auth/auth.service';
-import{ ImagePipe } from '../../image.pipe';
+import { ImagePipe } from '../../image.pipe';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-colaborador',
@@ -20,7 +19,8 @@ import{ ImagePipe } from '../../image.pipe';
     MatDialogModule,
     MatButtonModule,
     FormsModule,
-    ImagePipe
+    ImagePipe,
+    NgxPaginationModule
   ],
   templateUrl: './colaborador.component.html',
   styleUrls: ['./colaborador.component.css']
@@ -35,11 +35,10 @@ export class ColaboradorComponent implements OnInit {
   selectedDate: string | null = null;
   ordenacao: string | null = null;
 
-  isLoading: boolean = true; // Para mostrar um carregando enquanto espera os dados
-  hasNoData: boolean = false; // Propriedade para controlar a exibição da mensagem
+  isLoading: boolean = true;
+  hasNoData: boolean = false;
 
-
-  itensPorPagina = 10;    // <- definido para controlar paginação
+  itensPorPagina = 10;
   paginaAtual = 1;
 
   constructor(
@@ -51,52 +50,60 @@ export class ColaboradorComponent implements OnInit {
 
   async ngOnInit() {
     await this.loadUserLogado();
-    await this.loadColaboradores();
+    await this.loadColaboradores(); // Carrega todos inicialmente
     await this.loadEmpresas();
   }
 
-  // Marque a função como 'async'
   async loadColaboradores(): Promise<void> {
     this.isLoading = true;
     this.hasNoData = false;
-
     try {
-      // Use await para esperar a Promise ser resolvida
       const data: Colaborador[] = await this.colaboradorService.findAll();
-      this.colaboradores = data;
+      this.colaboradores = data || []; // Garante que seja um array
       this.isLoading = false;
-      this.hasNoData = this.colaboradores.length === 0;
+      // hasNoData será determinado pelo getter após filtros
     } catch (error) {
       console.error('Erro ao carregar colaboradores:', error);
+      this.colaboradores = [];
       this.isLoading = false;
-      this.hasNoData = true; // Exibir "sem dados" ou "erro ao carregar" em caso de erro
-      // Opcional: exibir uma mensagem de erro ao usuário, talvez com MatSnackBar ou SweetAlert2
+      this.hasNoData = true; // Se falhou ao carregar, não há dados
     }
   }
 
   async loadEmpresas() {
-    this.empresas = await this.empresaService.findAll();
+    try {
+      this.empresas = await this.empresaService.findAll() || [];
+    } catch (error) {
+      console.error('Erro ao carregar empresas:', error);
+      this.empresas = [];
+    }
   }
+
   async loadUserLogado() {
     this.usuarioLogado = await this.authService.getUserLogado();
   }
 
   async abrirModalCadastro() {
-    this.dialog.open(ModalCadastroComponent, {});
-
-    this.dialog.afterAllClosed.subscribe(async () => {
-      await this.loadColaboradores();
+    const dialogRef = this.dialog.open(ModalCadastroComponent, {});
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadColaboradores(); // Recarrega se houve cadastro
+      }
     });
   }
+
   async abrirModalEditar() {
-    this.dialog.open(ModalEditarDeletarComponent, {});
-    this.dialog.afterAllClosed.subscribe(async () => {
-      await this.loadColaboradores();
+    // A data já foi setada no clickRow
+    const dialogRef = this.dialog.open(ModalEditarDeletarComponent, {});
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadColaboradores(); // Recarrega se houve edição/deleção
+      }
     });
   }
 
   clickRow(colaborador: Colaborador) {
-    this.colaboradorService.setData(colaborador);
+    this.colaboradorService.setData(colaborador); // Passa os dados para o modal via serviço
     this.abrirModalEditar();
   }
 
@@ -106,30 +113,42 @@ export class ColaboradorComponent implements OnInit {
     }
 
     let empresasDoUsuario: number[] = [];
-
-    // Só define empresas se for EMPRESA
     if (this.usuarioLogado.grupo === 'EMPRESA') {
       empresasDoUsuario = this.usuarioLogado.empresas.map(e => e.id);
     }
 
     let filtrados = this.colaboradores.filter(colaborador => {
       const empresasColaborador = colaborador.empresas?.map(e => e.id) || [];
-
-      // Se for ADMIN → não precisa verificar empresas
       const temEmpresaEmComum = this.usuarioLogado?.grupo === 'ADMIN' ||
         empresasColaborador.some(id => empresasDoUsuario.includes(id));
 
-      return temEmpresaEmComum &&
-        colaborador.nome.toLowerCase().includes(this.searchTerm.toLowerCase());
+      // Filtro por busca (termo)
+      const buscaOk = !this.searchTerm || // Se não houver termo, passa
+                      colaborador.nome.toLowerCase().includes(this.searchTerm.toLowerCase());
+
+      // Dentro do getter colaboradoesFiltrados, na parte do .filter()
+
+      const selectedEmpresaId = this.selectedEmpresa !== null ? parseInt(this.selectedEmpresa as any, 10) : null;
+
+      let empresaOk = false; // Inicializa como falso
+      if (selectedEmpresaId === null) {
+        empresaOk = true; // Se nenhuma empresa está selecionada, o colaborador passa neste filtro
+      } else {
+        // Só chama includes se selectedEmpresaId for um número
+        empresaOk = empresasColaborador.includes(selectedEmpresaId);
+      }
+
+      return temEmpresaEmComum && buscaOk && empresaOk;
     });
 
+    // Aplica ordenação e outros filtros (data, status)
     if (this.ordenacao === 'alfab') {
       filtrados.sort((a, b) => a.nome.localeCompare(b.nome));
     }
 
     if (this.ordenacao === 'cadastro' && this.selectedDate) {
       filtrados = filtrados.filter(colaborador => {
-        const dataColaborador = colaborador.dataCadastro?.split('T')[0];
+        const dataColaborador = colaborador.dataCadastro ? new Date(colaborador.dataCadastro).toISOString().split('T')[0] : null;
         return dataColaborador === this.selectedDate;
       });
     }
@@ -142,26 +161,48 @@ export class ColaboradorComponent implements OnInit {
       filtrados = filtrados.filter(colaborador => colaborador.statusAtivo === false);
     }
 
+    // Atualiza flag hasNoData baseado na lista *filtrada*
+    this.hasNoData = !this.isLoading && filtrados.length === 0;
+
     return filtrados;
   }
 
+  // --- Handlers para resetar a página ao aplicar filtros --- 
 
+  onSearchTermChange(): void {
+    this.paginaAtual = 1;
+  }
 
-  handleOrdenacaoChange() {// Resetar data se saiu da ordenação por cadastro
-    if (this.ordenacao !== 'cadastro') {
-      this.selectedDate = null;
-    }
-
-    // Se limpou os filtros
-    if (!this.ordenacao) {
-      this.selectedDate = null;
-      this.searchTerm = '';
+  onDateChange(): void {
+    this.paginaAtual = 1;
+    // Força ordenação por cadastro se data for selecionada
+    if (this.selectedDate) {
+      this.ordenacao = 'cadastro';
     }
   }
 
-    formatarCPF(cpf?: string): string {
+  onEmpresaChange(): void {
+    this.paginaAtual = 1;
+  }
+
+  handleOrdenacaoChange() {
+    this.paginaAtual = 1;
+    if (this.ordenacao !== 'cadastro') {
+      this.selectedDate = null;
+    }
+    // Limpa outros filtros se 'Limpar filtros' for selecionado
+    if (!this.ordenacao) {
+      this.selectedDate = null;
+      this.searchTerm = '';
+      this.selectedEmpresa = null;
+    }
+  }
+  // --------------------------------------------------------
+
+  formatarCPF(cpf?: string): string {
     if (!cpf) return '---';
     const cpfLimpo = cpf.replace(/\D/g, ''); // Remove não dígitos
+    if (cpfLimpo.length !== 11) return cpf; // Retorna original se não tiver 11 dígitos
     return cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
 }
