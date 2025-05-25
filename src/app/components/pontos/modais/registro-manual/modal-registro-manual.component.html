@@ -54,29 +54,32 @@
           </div>
         </div>
         
-        <div class="form-row">
-          <div class="form-group">
-            <label for="horaEntrada">Horário de Entrada</label>
-            <input 
-              type="time"
-              id="horaEntrada"
-              class="form-input"
-              [(ngModel)]="registroData.horaEntrada"
-              name="horaEntrada"
-              required>
-          </div>
-          
-          <div class="form-group">
-            <label for="horaSaida">Horário de Saída</label>
-            <input 
-              type="time"
-              id="horaSaida"
-              class="form-input"
-              [(ngModel)]="registroData.horaSaida"
-              name="horaSaida"
-              required>
-          </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="horaEntrada">Horário de Entrada</label>
+          <input 
+            type="time"
+            id="horaEntrada"
+            class="form-input"
+            [(ngModel)]="registroData.horaEntrada"
+            name="horaEntrada"
+            step="1"
+            required>
         </div>
+
+        <div class="form-group">
+          <label for="horaSaida">Horário de Saída</label>
+          <input 
+            type="time"
+            id="horaSaida"
+            class="form-input"
+            [(ngModel)]="registroData.horaSaida"
+            name="horaSaida"
+            step="1"
+            required>
+        </div>
+      </div>
+
         
         <div class="form-row">
           <div class="form-group full-width">
