@@ -30,7 +30,9 @@
   font-weight: 600;
   margin-bottom: 1.5rem;
   color: #0C6834;
-  padding-top: 2%;
+  transform: translate(0, 0.5rem);
+  left: 1rem;
+  padding-top: 1.5rem;
 }
 
 #titleRelatorios::after {
