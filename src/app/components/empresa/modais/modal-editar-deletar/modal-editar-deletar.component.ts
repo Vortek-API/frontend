@@ -26,9 +26,9 @@ export class ModalEditarDeletarComponent implements OnInit {
     private empresaService: EmpresaService,
     public dialogRef: MatDialogRef<ModalEditarDeletarComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { empresaSelecionada: Empresa }, // Injete os dados recebidos da empresa clicada
-  ) { 
+  ) {
     this.empresaSelecionada = data.empresaSelecionada;
-   }
+  }
 
   async ngOnInit() {
   }
@@ -51,14 +51,29 @@ export class ModalEditarDeletarComponent implements OnInit {
 
     if (confirmacao.isConfirmed) {
       try {
-        const empresaExistente = this.empresas.find(emp => emp.id === this.empresaSelecionada.id);
+        console.log(this.empresaSelecionada);
+        console.log(this.empresaSelecionada.colaboradores?.length);
 
-        if (((Array.isArray(empresaExistente?.colaboradores) && empresaExistente.colaboradores.length > 0))) {
-          await Swal.fire({
-            icon: 'error',
-            title: 'Erro ao excluir a empresa! Existem colaboradores relacionados a ela.',
+        if (this.empresaSelecionada.colaboradores && this.empresaSelecionada.colaboradores?.length > 0) {
+          const confirmacaoRegistro = await Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Existem colaboradores relacionados a ela.',
+            icon: 'warning',
+            showCancelButton: true,
             confirmButtonColor: '#EF5350',
+            cancelButtonColor: '#0C6834',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar'
           });
+          if (confirmacaoRegistro.isConfirmed) {
+            await this.empresaService.delete(this.empresaSelecionada.id);
+            await Swal.fire({
+              icon: 'success',
+              title: 'Empresa excluída com sucesso!',
+              confirmButtonColor: '#0C6834',
+            });
+            this.dialogRef.close(true);
+          }
         }
         else {
           await this.empresaService.delete(this.empresaSelecionada.id);
@@ -79,15 +94,15 @@ export class ModalEditarDeletarComponent implements OnInit {
     }
   }
 
-  async save(form:NgForm): Promise<void> {
+  async save(form: NgForm): Promise<void> {
 
     if (form.invalid) {
       Object.values(form.controls).forEach(control => {
-        control.markAsTouched(); 
+        control.markAsTouched();
       });
 
       Swal.fire('Atenção', 'Por favor, preencha todos os campos obrigatórios corretamente.', 'warning');
-      return; 
+      return;
     }
 
     try {

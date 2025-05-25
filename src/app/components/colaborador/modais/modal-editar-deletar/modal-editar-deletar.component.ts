@@ -43,7 +43,7 @@ export class ModalEditarDeletarComponent implements OnInit {
     public dialogRef: MatDialogRef<ModalEditarDeletarComponent>,
     private colaboradorService: ColaboradorService,
     private empresaService: EmpresaService
-  ) {}
+  ) { }
 
   async ngOnInit() {
     this.empresas = await this.empresaService.findAll();
@@ -54,14 +54,14 @@ export class ModalEditarDeletarComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  async save(form:NgForm): Promise<void> {
+  async save(form: NgForm): Promise<void> {
     if (form.invalid) {
       Object.values(form.controls).forEach(control => {
-        control.markAsTouched(); 
+        control.markAsTouched();
       });
 
       Swal.fire('Atenção', 'Por favor, preencha todos os campos obrigatórios corretamente.', 'warning');
-      return; 
+      return;
     }
 
     const colaboradorEnviado: Colaborador = {
@@ -82,17 +82,40 @@ export class ModalEditarDeletarComponent implements OnInit {
 
   async deletar(): Promise<void> {
     try {
-      if (await this.colaboradorService.hasRegistro(this.colaborador.id)) {
-        await Swal.fire({
-          icon: 'error',
-          title: 'Erro ao excluir o colaborador! Existem registros relacionados.',
-          confirmButtonColor: '#EF5350',
-        });
-      }
-      else {
-        await this.colaboradorService.delete(this.colaborador.id);
-        await Swal.fire('Removido', 'Colaborador deletado com sucesso.', 'success');
-        this.close();
+      const confirmacao = await Swal.fire({
+        title: 'Tem certeza?',
+        text: 'Esta ação não poderá ser desfeita!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#EF5350',
+        cancelButtonColor: '#0C6834',
+        confirmButtonText: 'Sim, excluir!',
+        cancelButtonText: 'Cancelar'
+      });
+
+      if (confirmacao.isConfirmed) {
+        if (await this.colaboradorService.hasRegistro(this.colaborador.id)) {
+          const confirmacaoRegistro = await Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Existem registros relacionados',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#EF5350',
+            cancelButtonColor: '#0C6834',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar'
+          });
+          if (confirmacaoRegistro.isConfirmed) {
+            await this.colaboradorService.delete(this.colaborador.id);
+            await Swal.fire('Removido', 'Colaborador deletado com sucesso.', 'success');
+            this.close();
+          }
+        }
+        else {
+          await this.colaboradorService.delete(this.colaborador.id);
+          await Swal.fire('Removido', 'Colaborador deletado com sucesso.', 'success');
+          this.close();
+        }
       }
     } catch (error) {
       console.error(error);
