@@ -721,5 +721,6 @@ desmarcarTodasEmpresas() {
     this.montarGraficoColaboradores(this.colaboradoresData);
     this.montarGraficoColaboradoresInativos(this.colaboradoresInativosData);
     this.montarGraficoColaboradoresAtrasados(this.colaboradoresAtrasadosData);
+    this.montarGraficoColaboradoresSaidaAdiantada(this.colaboradoresSaidaAdiantadaData);
   }
 }
