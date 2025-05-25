@@ -206,8 +206,6 @@ export class ModalEditarComponent implements OnInit {
       justificativa: this.registro.justificativa
     };
 
-    console.log(colaboradorEnviado)
-
     try {
       if (!colaboradorEnviado.id) {
         throw new Error('ID do colaborador é inválido');

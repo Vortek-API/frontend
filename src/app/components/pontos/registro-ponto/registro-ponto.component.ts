@@ -16,8 +16,8 @@ import { AuthService, UserLogado } from '../../../services/auth/auth.service';
   selector: 'app-registro-ponto',
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
+    CommonModule,
+    FormsModule,
     NgxPaginationModule
   ],
   templateUrl: './registro-ponto.component.html',
@@ -141,14 +141,14 @@ export class RegistroPontoComponent implements OnInit {
   }
 
   formatarCPF(cpf: string | undefined): string {
-  if (!cpf) return '';
-  
-  const numeros = cpf.replace(/\D/g, '');
-  
-  if (numeros.length !== 11) return cpf;
-  
-  return numeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-}
+    if (!cpf) return '';
+
+    const numeros = cpf.replace(/\D/g, '');
+
+    if (numeros.length !== 11) return cpf;
+
+    return numeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  }
 
   prepararRelatorio() {
     this.relatorioData = this.registrosFiltrados.map(r => {
@@ -161,27 +161,27 @@ export class RegistroPontoComponent implements OnInit {
         nomeEmpresa: empresa?.nome || '---',
         dataRegistro: r.data
           ? (() => {
-              const [year, month, day] = r.data.split('T')[0].split('-');
-              return `${day}/${month}/${year}`;  // corrigido para template literal
-            })()
+            const [year, month, day] = r.data.split('T')[0].split('-');
+            return `${day}/${month}/${year}`;  // corrigido para template literal
+          })()
           : '',
         entradaRegistro: r.horaEntrada?.split('T')[0]?.substring(0, 5) || '',
         saidaRegistro: r.horaSaida?.split('T')[0]?.substring(0, 5) || '',
         tempoTotal: r.tempoTotal || '',
       };
     })
-    .sort((a, b) => {
-      if (a.dataRegistro > b.dataRegistro) return -1;
-      if (a.dataRegistro < b.dataRegistro) return 1;
+      .sort((a, b) => {
+        if (a.dataRegistro > b.dataRegistro) return -1;
+        if (a.dataRegistro < b.dataRegistro) return 1;
 
-      if (a.nomeEmpresa.toLowerCase() < b.nomeEmpresa.toLowerCase()) return -1;
-      if (a.nomeEmpresa.toLowerCase() > b.nomeEmpresa.toLowerCase()) return 1;
+        if (a.nomeEmpresa.toLowerCase() < b.nomeEmpresa.toLowerCase()) return -1;
+        if (a.nomeEmpresa.toLowerCase() > b.nomeEmpresa.toLowerCase()) return 1;
 
-      if (a.nomeColaborador.toLowerCase() < b.nomeColaborador.toLowerCase()) return -1;
-      if (a.nomeColaborador.toLowerCase() > b.nomeColaborador.toLowerCase()) return 1;
+        if (a.nomeColaborador.toLowerCase() < b.nomeColaborador.toLowerCase()) return -1;
+        if (a.nomeColaborador.toLowerCase() > b.nomeColaborador.toLowerCase()) return 1;
 
-      return 0;
-    });
+        return 0;
+      });
   }
 
   toggleDownloadOptions() {
@@ -246,10 +246,10 @@ export class RegistroPontoComponent implements OnInit {
       disableClose: true
     });
 
-    dialogRef.afterClosed().subscribe((resultado: PontoDetalhado) => {
-      if (resultado) {
-        console.log('Dados do registro manual recebidos:', resultado);
-      }
+    dialogRef.afterClosed().subscribe(async (resultado: PontoDetalhado) => {
+      await this.loadEmpresas();
+      await this.loadColaboradores();
+      await this.loadRegistros();
     });
   }
 }

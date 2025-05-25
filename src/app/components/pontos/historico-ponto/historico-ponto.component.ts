@@ -67,7 +67,6 @@ export class HistoricoPontosComponent implements OnInit {
     const colabId = this.colaborador?.id;
     if (colabId)
       this.registros = await this.pontoService.findByColabId(colabId);
-    console.log(this.registros[1].empresaId);
   }
 
   formatarHora(hora?: string): string {

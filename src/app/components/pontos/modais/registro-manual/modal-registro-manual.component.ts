@@ -104,7 +104,6 @@ export class ModalRegistroManualComponent implements OnInit {
   }
 
   get colaboradoresFiltrados(): Colaborador[] {
-    console.log(this.empresaSelecionada)
     if (this.empresaSelecionada) {
       return this.empresaSelecionada.colaboradores ? this.empresaSelecionada.colaboradores : this.colaboradores;
     }
@@ -116,8 +115,7 @@ export class ModalRegistroManualComponent implements OnInit {
   async onConfirmar() {
     try {
       await this.pontoService.add(this.registroData);
-      console.log(this.registroData);
-
+      
       // Exibe o pop-up de sucesso
       await Swal.fire({
         icon: 'success',

@@ -26,7 +26,6 @@ export class AuthService {
     let user: UserLogado = await firstValueFrom(this.http.post<UserLogado>(`${this.apiUrl}/login`, { login, senha }));
 
     sessionStorage.setItem('userId', user.id.toString());
-    console.log(sessionStorage.getItem('userId'))
     return user;
   }
 

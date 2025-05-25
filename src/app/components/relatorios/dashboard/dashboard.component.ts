@@ -71,8 +71,6 @@ export class DashboardComponent implements OnInit {
     this.loadEmpresas();
     this.carregarColaboradoresPorHorario();
 
-
-    console.log(this.empresas)
   }
    async loadEmpresas() {
     this.empresas = await this.empresaService.findAll();
