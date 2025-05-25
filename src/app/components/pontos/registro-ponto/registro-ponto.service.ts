@@ -31,7 +31,10 @@ export class RegistroPontoService {
     ) { }
 
     async findAll(): Promise<PontoDetalhado[]> {
-        return firstValueFrom(this.http.get<PontoDetalhado[]>(`${this.apiUrl}/detalhado`));
+        const registros = await firstValueFrom(this.http.get<PontoDetalhado[]>(`${this.apiUrl}/detalhado`));
+        registros.sort((a, b) => b.data.localeCompare(a.data));
+
+        return registros;
     }
     async find(id: number): Promise<PontoDetalhado> {
         return firstValueFrom(this.http.get<PontoDetalhado>(`${this.apiUrl}/${id}/detalhado`));

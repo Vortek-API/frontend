@@ -19,7 +19,9 @@ export class ModalRegistroManualComponent implements OnInit {
   colaboradores: Colaborador[] = [];
   empresas: Empresa[] = [];
   usuarioLogado: UserLogado | undefined;
-  
+  colaboradorSelecionado: Colaborador | undefined;
+  empresaSelecionada: Empresa | undefined;
+
   registroData: PontoDetalhado = {
     colaboradorId: 0,
     empresaId: 0,
@@ -43,69 +45,86 @@ export class ModalRegistroManualComponent implements OnInit {
 
   async ngOnInit() {
     await this.loadUserLogado();
-    await this.loadColaboradores();
     await this.loadEmpresas();
+    await this.loadColaboradores();
   }
 
   async loadColaboradores() {
-    this.colaboradores = await this.colaboradorService.findAll();
+    const colaboradoresDuplicados = this.empresas.flatMap(e => e.colaboradores ?? []);
+
+    const mapaColaboradores = new Map<number, Colaborador>();
+    colaboradoresDuplicados.forEach(colab => {
+      mapaColaboradores.set(colab.id, colab);
+    });
+
+    this.colaboradores = Array.from(mapaColaboradores.values());
+
+    this.colaboradores.sort((a, b) => a.nome.localeCompare(b.nome));
   }
+
 
   async loadEmpresas() {
     this.empresas = await this.empresaService.findAll();
-    
-    if (this.usuarioLogado && this.usuarioLogado.grupo === 'EMPRESA') {
-      const empresasUsuario = this.usuarioLogado.empresas.map(e => e.id);
-      this.empresas = this.empresas.filter(e => empresasUsuario.includes(e.id));
-    }
   }
 
   async loadUserLogado() {
     this.usuarioLogado = await this.authService.getUserLogado();
   }
 
-  get empresasFiltradas() {
-    if (this.usuarioLogado && this.usuarioLogado.grupo === 'EMPRESA') {
+  get empresasFiltradas(): Empresa[] {
+    if (!this.empresas || this.empresas.length === 0) {
+      return [];
+    }
+
+    if (this.colaboradorSelecionado && this.colaboradorSelecionado.empresas) {
+      const empresasColabIds = this.colaboradorSelecionado.empresas.map(e => e.id);
+
+      if (this.usuarioLogado?.grupo === 'EMPRESA') {
+        const empresasUsuarioIds = this.usuarioLogado.empresas.map(e => e.id);
+
+        return this.empresas.filter(e =>
+          empresasColabIds.includes(e.id) && empresasUsuarioIds.includes(e.id)
+        );
+      }
+      else if (this.usuarioLogado?.grupo === 'ADMIN') {
+        return this.empresas.filter(e => empresasColabIds.includes(e.id));
+      }
+      return this.empresas.filter(e => empresasColabIds.includes(e.id));
+    }
+
+    if (this.usuarioLogado?.grupo === 'EMPRESA') {
       const empresasUsuario = this.usuarioLogado.empresas.map(e => e.id);
       return this.empresas.filter(e => empresasUsuario.includes(e.id));
     }
-    return this.empresas;
-  }
-
-  isFormValid(): boolean {
-    return !!(
-      this.registroData.colaboradorId &&
-      this.registroData.empresaId &&
-      this.registroData.data &&
-      this.registroData.horaEntrada &&
-      this.registroData.horaSaida &&
-      this.registroData.justificativa.trim()
-    );
-  }
-
-  isHorarioValid(): boolean {
-    if (!this.registroData.horaEntrada || !this.registroData.horaSaida) {
-      return true; 
+    else if (this.usuarioLogado?.grupo === 'ADMIN') {
+      return [...this.empresas];
     }
-    
-    const entrada = this.registroData.horaEntrada;
-    const saida = this.registroData.horaSaida;
-    
-    return entrada < saida;
+
+    return [];
   }
+
+  get colaboradoresFiltrados(): Colaborador[] {
+    console.log(this.empresaSelecionada)
+    if (this.empresaSelecionada) {
+      return this.empresaSelecionada.colaboradores ? this.empresaSelecionada.colaboradores : this.colaboradores;
+    }
+
+    return this.colaboradores;
+  }
+
 
   async onConfirmar() {
     try {
       await this.pontoService.add(this.registroData);
       console.log(this.registroData);
-      
+
       // Exibe o pop-up de sucesso
       await Swal.fire({
         icon: 'success',
         title: 'Registro salvo com sucesso!',
         confirmButtonColor: '#3085d6',
       });
-      
+
       this.dialogRef.close(this.registroData);
     } catch (error) {
       // Opcional: tratar erros com outro pop-up
@@ -122,4 +141,32 @@ export class ModalRegistroManualComponent implements OnInit {
   onCancelar() {
     this.dialogRef.close();
   }
+
+  isFormValid(): boolean {
+    return !!(
+      this.registroData.colaboradorId &&
+      this.registroData.empresaId &&
+      this.registroData.data &&
+      this.registroData.horaEntrada &&
+      this.registroData.horaSaida &&
+      this.registroData.justificativa.trim()
+    );
+  }
+
+  async onColaboradorChange() {
+    if (this.registroData.colaboradorId > 0) {
+      this.colaboradorSelecionado = await this.colaboradorService.find(this.registroData.colaboradorId);
+    } else {
+      this.colaboradorSelecionado = undefined;
+    }
+  }
+
+  async onEmpresaChange() {
+    
+    if (this.registroData.empresaId > 0) {
+      this.empresaSelecionada = await this.empresaService.find(this.registroData.empresaId);
+    }
+    else this.empresaSelecionada = undefined;
+  }
+
 }

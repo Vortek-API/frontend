@@ -15,9 +15,10 @@
               class="form-select"
               [(ngModel)]="registroData.colaboradorId"
               name="colaborador"
+              (change)="onColaboradorChange()"
               required>
               <option value="0">Selecione um colaborador</option>
-              <option *ngFor="let colaborador of colaboradores" [value]="colaborador.id">
+              <option *ngFor="let colaborador of colaboradoresFiltrados" [value]="colaborador.id">
                 {{ colaborador.nome }}
               </option>
             </select>
@@ -30,6 +31,7 @@
               class="form-select"
               [(ngModel)]="registroData.empresaId"
               name="empresa"
+              (change)="onEmpresaChange()"
               required>
               <option value="0">Selecione uma empresa</option>
               <option *ngFor="let empresa of empresasFiltradas" [value]="empresa.id">
@@ -76,12 +78,6 @@
           </div>
         </div>
         
-        <div class="form-row" *ngIf="!isHorarioValid()">
-          <div class="error-message">
-            O horário de saída deve ser posterior ao horário de entrada.
-          </div>
-        </div>
-        
         <div class="form-row">
           <div class="form-group full-width">
             <label for="justificativa">Justificativa</label>
@@ -103,7 +99,7 @@
       <button 
         class="btn-confirmar" 
         (click)="onConfirmar()"
-        [disabled]="!isFormValid() || !isHorarioValid()">
+        [disabled]="!isFormValid()">
         Confirmar
       </button>
     </div>

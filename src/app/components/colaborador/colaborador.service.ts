@@ -55,6 +55,7 @@ export class ColaboradorService {
             if (colab.foto) colab.foto = await this.findFoto(colab.id);
         });
 
+        colabs.sort((a, b) => a.nome.localeCompare(b.nome));
         return colabs;
     }
 

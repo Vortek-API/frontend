@@ -52,10 +52,16 @@ export class EmpresaService {
 }
 
     async find(id: number): Promise<Empresa> {
-        return firstValueFrom(this.http.get<Empresa>(`${this.apiUrl}/${id}`));
+        const emp = await firstValueFrom(this.http.get<Empresa>(`${this.apiUrl}/${id}`));
+        emp.colaboradores = await this.findColabs(emp.id);
+
+        return emp;
     }
     async findColabs(id: number): Promise<Colaborador[]> {
-        return firstValueFrom(this.http.get<Colaborador[]>(`${this.apiUrl}/colabs/${id}`));
+        const colabs = await firstValueFrom(this.http.get<Colaborador[]>(`${this.apiUrl}/colabs/${id}`));
+        colabs.sort((a, b) => a.nome.localeCompare(b.nome));
+
+        return colabs;
     }
 
     async add(empresa: Empresa): Promise<Empresa> {
