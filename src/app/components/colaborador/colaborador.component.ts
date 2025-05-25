@@ -85,10 +85,8 @@ export class ColaboradorComponent implements OnInit {
 
   async abrirModalCadastro() {
     const dialogRef = this.dialog.open(ModalCadastroComponent, {});
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadColaboradores(); // Recarrega se houve cadastro
-      }
+    dialogRef.afterClosed().subscribe(async result => {
+        this.colaboradores = await this.colaboradorService.findAll();// Recarrega se houve cadastro
     });
   }
 
@@ -96,9 +94,7 @@ export class ColaboradorComponent implements OnInit {
     // A data já foi setada no clickRow
     const dialogRef = this.dialog.open(ModalEditarDeletarComponent, {});
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
         this.loadColaboradores(); // Recarrega se houve edição/deleção
-      }
     });
   }
 
