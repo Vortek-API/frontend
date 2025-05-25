@@ -10,9 +10,11 @@
           [(ngModel)]="searchTerm"
           (ngModelChange)="onSearchTermChange()"
           required
-        /> <!-- Fechado -->
+        />
+        <!-- Fechado -->
         <span class="search-icon">
-          <img src="assets/icons/personsearch.svg" alt="Ícone de busca" /> <!-- Fechado (implícito, mas ok) -->
+          <img src="assets/icons/personsearch.svg" alt="Ícone de busca" />
+          <!-- Fechado (implícito, mas ok) -->
         </span>
       </div>
     </div>
@@ -24,7 +26,8 @@
         class="date-picker"
         [(ngModel)]="selectedDate"
         (ngModelChange)="onDateChange()"
-      /> <!-- Fechado -->
+      />
+      <!-- Fechado -->
       <div class="ordenar-container">
         <select
           class="ordenar-btn"
@@ -40,7 +43,11 @@
         </select>
       </div>
 
-      <select class="filter-dropdown" [(ngModel)]="selectedEmpresa" (ngModelChange)="onEmpresaChange()">
+      <select
+        class="filter-dropdown"
+        [(ngModel)]="selectedEmpresa"
+        (ngModelChange)="onEmpresaChange()"
+      >
         <option [ngValue]="null">Todas as Empresas</option>
         <option *ngFor="let empresa of empresas" [value]="empresa.id">
           {{ empresa.nome }}
@@ -53,14 +60,16 @@
     </div>
   </div>
   <div class="table-wrapper">
-    
     <div *ngIf="isLoading" class="loading-message">
-            <p>Carregando colaboradores...</p>
-        </div>
+      <p>Carregando colaboradores...</p>
+    </div>
 
     <div *ngIf="hasNoData" class="no-data-message">
-            <p>Nenhum colaborador encontrado com os filtros aplicados ou nenhum cadastrado ainda.</p>
-        </div>
+      <p>
+        Nenhum colaborador encontrado com os filtros aplicados ou nenhum
+        cadastrado ainda.
+      </p>
+    </div>
 
     <table class="attendance-table" *ngIf="!isLoading && !hasNoData">
       <thead>
@@ -75,55 +84,66 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let colaborador of colaboradoesFiltrados | paginate: { itemsPerPage: itensPorPagina, currentPage: paginaAtual }"
-            (click)="clickRow(colaborador)"
-            style="cursor: pointer"
-            >
-            <td class="colab-photo">
+        <tr
+          *ngFor="
+            let colaborador of colaboradoesFiltrados
+              | paginate
+                : { itemsPerPage: itensPorPagina, currentPage: paginaAtual }
+          "
+          (click)="clickRow(colaborador)"
+          style="cursor: pointer"
+        >
+          <td class="colab-photo">
+            <img
+              *ngIf="colaborador.foto; else noPhoto"
+              class="colab-photo"
+              [src]="colaborador.foto | base64Image : 'jpeg'"
+              alt="Foto do colaborador"
+            />
+            <!-- Fechamento corrigido -->
+            <ng-template #noPhoto>
               <img
-                *ngIf="colaborador.foto; else noPhoto"
+                src="assets/icons/noPicture.svg"
+                alt="Sem foto"
                 class="colab-photo"
-                [src]="colaborador.foto | base64Image : 'jpeg'"
-                alt="Foto do colaborador"
-              /> <!-- Fechamento corrigido -->
-              <ng-template #noPhoto>
-                <img
-                  src="assets/icons/noPicture.svg"
-                  alt="Sem foto"
-                  class="colab-photo"
-                  style="border-color: #ef5350"
-                /> <!-- Fechamento corrigido -->
-              </ng-template>
-            </td>
+                style="border-color: #ef5350"
+              />
+              <!-- Fechamento corrigido -->
+            </ng-template>
+          </td>
 
-            <td>{{ colaborador.nome }}</td>
-            <td>{{ formatarCPF(colaborador.cpf) }}</td>
-            <td>{{ colaborador.cargo }}</td>
-            <td class="status-colab">
-              <span
-                class="status"
-                [ngClass]="colaborador.statusAtivo ? 'ativo' : 'inativo'"
-              >
-                {{ colaborador.statusAtivo ? "Ativo" : "Inativo" }}
-              </span>
-            </td>
+          <td>{{ colaborador.nome }}</td>
+          <td>{{ formatarCPF(colaborador.cpf) }}</td>
+          <td>{{ colaborador.cargo }}</td>
+          <td class="status-colab">
+            <span
+              class="status"
+              [ngClass]="colaborador.statusAtivo ? 'ativo' : 'inativo'"
+            >
+              {{ colaborador.statusAtivo ? "Ativo" : "Inativo" }}
+            </span>
+          </td>
 
-            <td>{{ colaborador.horarioEntrada }}</td>
-            <td>{{ colaborador.horarioSaida }}</td>
-          </tr>
+          <td>{{ colaborador.horarioEntrada }}</td>
+          <td>{{ colaborador.horarioSaida }}</td>
+        </tr>
       </tbody>
     </table>
-
-    <div class="pagination-wrapper" *ngIf="!isLoading && !hasNoData && colaboradoesFiltrados.length > itensPorPagina">
-      <pagination-controls
-        (pageChange)="paginaAtual = $event"
-        [responsive]="true"
-        previousLabel="Anterior"
-        nextLabel="Próxima"
-        [autoHide]="true">
-      </pagination-controls> <!-- Tag única -->
+  </div>
+  <div
+    class="pagination-wrapper"
+    *ngIf="
+      !isLoading && !hasNoData && colaboradoesFiltrados.length > itensPorPagina
+    "
+  >
+    <pagination-controls
+      (pageChange)="paginaAtual = $event"
+      [responsive]="true"
+      previousLabel="Anterior"
+      nextLabel="Próxima"
+      [autoHide]="true"
+    >
+    </pagination-controls>
+    <!-- Tag única -->
   </div>
 </div>
-
-<div class="modal-colab-crud"></div>
-

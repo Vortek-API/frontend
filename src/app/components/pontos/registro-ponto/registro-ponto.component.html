@@ -103,7 +103,9 @@
       </tbody>
     </table>
 
-    <!-- Paginação -->
+
+  </div>
+      <!-- Paginação -->
     <div class="pagination-wrapper" *ngIf="registrosFiltrados.length > itensPorPagina">
       <pagination-controls
         (pageChange)="paginaAtual = $event"
@@ -113,5 +115,4 @@
         [autoHide]="true">
       </pagination-controls>
     </div>
-  </div>
 </div>

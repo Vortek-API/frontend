@@ -56,7 +56,7 @@
   font-weight: 600;
   margin-bottom: 1.5rem;
   color: #0C6834;
-  padding-left: 0.5rem;
+
 }
 
 .ponto-title::after {
@@ -64,7 +64,7 @@
   position: absolute;
   left: 0;
   bottom: -0.5rem;
-  width: 10rem;
+  width: 100%;
   height: 0.2rem;
   background-color: #0C6834;
   border-radius: 2px;

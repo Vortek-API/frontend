@@ -20,7 +20,7 @@ export class EmpresaComponent implements OnInit {
   ordenacao: string | null = null;
   selectedDate: string | null = null;
 
-  empresasExibidas: Empresa[] = []; 
+  empresasExibidas: Empresa[] = [];
 
   isLoading: boolean = true; // Para mostrar um carregando enquanto espera os dados
   hasNoData: boolean = false; // Propriedade para controlar a exibição da mensagem
@@ -44,7 +44,7 @@ export class EmpresaComponent implements OnInit {
 
     try {
       const data: Empresa[] = await this.empresaService.findAll();
-      this.empresas = data || []; 
+      this.empresas = data || [];
       this.isLoading = false;
       this.hasNoData = this.empresas.length === 0;
 
@@ -101,11 +101,11 @@ export class EmpresaComponent implements OnInit {
 
   clickRow(empresa: Empresa) {
     const dialogRef = this.dialog.open(ModalEditarDeletarComponent, {
-       data: { empresaSelecionada: empresa }
+      data: { empresaSelecionada: empresa }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) { 
+      if (result) {
         this.carregarEmpresas(); // Recarrega os dados
       }
     });
@@ -127,5 +127,15 @@ export class EmpresaComponent implements OnInit {
   onSearchTermChange(): void {
     this.paginaAtual = 1;
     this.aplicarFiltrosEOrdenacao(); // Aplica filtros ao digitar na busca
+  }
+
+  formatarCNPJ(cnpj?: string): string {
+    if (!cnpj) return '---';
+    const cnpjLimpo = cnpj.replace(/\D/g, '');
+    if (cnpjLimpo.length !== 14) return cnpj;
+    return cnpjLimpo.replace(
+      /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
+      '$1.$2.$3/$4-$5'
+    );
   }
 }
