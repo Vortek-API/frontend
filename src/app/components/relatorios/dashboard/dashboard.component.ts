@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DashboardService, HorasPorEmpresa } from '../dashboard.service';
+import { AtrasadosPorEmpresa, DashboardService, HorasPorEmpresa } from '../dashboard.service';
 import { Empresa, EmpresaService } from '../../empresa/empresa.service';
 import { EChartsOption } from 'echarts';
 import { CommonModule } from '@angular/common';
@@ -39,7 +39,13 @@ export class DashboardComponent implements OnInit {
   carregandoHorasEmpresa = false;
 
   colaboradoresData: ColaboradoresPorEmpresa[] = [];
+  colaboradoresInativosData: ColaboradoresPorEmpresa[] = [];
+  colaboradoresAtrasadosData: AtrasadosPorEmpresa[] = [];
+  colaboradoresSaidaAdiantadaData: AtrasadosPorEmpresa[] = [];
   colaboradoresBarChartOptions: EChartsOption = {};
+  colaboradoresInativosBarChartOptions: EChartsOption = {};
+  colaboradoresAtrasadosBarChartOptions: EChartsOption = {};
+  colaboradoresSaidaAdiantadaBarChartOptions: EChartsOption = {};
   carregandoColaboradores = false;
 
   constructor(
@@ -88,6 +94,51 @@ export class DashboardComponent implements OnInit {
       colaboradoresFiltrados = colaboradoresFiltrados.filter(c => c.colaboradoresAtivos > 0);
       this.colaboradoresData = colaboradoresFiltrados;
       this.montarGraficoColaboradores(colaboradoresFiltrados);
+
+      // Buscar colaboradores Inativos
+      const todosColaboradoresInativos = await this.dashboardService.getColaboradoresInativosPorEmpresa(
+        this.filtros.dataInicio,
+        this.filtros.dataFim
+      );
+      let colaboradoresInativosFiltrados = todosColaboradoresInativos;
+      if (this.selectedEmpresas && this.selectedEmpresas.length > 0) {
+        colaboradoresInativosFiltrados = todosColaboradoresInativos.filter(c => this.selectedEmpresas.includes(c.empresa.id));
+      }
+
+      // Filtrar só quem tem > 0
+      colaboradoresInativosFiltrados = colaboradoresInativosFiltrados.filter(c => c.colaboradoresAtivos > 0);
+      this.colaboradoresInativosData = colaboradoresInativosFiltrados;
+      this.montarGraficoColaboradoresInativos(colaboradoresInativosFiltrados);
+
+      // Buscar colaboradores Atrasados
+      const todosColaboradoresAtrasados = await this.dashboardService.getAtrasadosPorEmpresa(
+        this.filtros.dataInicio,
+        this.filtros.dataFim
+      );
+      let colaboradoresAtrasadosFiltrados = todosColaboradoresAtrasados;
+      if (this.selectedEmpresas && this.selectedEmpresas.length > 0) {
+        colaboradoresAtrasadosFiltrados = todosColaboradoresAtrasados.filter(c => this.selectedEmpresas.includes(c.empresa.id));
+      }
+
+      // Filtrar só quem tem > 0
+      colaboradoresAtrasadosFiltrados = colaboradoresAtrasadosFiltrados.filter(c => c.colaboradoresAtrasados > 0);
+      this.colaboradoresAtrasadosData = colaboradoresAtrasadosFiltrados;
+      this.montarGraficoColaboradoresAtrasados(colaboradoresAtrasadosFiltrados);
+
+      // Buscar colaboradores saindo antes
+      const todosColaboradoresSaidaAdiantada = await this.dashboardService.getSaidaAdiantadaPorEmpresa(
+        this.filtros.dataInicio,
+        this.filtros.dataFim
+      );
+      let colaboradoresSaidaAdiantadaFiltrados = todosColaboradoresSaidaAdiantada;
+      if (this.selectedEmpresas && this.selectedEmpresas.length > 0) {
+        colaboradoresSaidaAdiantadaFiltrados = todosColaboradoresSaidaAdiantada.filter(c => this.selectedEmpresas.includes(c.empresa.id));
+      }
+
+      // Filtrar só quem tem > 0
+      colaboradoresSaidaAdiantadaFiltrados = colaboradoresSaidaAdiantadaFiltrados.filter(c => c.colaboradoresAtrasados > 0);
+      this.colaboradoresSaidaAdiantadaData = colaboradoresSaidaAdiantadaFiltrados;
+      this.montarGraficoColaboradoresSaidaAdiantada(colaboradoresSaidaAdiantadaFiltrados);
     } catch (error) {
       console.error('Erro ao buscar dados do dashboard', error);
     } finally {
@@ -107,7 +158,7 @@ export class DashboardComponent implements OnInit {
       this.horasEmpresaBarChartOptions = {
         title: {
           text: 'Horas Trabalhadas por Empresa (Relação)',
-          left: 'center',
+          left: 'left',
           textStyle: { fontSize: 16, fontWeight: 'bold' }
         },
         tooltip: {
@@ -231,7 +282,7 @@ export class DashboardComponent implements OnInit {
       this.colaboradoresBarChartOptions = {
         title: {
           text: 'Colaboradores Ativos por Empresa (Relação)',
-          left: 'center',
+          left: 'left',
           textStyle: {
             fontSize: 16,
             fontWeight: 'bold'
@@ -314,6 +365,315 @@ export class DashboardComponent implements OnInit {
       };
     }
   }
+  montarGraficoColaboradoresInativos(colaboradores: ColaboradoresPorEmpresa[]) {
+    if (!colaboradores.length) {
+      this.colaboradoresInativosBarChartOptions = {};
+      return;
+    }
+
+    const empresas = colaboradores.map(c => c.empresa.nome);
+    const colaboradoresAtivos = colaboradores.map(c => c.colaboradoresAtivos);
+
+    if (this.tipoGrafico === 'pie') {
+      // Para gráfico de pizza, os dados precisam ser [{value: number, name: string}]
+      const pieData = colaboradores.map(c => ({
+        value: c.colaboradoresAtivos,
+        name: c.empresa.nome
+      }));
+
+      this.colaboradoresInativosBarChartOptions = {
+        title: {
+          text: 'Colaboradores Inativos por Empresa (Relação)',
+          left: 'left',
+          textStyle: {
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}: {c} ({d}%)'  // Mostrar nome, valor e %
+        },
+        series: [
+          {
+            name: 'Colaboradores Inativos',
+            type: 'pie',
+            radius: '50%',
+            data: pieData,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            },
+            label: {
+              formatter: '{b}: ({d}%)'  // Exibir nome, valor e %
+            }
+          }
+        ]
+      };
+    } else {
+      // Para 'bar' e 'line'
+      this.colaboradoresInativosBarChartOptions = {
+        title: {
+          text: 'Colaboradores Inativos por Empresa',
+          left: 'center',
+          textStyle: {
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' }
+        },
+        grid: {
+          left: '5%',
+          right: '5%',
+          bottom: '10%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: empresas,
+          axisLabel: {
+            interval: 0,
+            rotate: 45,
+            fontSize: 12
+          }
+        },
+        yAxis: {
+          type: 'value',
+          name: 'Colaboradores',
+          axisLabel: {
+            formatter: '{value}'
+          }
+        },
+        series: [
+          {
+            name: 'Colaboradores Inativos',
+            type: this.tipoGrafico, // 'bar' ou 'line'
+            data: colaboradoresAtivos,
+            itemStyle: {
+              color: '#7a1818'
+            },
+            label: {
+              show: true,
+              position: 'top'
+            }
+          }
+        ]
+      };
+    }
+  }
+  montarGraficoColaboradoresAtrasados(colaboradores: AtrasadosPorEmpresa[]) {
+    if (!colaboradores.length) {
+      this.colaboradoresAtrasadosBarChartOptions = {};
+      return;
+    }
+
+    const empresas = colaboradores.map(c => c.empresa.nome);
+    const colaboradoresAtrasados = colaboradores.map(c => c.colaboradoresAtrasados);
+
+    console.log(empresas);
+    console.log(colaboradoresAtrasados)
+
+    if (this.tipoGrafico === 'pie') {
+      // Para gráfico de pizza, os dados precisam ser [{value: number, name: string}]
+      const pieData = colaboradores.map(c => ({
+        value: c.colaboradoresAtrasados,
+        name: c.empresa.nome
+      }));
+
+      this.colaboradoresAtrasadosBarChartOptions = {
+        title: {
+          text: 'Entrada Atrasada de Colaboradores por Empresa (Relação)',
+          left: 'left',
+          textStyle: {
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}: ({d}%)'  // Mostrar nome, valor e %
+        },
+        series: [
+          {
+            name: 'Colaboradores Atrasados',
+            type: 'pie',
+            radius: '50%',
+            data: pieData,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            },
+            label: {
+              formatter: '{b}: ({d}%)'  // Exibir nome, valor e %
+            }
+          }
+        ]
+      };
+    } else {
+      // Para 'bar' e 'line'
+      this.colaboradoresAtrasadosBarChartOptions = {
+        title: {
+          text: 'Entrada Atrasada de Colaboradores por Empresa',
+          left: 'center',
+          textStyle: {
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' }
+        },
+        grid: {
+          left: '5%',
+          right: '5%',
+          bottom: '10%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: empresas,
+          axisLabel: {
+            interval: 0,
+            rotate: 45,
+            fontSize: 12
+          }
+        },
+        yAxis: {
+          type: 'value',
+          name: 'Colaboradores',
+          axisLabel: {
+            formatter: '{value}'
+          }
+        },
+        series: [
+          {
+            name: 'Colaboradores Atrasados',
+            type: this.tipoGrafico, // 'bar' ou 'line'
+            data: colaboradoresAtrasados,
+            itemStyle: {
+              color: '#d15c21'
+            },
+            label: {
+              show: true,
+              position: 'top'
+            }
+          }
+        ]
+      };
+    }
+  }
+  montarGraficoColaboradoresSaidaAdiantada(colaboradores: AtrasadosPorEmpresa[]) {
+    if (!colaboradores.length) {
+      this.colaboradoresSaidaAdiantadaBarChartOptions = {};
+      return;
+    }
+
+    const empresas = colaboradores.map(c => c.empresa.nome);
+    const colaboradoresSaidaAdiantada = colaboradores.map(c => c.colaboradoresAtrasados);
+
+    if (this.tipoGrafico === 'pie') {
+      // Para gráfico de pizza, os dados precisam ser [{value: number, name: string}]
+      const pieData = colaboradores.map(c => ({
+        value: c.colaboradoresAtrasados,
+        name: c.empresa.nome
+      }));
+
+      this.colaboradoresSaidaAdiantadaBarChartOptions = {
+        title: {
+          text: 'Saída Adiantada de Colaboradores por Empresa (Relação)',
+          left: 'left',
+          textStyle: {
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}: ({d}%)'  // Mostrar nome, valor e %
+        },
+        series: [
+          {
+            name: 'Colaboradores Adiantados',
+            type: 'pie',
+            radius: '50%',
+            data: pieData,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            },
+            label: {
+              formatter: '{b}: ({d}%)'  // Exibir nome, valor e %
+            }
+          }
+        ]
+      };
+    } else {
+      // Para 'bar' e 'line'
+      this.colaboradoresSaidaAdiantadaBarChartOptions = {
+        title: {
+          text: 'Saída Adiantada de Colaboradores por Empresa',
+          left: 'center',
+          textStyle: {
+            fontSize: 16,
+            fontWeight: 'bold'
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' }
+        },
+        grid: {
+          left: '5%',
+          right: '5%',
+          bottom: '10%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: empresas,
+          axisLabel: {
+            interval: 0,
+            rotate: 45,
+            fontSize: 12
+          }
+        },
+        yAxis: {
+          type: 'value',
+          name: 'Colaboradores',
+          axisLabel: {
+            formatter: '{value}'
+          }
+        },
+        series: [
+          {
+            name: 'Colaboradores Adiantados',
+            type: this.tipoGrafico, // 'bar' ou 'line'
+            data: colaboradoresSaidaAdiantada,
+            itemStyle: {
+              color: '#9e4e26'
+            },
+            label: {
+              show: true,
+              position: 'top'
+            }
+          }
+        ]
+      };
+    }
+  }
 
   private tempoParaDecimal(tempo: string): number {
     const [h, m, s] = tempo.split(':').map(Number);
@@ -324,9 +684,15 @@ export class DashboardComponent implements OnInit {
     this.buscarDados();
   }
   limparFiltros() {
-    this.filtros.dataInicio='';
-    this.filtros.dataFim='';
-    this.selectedEmpresas=[];
+    this.filtros.dataInicio = '';
+    this.filtros.dataFim = '';
+    this.selectedEmpresas = [];
     this.onFiltroChange();
+  }
+  onTipoGraficoChange() {
+    this.montarGraficoHorasEmpresa(this.horasEmpresaData);
+    this.montarGraficoColaboradores(this.colaboradoresData);
+    this.montarGraficoColaboradoresInativos(this.colaboradoresInativosData);
+    this.montarGraficoColaboradoresAtrasados(this.colaboradoresAtrasadosData);
   }
 }

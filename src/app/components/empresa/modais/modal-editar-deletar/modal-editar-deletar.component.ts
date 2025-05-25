@@ -51,9 +51,6 @@ export class ModalEditarDeletarComponent implements OnInit {
 
     if (confirmacao.isConfirmed) {
       try {
-        console.log(this.empresaSelecionada);
-        console.log(this.empresaSelecionada.colaboradores?.length);
-
         if (this.empresaSelecionada.colaboradores && this.empresaSelecionada.colaboradores?.length > 0) {
           const confirmacaoRegistro = await Swal.fire({
             title: 'Tem certeza?',
