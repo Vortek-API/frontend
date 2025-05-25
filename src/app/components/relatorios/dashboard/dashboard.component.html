@@ -5,28 +5,26 @@
     </div>
 
     <div class="left-controls">
-      <input type="date" class="date-picker" [(ngModel)]="filtros.dataInicio" (ngModelChange)="onFiltroChange()" />
-      <input type="date" class="date-picker" [(ngModel)]="filtros.dataFim" (ngModelChange)="onFiltroChange()" />
+      <input
+        type="date"
+        class="date-picker"
+        [(ngModel)]="filtros.dataInicio"
+        (ngModelChange)="onFiltroChange()"
+      />
+      <input
+        type="date"
+        class="date-picker"
+        [(ngModel)]="filtros.dataFim"
+        (ngModelChange)="onFiltroChange()"
+      />
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Empresas</mat-label>
-        <mat-select [(ngModel)]="selectedEmpresas" multiple (ngModelChange)="onFiltroChange()" placeholder="Selecione"
-          panelClass="empresas-select-panel">
+      <button class="add-employee-btn" (click)="abrirModal()">
+        Abrir Filtros
+      </button>
 
-          <mat-option *ngFor="let empresa of empresas" [value]="empresa.id">
-            {{ empresa.nome }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <select class="filter-dropdown" [(ngModel)]="tipoGrafico" (ngModelChange)="onTipoGraficoChange()">
-        <option [ngValue]="'bar'">Barraㅤ</option>
-        <option [ngValue]="'pie'">Pizzaㅤ</option>
-        <option [ngValue]="'line'">Linhaㅤ</option>
-      </select>
-
-      <button class="add-employee-btn" (click)="limparFiltros()">Limpar Filtros</button>
-      
+      <button class="add-employee-btn" (click)="limparFiltros()">
+        Limpar Filtros
+      </button>
     </div>
   </div>
 
@@ -45,5 +43,52 @@
   <div class="loading-container" *ngIf="carregandoHorasEmpresa">
     <div class="spinner"></div>
     <p>Carregando dados...</p>
+  </div>
+</div>
+
+<!-- Modal dos filtros -->
+<div class="container-filtros" *ngIf="mostrarModal">
+  <div class="modal-filtros">
+    <h3>Filtros</h3>
+    <h4>Selecione as empresas que deseja vizualizar:</h4>
+
+    <div class="buttons-controls">
+      <button class="btn-primary" (click)="selecionarTodasEmpresas()">
+        Selecionar Todas
+      </button>
+      <button class="btn-cancel" (click)="desmarcarTodasEmpresas()">
+        Desmarcar Todas
+      </button>
+    </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Empresas</mat-label>
+      <mat-select
+        [(ngModel)]="selectedEmpresas"
+        multiple
+        (ngModelChange)="onFiltroChange()"
+        panelClass="empresas-select-panel"
+      >
+        <mat-option *ngFor="let empresa of empresas" [value]="empresa.id">
+          {{ empresa.nome }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="optionGrafic">
+      <mat-form-field appearance="outline" class="filter-dropdown1">
+        <mat-label>Tipo de Gráfico</mat-label>
+        <mat-select
+          [(ngModel)]="tipoGrafico"
+          (ngModelChange)="onFiltroChange()"
+        >
+          <mat-option value="bar">Barra</mat-option>
+          <mat-option value="pie">Pizza</mat-option>
+          <mat-option value="line">Linha</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="buttons-controls">
+      <button class="btn-cancel" (click)="fecharModal()">Fechar</button>
+    </div>
   </div>
 </div>
