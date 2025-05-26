@@ -503,9 +503,6 @@ desmarcarTodasEmpresas() {
     const empresas = colaboradores.map(c => c.empresa.nome);
     const colaboradoresAtrasados = colaboradores.map(c => c.colaboradoresAtrasados);
 
-    console.log(empresas);
-    console.log(colaboradoresAtrasados)
-
     if (this.tipoGrafico === 'pie') {
       // Para gráfico de pizza, os dados precisam ser [{value: number, name: string}]
       const pieData = colaboradores.map(c => ({

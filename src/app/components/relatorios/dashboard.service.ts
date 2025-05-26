@@ -29,8 +29,18 @@ export class DashboardService {
     private pontoService: RegistroPontoService
   ) { }
 
+  empresas: Empresa[] = [];
+
+  async loadEmpresas(): Promise<Empresa[]> {
+    if (this.empresas.length == 0) 
+      {
+        this.empresas = await this.empresaService.findAll();
+      }
+    return this.empresas;
+  }
+
   async getHorasPorEmpresa(dataInicio: string, dataFim: string): Promise<HorasPorEmpresa[]> {
-    const empresas = await this.empresaService.findAll();
+    const empresas = await this.loadEmpresas();
     const resultado: HorasPorEmpresa[] = [];
 
     for (const empresa of empresas) {
@@ -49,7 +59,7 @@ export class DashboardService {
     return resultado;
   }
   async getColaboradoresAtivosPorEmpresa(dataInicio: string, dataFim: string): Promise<ColaboradoresPorEmpresa[]> {
-    const empresas = await this.empresaService.findAll();
+    const empresas = await this.loadEmpresas();
     const resultado: ColaboradoresPorEmpresa[] = [];
 
     for (const empresa of empresas) {
@@ -73,7 +83,7 @@ export class DashboardService {
     return resultado;
   }
   async getColaboradoresInativosPorEmpresa(dataInicio: string, dataFim: string): Promise<ColaboradoresPorEmpresa[]> {
-    const empresas = await this.empresaService.findAll();
+    const empresas = await this.loadEmpresas();
     const resultado: ColaboradoresPorEmpresa[] = [];
 
     for (const empresa of empresas) {
@@ -97,7 +107,7 @@ export class DashboardService {
     return resultado;
   }
   async getAtrasadosPorEmpresa(dataInicio: string, dataFim: string): Promise<AtrasadosPorEmpresa[]> {
-    const empresas = await this.empresaService.findAll();
+    const empresas = await this.loadEmpresas();
     const resultado: AtrasadosPorEmpresa[] = [];
 
     for (const empresa of empresas) {
@@ -119,7 +129,7 @@ export class DashboardService {
     return resultado;
   }
   async getSaidaAdiantadaPorEmpresa(dataInicio: string, dataFim: string): Promise<AtrasadosPorEmpresa[]> {
-    const empresas = await this.empresaService.findAll();
+    const empresas = await this.loadEmpresas();
     const resultado: AtrasadosPorEmpresa[] = [];
 
     for (const empresa of empresas) {
