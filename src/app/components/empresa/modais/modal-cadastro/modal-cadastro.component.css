@@ -119,3 +119,10 @@ form {
   display: flex;
   flex-direction: column;
 }
+
+.error-message {
+    color: #f44336; /* Vermelho vibrante */
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+    font-weight: 500;
+}

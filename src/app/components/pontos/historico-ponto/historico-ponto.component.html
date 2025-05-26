@@ -1,0 +1,107 @@
+<div class="ponto-container">
+  <div class="ponto-content">
+    <!-- Coluna do Perfil do Colaborador -->
+    <div class="perfil-column">
+      <div class="perfil-colaborador">
+        <div class="form-group avatar-group">
+
+          <div class="avatar" *ngIf="imagemPreview; else noImage">
+            <img [src]="imagemPreview" class="avatar-img" />
+          </div>
+
+          <ng-template #noImage>
+            <div class="avatar" [ngStyle]="{'background-image': 'url(assets/images/empty.webp)'}"></div>
+          </ng-template>
+
+        </div>
+        <h2 class="perfil-nome">{{ colaborador?.nome }}</h2>
+        <p class="perfil-cargo">{{ colaborador?.cargo }}</p>
+
+        <div class="perfil-info">
+          <div class="info-item">
+            <span class="info-label">CPF:</span>
+            <span class="info-valor">{{ formatarCPF(colaborador?.cpf) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Admissão:</span>
+            <span class="info-valor">{{ colaborador?.dataCadastro | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Jornada:</span>
+            <span class="info-valor">
+              {{ formatarHora(colaborador?.horarioEntrada) }} - {{ formatarHora(colaborador?.horarioSaida) }}
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Status:</span>
+            <span class="info-valor" [ngClass]="colaborador?.statusAtivo ? 'status ativo' : 'status inativo'">
+              {{ colaborador?.statusAtivo ? "Ativo" : "Inativo" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coluna do Histórico de Pontos -->
+    <div class="historico-column">
+      <div class="ponto-header">
+        <div class="right-controls">
+          <h1 class="ponto-title">Histórico de Pontos</h1>
+          <div class="ponto-actions">
+            <div class="search-container">
+              <input type="text" class="search-input" placeholder="Buscar por nome ou CPF" [(ngModel)]="searchTerm"
+                required />
+              <span class="search-icon">
+                <img src="assets/icons/personsearch.svg" alt="Ícone de busca" />
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="left-controls">
+          De: 
+          <input type="date" class="date-picker" [(ngModel)]="filtros.dataInicio"/>
+          Até:
+          <input type="date" class="date-picker" [(ngModel)]="filtros.dataFim"/>
+          <div class="ponto-filtros">
+            <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
+              <option [ngValue]="null">Todas</option>
+              <option *ngFor="let empresa of empresas" [value]="empresa.id">
+                {{ empresa.nome }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="attendance-table">
+          <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>Data</th>
+              <th>Entrada</th>
+              <th>Saída</th>
+              <th>Tempo Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let registro of registrosFiltrados | paginate: { itemsPerPage: itensPorPagina, currentPage: paginaAtual }">
+              <td>{{ getNomeEmpresa(registro.empresaId) }}</td>
+              <td>{{ registro.data | date:'dd/MM/yyyy' }}</td>
+              <td>{{ registro.horaEntrada }} </td>
+              <td>{{ registro.horaSaida }} </td>
+              <td>{{ registro.tempoTotal }} </td>
+            </tr>
+          </tbody>
+        </table>
+        <pagination-controls
+          (pageChange)="paginaAtual = $event"
+          [responsive]="true"
+          previousLabel="Anterior"
+          nextLabel="Próxima"
+          [autoHide]="true">
+        </pagination-controls>
+      </div>
+    </div>
+  </div>
+</div>

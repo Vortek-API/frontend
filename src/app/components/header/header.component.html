@@ -12,12 +12,21 @@
     </div>
   </div>
 
-    <div class="date-time">
-      <div>
-        <span>{{ time }}</span>
-      </div>
-      <div>
-        <span>{{ date }}</span>
-      </div>
+
+  @if (isAdmin) {
+  <div class="user-content">
+    <button class="btnUsers" (click)="openModalUsers()">
+      <img src="/assets/icons/usersHeader.svg" alt="Users" />
+    </button>
+  </div>
+  }
+  
+  <div class="date-time">
+    <div>
+      <span>{{ time }}</span>
     </div>
+    <div>
+      <span>{{ date }}</span>
+    </div>
+  </div>
 </nav>

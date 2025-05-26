@@ -1,20 +1,36 @@
-        <div class="container">
-            <div class="login-box">
-                <h2>Login</h2>
-                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-                    <div class="input-box">
-                        <input id="login" type="text" formControlName="login" required maxlength="18" (input)="formatCnpjInput($event)">
-                        <label>CNPJ</label>
-                    </div>
-                    <div class="input-box">
-                        <input type="password" formControlName="senha" required>
-                        <label>Senha</label>
-                    </div>
-                    <button type="submit" class="btn" [disabled]="loginForm.invalid">Login</button>
-                    <div class="forgot-password">
-                        <a href="#">Problemas com a senha?</a>
-                    </div>
-                </form>
-            </div>
+<div class="container">
+  <div class="login-box">
+    <h2>Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="input-box">
+        <input
+          id="login"
+          type="text"
+          formControlName="login"
+          required
+          maxlength="255"
+          (input)="formatEmailInput($event)"
+        />
+        <div *ngIf="loginForm.get('login')?.invalid && (loginForm.get('login')?.dirty || loginForm.get('login')?.touched)" class="error-message">
+          <div *ngIf="loginForm.get('login')?.errors?.['email']">
+            Por favor, insira um email válido.
+          </div>
         </div>
- 
+        <label>Usuário</label>
+      </div>
+      <div class="input-box">
+        <input type="password" formControlName="senha" required />
+        <label>Senha</label>
+        <div *ngIf="loginForm.get('senha')?.invalid && (loginForm.get('senha')?.dirty || loginForm.get('senha')?.touched)" class="error-message">
+          Por favor, insira um email válido.
+        </div>
+      </div>
+      <button type="submit" class="btn" [disabled]="loginForm.invalid">
+        Login
+      </button>
+      <div class="forgot-password">
+        <a href="/reset-senha-request">Problemas com a senha? </a>
+      </div>
+    </form>
+  </div>
+</div>

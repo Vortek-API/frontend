@@ -5,86 +5,137 @@ import { ModalCadastroComponent } from './modais/modal-cadastro/modal-cadastro.c
 import { MatDialog } from '@angular/material/dialog';
 import { ModalEditarDeletarComponent } from './modais/modal-editar-deletar/modal-editar-deletar.component';
 import { FormsModule } from '@angular/forms';
+import { NgxPaginationModule } from 'ngx-pagination';
+
 @Component({
   selector: 'app-empresa',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgxPaginationModule],
   templateUrl: './empresa.component.html',
   styleUrls: ['./empresa.component.css']
 })
 export class EmpresaComponent implements OnInit {
   empresas: Empresa[] = [];
   searchTerm: string = '';
-  ordenacaoSelecionada: string | null = null;
-  selectedDate: string | null = null;
   ordenacao: string | null = null;
+  selectedDate: string | null = null;
 
+  empresasExibidas: Empresa[] = [];
+
+  isLoading: boolean = true; // Para mostrar um carregando enquanto espera os dados
+  hasNoData: boolean = false; // Propriedade para controlar a exibição da mensagem
+
+  itensPorPagina = 20;
+  paginaAtual = 1;
 
   constructor(
     private empresaService: EmpresaService,
     public dialog: MatDialog
   ) { }
 
-  async ngOnInit() {
-    this.loadEmpresas();
+  ngOnInit(): void {
+    this.carregarEmpresas();
   }
 
-  openModalCadastro() {
-    this.dialog.open(ModalCadastroComponent, {
-    });
+  async carregarEmpresas(): Promise<void> {
+    this.isLoading = true;
+    this.hasNoData = false;
+    this.paginaAtual = 1;
 
-    this.dialog.afterAllClosed.subscribe(async () => {
-      await this.loadEmpresas();
-      // setTimeout(async () => {
-      //   await this.loadEmpresas();
-      // }, 2000);
-    });
-  }
-  openModalEditar() {
-    this.dialog.open(ModalEditarDeletarComponent, {
-    });
+    try {
+      const data: Empresa[] = await this.empresaService.findAll();
+      this.empresas = data || [];
+      this.isLoading = false;
+      this.hasNoData = this.empresas.length === 0;
 
-    this.dialog.afterAllClosed.subscribe(async () => {
-      await this.loadEmpresas();
-      // setTimeout(async () => {
-      //   await this.loadEmpresas();
-      // }, 2000);
-    });
-  }
-  async loadEmpresas() {
-    this.empresas = await this.empresaService.findAll();
-  }
-  clickRow(empresa: Empresa) {
-    this.empresaService.setData(empresa, this.empresas);
-    this.openModalEditar();
-  }
-  get empresasFiltradas(): Empresa[] {
-    let filtradas = this.empresas.filter(empresa =>
-      empresa.nome.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
+      this.aplicarFiltrosEOrdenacao();
 
-    if (this.ordenacao === 'alfab') {
-      filtradas.sort((a, b) => a.nome.localeCompare(b.nome));
+    } catch (error) {
+      console.error('Erro ao carregar empresas:', error);
+      this.empresas = []; // Limpa a lista em caso de erro
+      this.empresasExibidas = []; // Limpa também a lista exibida
+      this.isLoading = false;
+      this.hasNoData = true; // Exibe a mensagem de "sem dados" ou "erro ao carregar"
+    }
+  }
+
+  aplicarFiltrosEOrdenacao(): void {
+    let filtradas = [...this.empresas]; // Começa com a lista completa
+
+    // Aplica filtro por termo de busca
+    if (this.searchTerm) {
+      filtradas = filtradas.filter(empresa =>
+        empresa.nome.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        empresa.cnpj.includes(this.searchTerm) // Supondo que cnpj é string
+      );
     }
 
-    if (this.ordenacao === 'cadastro' && this.selectedDate) {
+    // Aplica ordenação
+    if (this.ordenacao === 'alfab') {
+      filtradas.sort((a, b) => a.nome.localeCompare(b.nome));
+    } else if (this.ordenacao === 'cadastro' && this.selectedDate) {
+      // Filtrar por data de cadastro
       filtradas = filtradas.filter(empresa => {
-        const dataEmpresa = empresa.dataCadastro?.split('T')[0]; // pega só "2025-04-14"
+        // Assegura que dataCadastro existe e é uma string antes de tentar split
+        const dataEmpresa = empresa.dataCadastro ? new Date(empresa.dataCadastro).toISOString().split('T')[0] : null;
         return dataEmpresa === this.selectedDate;
       });
     }
-    return filtradas;
+
+    this.empresasExibidas = filtradas; // Atualiza a lista que será usada no *ngFor
   }
+
+  async loadEmpresas() {
+    this.empresas = await this.empresaService.findAll();
+  }
+
+  openModalCadastro() {
+    this.dialog.open(ModalCadastroComponent, {});
+    this.dialog.afterAllClosed.subscribe(() => this.carregarEmpresas());
+  }
+
+  openModalEditar() {
+    this.dialog.open(ModalEditarDeletarComponent, {});
+    this.dialog.afterAllClosed.subscribe(() => this.carregarEmpresas());
+  }
+
+  clickRow(empresa: Empresa) {
+    const dialogRef = this.dialog.open(ModalEditarDeletarComponent, {
+      data: { empresaSelecionada: empresa }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.carregarEmpresas(); // Recarrega os dados
+      }
+    });
+  }
+
   handleOrdenacaoChange() {
-    // Resetar data se saiu da ordenação por cadastro
+    this.paginaAtual = 1;
+
     if (this.ordenacao !== 'cadastro') {
       this.selectedDate = null;
     }
 
-    // Se limpou os filtros
     if (!this.ordenacao) {
       this.selectedDate = null;
       this.searchTerm = '';
     }
+  }
+
+  onSearchTermChange(): void {
+    this.paginaAtual = 1;
+    this.aplicarFiltrosEOrdenacao(); // Aplica filtros ao digitar na busca
+  }
+
+  formatarCNPJ(cnpj?: string): string {
+    if (!cnpj) return '---';
+    const cnpjLimpo = cnpj.replace(/\D/g, '');
+    if (cnpjLimpo.length !== 14) return cnpj;
+    return cnpjLimpo.replace(
+      /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
+      '$1.$2.$3/$4-$5'
+    );
   }
 }

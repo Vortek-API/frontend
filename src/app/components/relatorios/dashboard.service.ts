@@ -1,62 +1,170 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { Empresa, EmpresaService } from '../empresa/empresa.service';
+import { RegistroPontoService } from '../pontos/registro-ponto/registro-ponto.service';
+
+export interface HorasPorEmpresa {
+  empresa: Empresa;
+  tempo: string;
+}
+export interface ColaboradoresPorEmpresa {
+  empresa: Empresa;
+  colaboradoresAtivos: number;
+  data: string;
+}
+export interface AtrasadosPorEmpresa {
+  empresa: Empresa;
+  colaboradoresAtrasados: number;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
-  private apiUrl = 'http://localhost:8080/api/dashboard';
-  private pontoApiUrl = 'http://localhost:8080/ponto';
+  constructor(
+    private http: HttpClient,
+    private empresaService: EmpresaService,
+    private pontoService: RegistroPontoService
+  ) { }
 
-  constructor(private http: HttpClient) {}
+  empresas: Empresa[] = [];
 
-  getResumoDashboard(filtros?: any): Observable<any> {
-    let params = new HttpParams();
-    
-    if (filtros) {
-      if (filtros.empresa) params = params.append('empresa', filtros.empresa);
-      if (filtros.dataInicio) params = params.append('dataInicio', filtros.dataInicio);
-      if (filtros.dataFim) params = params.append('dataFim', filtros.dataFim);
-      if (filtros.status) params = params.append('status', filtros.status);
-      if (filtros.categoria) params = params.append('categoria', filtros.categoria);
-      if (filtros.ordenacao) params = params.append('ordenacao', filtros.ordenacao);
+  async loadEmpresas(): Promise<Empresa[]> {
+    if (this.empresas.length == 0) 
+      {
+        this.empresas = await this.empresaService.findAll();
+      }
+    return this.empresas;
+  }
+
+  async getHorasPorEmpresa(dataInicio: string, dataFim: string): Promise<HorasPorEmpresa[]> {
+    const empresas = await this.loadEmpresas();
+    const resultado: HorasPorEmpresa[] = [];
+
+    for (const empresa of empresas) {
+      const registros = await this.pontoService.findByEmpIdIntervData(empresa.id, dataInicio, dataFim);
+
+      const totalSegundos = registros.reduce((acc, registro) => {
+        return acc + (registro.tempoTotal ? this.tempoStringParaSegundos(registro.tempoTotal) : 0);
+      }, 0);
+
+      resultado.push({
+        empresa,
+        tempo: this.segundosParaTempoString(totalSegundos)
+      });
     }
-    
-    return this.http.get(`${this.apiUrl}/resumo`, { params });
+
+    return resultado;
   }
-  
-  getHorasPorEmpresa(dataInicio?: string, dataFim?: string): Observable<any[]> {
-    let params = new HttpParams();
-    
-    if (dataInicio) params = params.append('dataInicio', dataInicio);
-    if (dataFim) params = params.append('dataFim', dataFim);
-    
-    return this.http.get<any[]>(`${this.pontoApiUrl}/horas-por-empresa`, { params });
-  }
-  
-  getEmpresas(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/empresas`);
-  }
-  
-  getStatus(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/status`);
-  }
-  
-  exportarRelatorio(filtros?: any): Observable<Blob> {
-    let params = new HttpParams();
-    
-    if (filtros) {
-      if (filtros.empresa) params = params.append('empresa', filtros.empresa);
-      if (filtros.dataInicio) params = params.append('dataInicio', filtros.dataInicio);
-      if (filtros.dataFim) params = params.append('dataFim', filtros.dataFim);
-      if (filtros.status) params = params.append('status', filtros.status);
-      if (filtros.categoria) params = params.append('categoria', filtros.categoria);
+  async getColaboradoresAtivosPorEmpresa(dataInicio: string, dataFim: string): Promise<ColaboradoresPorEmpresa[]> {
+    const empresas = await this.loadEmpresas();
+    const resultado: ColaboradoresPorEmpresa[] = [];
+
+    for (const empresa of empresas) {
+      const registros = await this.empresaService.findColabs(empresa.id);
+
+      const colaboradoresUnicos = new Set<number>();
+
+      registros.forEach(registro => {
+        if (registro.id && registro.statusAtivo) {
+          colaboradoresUnicos.add(registro.id);
+        }
+      });
+
+      resultado.push({
+        empresa,
+        colaboradoresAtivos: colaboradoresUnicos.size,
+        data: `${dataInicio} até ${dataFim}`
+      });
     }
-    
-    return this.http.get(`${this.apiUrl}/exportar`, { 
-      params, 
-      responseType: 'blob' 
-    });
+
+    return resultado;
+  }
+  async getColaboradoresInativosPorEmpresa(dataInicio: string, dataFim: string): Promise<ColaboradoresPorEmpresa[]> {
+    const empresas = await this.loadEmpresas();
+    const resultado: ColaboradoresPorEmpresa[] = [];
+
+    for (const empresa of empresas) {
+      const registros = await this.empresaService.findColabs(empresa.id);
+
+      const colaboradoresUnicos = new Set<number>();
+
+      registros.forEach(registro => {
+        if (registro.id && !registro.statusAtivo) {
+          colaboradoresUnicos.add(registro.id);
+        }
+      });
+
+      resultado.push({
+        empresa,
+        colaboradoresAtivos: colaboradoresUnicos.size,
+        data: `${dataInicio} até ${dataFim}`
+      });
+    }
+
+    return resultado;
+  }
+  async getAtrasadosPorEmpresa(dataInicio: string, dataFim: string): Promise<AtrasadosPorEmpresa[]> {
+    const empresas = await this.loadEmpresas();
+    const resultado: AtrasadosPorEmpresa[] = [];
+
+    for (const empresa of empresas) {
+      const registros = await this.pontoService.findByEmpIdIntervData(empresa.id, dataInicio, dataFim);
+      const colaboradoresUnicos = new Set<number>();
+
+      await Promise.all(registros.map(async (registro) => {
+        const colab = await this.pontoService.find(registro.colaboradorId);
+        if (this.stringToDate(registro.horaEntrada) > this.stringToDate(colab.horaEntrada) && registro.id) {
+          colaboradoresUnicos.add(registro.id);
+        }
+      }));
+
+      resultado.push({
+        empresa,
+        colaboradoresAtrasados: colaboradoresUnicos.size,
+      });
+    }
+    return resultado;
+  }
+  async getSaidaAdiantadaPorEmpresa(dataInicio: string, dataFim: string): Promise<AtrasadosPorEmpresa[]> {
+    const empresas = await this.loadEmpresas();
+    const resultado: AtrasadosPorEmpresa[] = [];
+
+    for (const empresa of empresas) {
+      const registros = await this.pontoService.findByEmpIdIntervData(empresa.id, dataInicio, dataFim);
+      const colaboradoresUnicos = new Set<number>();
+
+      await Promise.all(registros.map(async (registro) => {
+        const colab = await this.pontoService.find(registro.colaboradorId);
+        if (this.stringToDate(registro.horaSaida) < this.stringToDate(colab.horaSaida) && registro.id) {
+          colaboradoresUnicos.add(registro.id);
+        }
+      }));
+
+      resultado.push({
+        empresa,
+        colaboradoresAtrasados: colaboradoresUnicos.size,
+      });
+    }
+    return resultado;
+  }
+
+
+  private tempoStringParaSegundos(tempo: string): number {
+    const [horas, minutos, segundos] = tempo.split(':').map(Number);
+    return horas * 3600 + minutos * 60 + segundos;
+  }
+
+  private segundosParaTempoString(totalSegundos: number): string {
+    const horas = Math.floor(totalSegundos / 3600);
+    const minutos = Math.floor((totalSegundos % 3600) / 60);
+    const segundos = totalSegundos % 60;
+
+    return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+  }
+  private stringToDate(hora: string): Date {
+    return new Date(`1970-01-01T${hora}Z`);
   }
 }

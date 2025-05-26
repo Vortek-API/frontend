@@ -14,8 +14,25 @@ export interface Colaborador {
     horarioSaida: string;
     statusAtivo: boolean;
     dataCadastro?: string;
-    foto?: string | Uint8Array;
+    foto?: string | Uint8Array | null;
     empresas?: Empresa[];
+}
+
+export interface ColaboradorDto {
+    id: number;
+    cpf: string;
+    nome: string;
+    cargo: string;
+    horarioEntrada: string;
+    horarioSaida: string;
+    statusAtivo: boolean;
+    dataCadastro?: string;
+    foto?: string | Uint8Array | null;
+}
+
+export interface ColaboradorRequest {
+  colaborador: ColaboradorDto; 
+  empresasId: number[];  
 }
 
 @Injectable({
@@ -38,20 +55,26 @@ export class ColaboradorService {
             if (colab.foto) colab.foto = await this.findFoto(colab.id);
         });
 
+        colabs.sort((a, b) => a.nome.localeCompare(b.nome));
         return colabs;
     }
 
     async find(id: number): Promise<Colaborador> {
-        return firstValueFrom(this.http.get<Colaborador>(`${this.apiUrl}/${id}`));
+        const colab = await firstValueFrom(this.http.get<Colaborador>(`${this.apiUrl}/${id}`));
+        if (colab.foto) colab.foto = await this.findFoto(colab.id);
+
+        return colab;
     }
 
-    async add(colaborador: Colaborador): Promise<Colaborador> {
-        const payload = {
-            colaborador: colaborador,
-            empresasId: colaborador.empresas?.map(e => e.id) ?? []
+    async add(colaboradorData: ColaboradorDto, empresasIdArray : number[]): Promise<ColaboradorDto> {
+        //const empresasIdArray = empresasAssociadas?.map(e => e.id) ?? [];
+
+        const requestPayload: ColaboradorRequest = {
+            colaborador: colaboradorData, 
+            empresasId: empresasIdArray   
         };
 
-        return firstValueFrom(this.http.post<Colaborador>(this.apiUrl, payload, {
+        return firstValueFrom(this.http.post<ColaboradorDto>(this.apiUrl, requestPayload, {
             headers: this.jsonHeaders
         }));
 
@@ -62,7 +85,7 @@ export class ColaboradorService {
             colaborador: colaborador,
             empresasId: colaborador.empresas?.map(e => e.id) ?? []
         };
-        colaborador.empresas = undefined;
+        //colaborador.empresas = undefined;
         return firstValueFrom(this.http.put<Colaborador>(`${this.apiUrl}/${id}`, payload, {
             headers: this.jsonHeaders
         }));

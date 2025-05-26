@@ -1,7 +1,5 @@
 <div class="container">
   <div class="header-actions">
-    <!-- <div class="actions-container"> -->
-
     <div class="right-controls">
       <h1 id="titleEmpresa">Empresas</h1>
       <div class="search-container">
@@ -10,63 +8,88 @@
           class="search-input"
           placeholder="Buscar empresa..."
           [(ngModel)]="searchTerm"
+          (ngModelChange)="paginaAtual = 1"
           required
         />
         <span class="search-icon">
-          <img src="assets/icons/personsearch.svg" alt="Ícone de busca" />
+          <img src="assets/icons/searchIconEnterprise.svg" alt="Ícone de busca" />
         </span>
       </div>
     </div>
 
     <div class="left-controls">
+      <div class="campo-ordenar">
+        <input
+          *ngIf="ordenacao === 'cadastro'"
+          type="date"
+          class="date-picker"
+          [(ngModel)]="selectedDate"
+          (ngModelChange)="paginaAtual = 1"
+        />
 
-        <div class="campo-ordenar">
-          <input
-            *ngIf="ordenacao === 'cadastro'"
-            type="date"
-            class="date-picker"
-            [(ngModel)]="selectedDate"
-          />
+        <select
+          class="ordenar-btn"
+          [(ngModel)]="ordenacao"
+          (change)="handleOrdenacaoChange()"
+        >
+          <option *ngIf="!ordenacao" [ngValue]="null">Ordenar por</option>
+          <option *ngIf="ordenacao" [ngValue]="null">Limpar filtros</option>
+          <option [ngValue]="'alfab'">Alfabética</option>
+          <option [ngValue]="'cadastro'">Data de cadastro</option>
+        </select>
+      </div>
 
-          <select
-            class="ordenar-btn"
-            [(ngModel)]="ordenacao"
-            (change)="handleOrdenacaoChange()"
-          >
-            <option *ngIf="!ordenacao" [ngValue]="null">Ordenar por</option>
-            <option *ngIf="ordenacao" [ngValue]="null">Limpar filtros</option>
-
-            <option [ngValue]="'alfab'">Alfabética</option>
-            <option [ngValue]="'cadastro'">Data de cadastro</option>
-          </select>
-        </div>
-
-        <div class="campo-adicionar">
-          <button class="add-empresa-btn" (click)="openModalCadastro()">
-            + Empresa
-          </button>
-        </div>
-
+      <div class="campo-adicionar">
+        <button class="add-empresa-btn" (click)="openModalCadastro()">
+          + Empresa
+        </button>
+      </div>
     </div>
   </div>
+  <div *ngIf="isLoading" class="loading-message">
+    <p>Carregando empresas...</p>
+  </div>
 
+  <div *ngIf="!isLoading && hasNoData" class="no-data-message">
+    <p>
+      Nenhuma empresa cadastrada ainda. Clique em "+Empresa" para adicionar!
+    </p>
+  </div>
   <div class="wrapper">
     <div class="empresa-list">
       <div
         class="empresa-button"
-        *ngFor="let empresa of empresasFiltradas"
+        *ngFor="
+          let empresa of empresasExibidas
+            | paginate
+              : { itemsPerPage: itensPorPagina, currentPage: paginaAtual }
+        "
         (click)="clickRow(empresa)"
         style="cursor: pointer"
       >
         <div class="empresa-info">
           <h1>{{ empresa.colaboradores?.length }}</h1>
           <h2>{{ empresa.nome }}</h2>
-          <p><span class="icon"></span> {{ empresa.cnpj }}</p>
+          <p><span class="icon"></span> {{ formatarCNPJ(empresa.cnpj) }}</p>
         </div>
         <div class="icon-container">
           <i class="user-icon"></i>
         </div>
       </div>
     </div>
+  </div>
+  <!-- Paginação -->
+  <div
+    class="pagination-wrapper"
+    *ngIf="empresasExibidas.length > itensPorPagina"
+  >
+    <pagination-controls
+      (pageChange)="paginaAtual = $event"
+      [responsive]="true"
+      previousLabel="Anterior"
+      nextLabel="Próxima"
+      [autoHide]="true"
+    >
+    </pagination-controls>
   </div>
 </div>

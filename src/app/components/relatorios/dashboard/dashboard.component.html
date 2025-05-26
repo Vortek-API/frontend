@@ -4,86 +4,27 @@
       <h1 id="titleRelatorios">Relatórios</h1>
     </div>
 
-    <div class="filtros-container">
-      <!-- Filtros avançados -->
-      <div class="advanced-filters">
-        <div class="filter-group">
-          <label>Data Início:</label>
-          <input
-            type="date"
-            [(ngModel)]="filtros.dataInicio"
-            (change)="aplicarFiltros()"
-            class="date-input"
-          />
-        </div>
+    <div class="left-controls">
+      <input
+        type="date"
+        class="date-picker"
+        [(ngModel)]="filtros.dataInicio"
+        (ngModelChange)="onFiltroChange()"
+      />
+      <input
+        type="date"
+        class="date-picker"
+        [(ngModel)]="filtros.dataFim"
+        (ngModelChange)="onFiltroChange()"
+      />
 
-        <div class="filter-group">
-          <label>Data Fim:</label>
-          <input
-            type="date"
-            [(ngModel)]="filtros.dataFim"
-            (change)="aplicarFiltros()"
-            class="date-input"
-          />
-        </div>
+      <button class="add-employee-btn" (click)="abrirModal()">
+        Abrir Filtros
+      </button>
 
-        <div class="filter-group">
-          <label>Status:</label>
-          <select
-            [(ngModel)]="filtros.status"
-            (change)="aplicarFiltros()"
-            class="select-filter"
-          >
-            <option value="">Todos os status</option>
-            <option *ngFor="let status of listaStatus" [value]="status">
-              {{ status }}
-            </option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label>Empresa:</label>
-          <select
-            [(ngModel)]="filtros.empresa"
-            (change)="aplicarFiltros()"
-            class="select-filter"
-          >
-            <option value="">Todas as empresas</option>
-            <option *ngFor="let empresa of listaEmpresas" [value]="empresa">
-              {{ empresa }}
-            </option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label>Ordenar por:</label>
-          <select
-            [(ngModel)]="filtros.ordenacao"
-            (change)="aplicarFiltros()"
-            class="ordenar-select"
-          >
-            <option value="">Padrão</option>
-            <option value="empresa_asc">Empresa (A-Z)</option>
-            <option value="empresa_desc">Empresa (Z-A)</option>
-            <option value="data_asc">Data (Mais antiga)</option>
-            <option value="data_desc">Data (Mais recente)</option>
-            <option value="colaboradores_asc">Colaboradores (Menor)</option>
-            <option value="colaboradores_desc">Colaboradores (Maior)</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <button class="limpar-btn" (click)="limparFiltros()">
-            Limpar Filtros
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="filter-group">
-    <div class="loading-container-dwd" *ngIf="showDownloadOptions">
-      <div class="spinner-dwd"></div>
-      <p>Gerando Relatório</p>
+      <button class="add-employee-btn" (click)="limparFiltros()">
+        Limpar Filtros
+      </button>
     </div>
   </div>
 
@@ -91,21 +32,63 @@
     <h2>Indicadores</h2>
   </div>
 
-  <div class="charts-container" *ngIf="!carregandoHorasEmpresa">
-    <div
-      echarts
-      [options]="horasEmpresaBarChartOptions"
-      class="chart-box"
-    ></div>
-    <div
-      echarts
-      [options]="horasEmpresaPieChartOptions"
-      class="chart-box"
-    ></div>
+  <div class="charts-container" *ngIf="!carregandoHorasEmpresa && horasEmpresaBarChartOptions">
+    <div echarts [options]="horasEmpresaBarChartOptions" class="chart-box"></div>
+    <div echarts [options]="colaboradoresBarChartOptions" class="chart-box"></div>
+    <div echarts [options]="colaboradoresInativosBarChartOptions" class="chart-box"></div>
+    <div echarts [options]="colaboradoresAtrasadosBarChartOptions" class="chart-box"></div>
+    <div echarts [options]="colaboradoresSaidaAdiantadaBarChartOptions" class="chart-box"></div>
   </div>
 
   <div class="loading-container" *ngIf="carregandoHorasEmpresa">
     <div class="spinner"></div>
-    <p>Carregando dados</p>
+    <p>Carregando dados...</p>
+  </div>
+</div>
+
+<!-- Modal dos filtros -->
+<div class="container-filtros" *ngIf="mostrarModal">
+  <div class="modal-filtros">
+    <h3>Filtros</h3>
+    <h4>Selecione as empresas que deseja vizualizar:</h4>
+
+    <div class="buttons-controls">
+      <button class="btn-primary" (click)="selecionarTodasEmpresas()">
+        Selecionar Todas
+      </button>
+      <button class="btn-cancel" (click)="desmarcarTodasEmpresas()">
+        Desmarcar Todas
+      </button>
+    </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Empresas</mat-label>
+      <mat-select
+        [(ngModel)]="selectedEmpresas"
+        multiple
+        (ngModelChange)="onFiltroChange()"
+        panelClass="empresas-select-panel"
+      >
+        <mat-option *ngFor="let empresa of empresas" [value]="empresa.id">
+          {{ empresa.nome }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="optionGrafic">
+      <mat-form-field appearance="outline" class="filter-dropdown1">
+        <mat-label>Tipo de Gráfico</mat-label>
+        <mat-select
+          [(ngModel)]="tipoGrafico"
+          (ngModelChange)="onTipoGraficoChange()"
+        >
+          <mat-option value="bar">Barra</mat-option>
+          <mat-option value="pie">Pizza</mat-option>
+          <mat-option value="line">Linha</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="buttons-controls">
+      <button class="btn-cancel" (click)="fecharModal()">Fechar</button>
+    </div>
   </div>
 </div>

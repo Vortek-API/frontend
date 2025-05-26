@@ -1,13 +1,17 @@
 import { Component } from '@angular/core';
-import { FormGroup, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, 
+    CommonModule, 
+    FormsModule
+  ],
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -22,41 +26,45 @@ export class LoginComponent {
     private snackBar: MatSnackBar
   ) {
     this.loginForm = this.fb.group({
-      login: ['', [Validators.required]],
+      login: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required]]
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.loginForm.invalid) return;
     const { login, senha } = this.loginForm.value;
-    const cleanedLogin = login.replace(/\D/g, '');
 
-    this.authService.login(cleanedLogin, senha).subscribe({
-      next: (response) => {
-        sessionStorage.setItem('userGroup', response.grupo);
-        if (response.grupo === 'ADMIN') {
-          this.router.navigate(['/home']);
-        } else if (response.grupo === 'EMPRESA') {
-          this.router.navigate(['/empresa']);
-        }
+    try {
+      const response = await this.authService.login(login, senha);
 
-        this.snackBar.open('Bem-Vindo!', 'Fechar', {
-          duration: 4000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-          panelClass: ['glass-snackbar']
-        });
-      },
-      error: (error) => {
-        this.snackBar.open('Usuário ou Senha inválido.', 'Fechar', {
-          duration: 6000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-          panelClass: ['glass-snackbar', 'error-snackbar']
-        });
-      }
-    })
+      sessionStorage.setItem('userGroup', response.grupo);
+      this.router.navigate(['/home']);
+
+      this.snackBar.open('Bem-Vindo!', 'Fechar', {
+        duration: 4000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+        panelClass: ['glass-snackbar']
+      });
+    } catch (error) {
+      console.log(error)
+      this.snackBar.open('Usuário ou Senha inválido.', 'Fechar', {
+        duration: 6000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+        panelClass: ['glass-snackbar', 'error-snackbar']
+      });
+    }
+  }
+
+  formatEmailInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.value = this.formatEmail(input.value);
+  }
+
+  private formatEmail(email: string): string {
+    return email.trim().toLowerCase(); // remove espaços e deixa tudo minúsculo
   }
 
   formatCnpjInput(event: Event): void {

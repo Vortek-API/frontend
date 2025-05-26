@@ -3,6 +3,7 @@ import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Colaborador, ColaboradorService } from '../colaborador/colaborador.service';
+import { AuthService, UserLogado } from '../../services/auth/auth.service';
 
 export interface Empresa {
     id: number;
@@ -23,28 +24,44 @@ export class EmpresaService {
     private empresasDataTransfer: Empresa[] = [];
 
     constructor(private http: HttpClient,
-        private colaboradorService: ColaboradorService
+        private colaboradorService: ColaboradorService,
+        private authService: AuthService
     ) { }
 
     async findAll(): Promise<Empresa[]> {
-        let emp: Promise<Empresa[]> = firstValueFrom(this.http.get<Empresa[]>(this.apiUrl));
+    let userLogado: UserLogado | undefined = await this.authService.getUserLogado();
+    let emp: Promise<Empresa[]> = [] as unknown as Promise<Empresa[]>;
 
-        const empresas = await emp;
-
-        if (empresas != null) {
-            empresas.forEach(async (empresa: Empresa) => {
-                empresa.colaboradores = await this.findColabs(empresa.id);
-            });
-        }
-
-        return empresas;
+    if (userLogado?.grupo == "ADMIN") {
+        emp = firstValueFrom(this.http.get<Empresa[]>(this.apiUrl));
     }
+    if (userLogado?.grupo == "EMPRESA") {
+        emp = firstValueFrom(this.http.get<Empresa[]>(`${this.apiUrl}/usuario/${userLogado?.id}`));
+    }
+
+    const empresas = await emp;
+
+    if (empresas != null) {
+        for (const empresa of empresas) {
+            empresa.colaboradores = await this.findColabs(empresa.id);
+        }
+        empresas.sort((a, b) => a.nome.localeCompare(b.nome));
+    }
+
+    return empresas;
+}
 
     async find(id: number): Promise<Empresa> {
-        return firstValueFrom(this.http.get<Empresa>(`${this.apiUrl}/${id}`));
+        const emp = await firstValueFrom(this.http.get<Empresa>(`${this.apiUrl}/${id}`));
+        emp.colaboradores = await this.findColabs(emp.id);
+
+        return emp;
     }
     async findColabs(id: number): Promise<Colaborador[]> {
-        return firstValueFrom(this.http.get<Colaborador[]>(`${this.apiUrl}/colabs/${id}`));
+        const colabs = await firstValueFrom(this.http.get<Colaborador[]>(`${this.apiUrl}/colabs/${id}`));
+        colabs.sort((a, b) => a.nome.localeCompare(b.nome));
+
+        return colabs;
     }
 
     async add(empresa: Empresa): Promise<Empresa> {

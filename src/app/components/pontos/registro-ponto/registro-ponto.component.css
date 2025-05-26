@@ -32,7 +32,7 @@
   margin-bottom: 1.5rem;
   color: #0C6834;
   transform: translate(0, 0.5rem);
-  left: 1rem;
+  left: 1rem; 
 }
 
 .ponto-title::after {
@@ -44,6 +44,8 @@
   height: 0.2rem;
   background-color: #0C6834;
   border-radius: 2px;
+  transform-origin: left;
+  transform: scaleX(0.35);
 }
 
 /* Header */
@@ -128,14 +130,10 @@
 .left-controls {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem; /* Espaçamento uniforme entre todos os elementos */
 }
 
-.left-controls>* {
-  flex: 0 1 auto;
-  min-width: 5rem;
-  max-width: 20rem;
-}
+
 
 .right-controls .search-container {
   flex: 1 1 auto;
@@ -144,6 +142,7 @@
 .filter-dropdown,
 .date-picker,
 .download-btn,
+.registro-manual-btn,
 .filter-actions {
   background: #0C6834;
   color: #fff;
@@ -240,6 +239,54 @@
   background-color: #e0e0e0;
   cursor: pointer;
 }
+.date-range-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.date-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Espaço entre o label e o input */
+}
+
+.date-input label {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.date-picker {
+  height: 38px;
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #e6fae9; /* Exemplo de cor, pode ajustar */
+}
+
+.registro-class {
+    position: relative;
+    display: flex;
+}
+/* btn registro */
+.registro-manual-btn {
+  background-color: #0C6834;
+  color: white;
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  font-weight: 500;
+  transition: all 0.3s;
+  padding-bottom: 0.4rem;
+}
+
+.registro-manual-btn:hover {
+   background: #095227;
+  transform: translateY(-2px);
+}
+
 
 /* Botão Download */
 .filter-actions {
@@ -266,6 +313,15 @@
 .icon-download::after {
   content: '\2193';
   font-size: 1rem;
+}
+
+.no-records{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 1.2rem;
+  color: #EF5350;
 }
 
 @keyframes fadeIn {
@@ -369,7 +425,7 @@
   }
 
   .ponto-title::after {
-    width: 11rem;
+    width: 5rem;
   }
 
   .search-container:hover {
@@ -383,6 +439,7 @@
 
   .filter-dropdown,
   .date-picker,
+  .registro-manual-btn,
   .download-btn {
     width: 8.2rem;
     font-size: 0.7rem;
@@ -405,7 +462,7 @@
   }
 
   .ponto-title::after {
-    width: 11.7rem;
+    width: 5rem;
   }
 
   .search-container:hover {
@@ -414,6 +471,7 @@
 
   .filter-dropdown,
   .date-picker,
+  .registro-manual-btn,
   .download-btn {
     width: 9rem;
     font-size: 0.75rem;
@@ -435,7 +493,7 @@
   }
 
   .ponto-title::after {
-    width: 13.3rem
+    width: 10rem
   }
 
   .search-container:hover {
@@ -444,6 +502,7 @@
 
   .filter-dropdown,
   .date-picker,
+  .registro-manual-btn,
   .download-btn {
     width: 9.6rem;
     font-size: 0.8rem;
@@ -465,11 +524,11 @@
 
 @media (min-width: 1440px) {
   .ponto-title {
-    font-size: 1.7rem;
+    font-size: 1.5rem;
   }
 
   .ponto-title::after {
-    width: 14.8rem
+    width: 9em
   }
 
   .search-container,
@@ -483,14 +542,15 @@
 
 
   .search-container:hover {
-    width: 18rem;
+    width: 16rem;
     height: 3rem;
   }
 
   .filter-dropdown,
   .date-picker,
+  .registro-manual-btn,
   .download-btn {
-    width: 10.3rem;
+    width: 9.3rem;
     font-size: 0.9rem;
     height: 3rem;
   }
@@ -510,7 +570,7 @@
   }
 
   .ponto-title::after {
-    width: 17rem;
+    width: 2rem;
   }
 
   .search-container:hover {
@@ -528,8 +588,9 @@
 
   .filter-dropdown,
   .date-picker,
+  .registro-manual-btn,
   .download-btn {
-    width: 14rem;
+    width: 10rem;
     font-size: 1.2rem;
     height: 3rem;
   }
@@ -554,7 +615,7 @@
   }
 
   .ponto-title::after {
-    width: 21.5rem;
+    width: 10.5rem;
   }
 
   .search-icon,
@@ -583,6 +644,7 @@
 
   .filter-dropdown,
   .date-picker,
+  .registro-manual-btn,
   .download-btn {
     width: 18rem;
     font-size: 1.5rem;
@@ -596,4 +658,56 @@
   .attendance-table tbody td {
     font-size: 1.2rem;
   }
+}
+/* Botão editar */
+.historico-btn {
+  padding: 0.4rem 0.8rem;
+  background: #0C6834;
+  /* Verde principal */
+  color: white;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.historico-btn:hover {
+  background: #095227;
+  /* Verde escuro */
+  transform: scale(1.03);
+}
+
+.buttons-td{
+  gap: 10%;
+  display: flex;
+  justify-content: center;
+}
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+ngx-pagination li a,
+.ngx-pagination li span {
+  background-color: #0C6834 !important; /* seu tom de verde */
+  color: white !important;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  margin: 0 0.25rem;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.ngx-pagination li a:hover,
+.ngx-pagination li span:hover {
+  transform: scale(1.1);
+  background-color: #0a5a2c !important;
+}
+
+/* Customização do ngx-pagination com cor verde */
+.ngx-pagination .current {
+  background-color: #0C6834 !important;
+  color: white !important;
+  border-radius: 4px;
 }

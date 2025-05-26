@@ -1,76 +1,105 @@
 <div class="container">
-    <div class="header-actions">
-
-        <div class="right-controls">
-            <h1 id="titleFunc">Colaboradores</h1>
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Buscar" [(ngModel)]="searchTerm" required>
-                <span class="search-icon">
-                    <img src="assets/icons/personsearch.svg" alt="Ícone de busca" >
-                </span>
-            </div>
-        </div>
-    
-      
-        <div class="left-controls">
-            <input *ngIf="ordenacao=='cadastro'" type="date" class="date-picker" [(ngModel)]="selectedDate">
-            <div class="ordenar-container">
-                <select class="ordenar-btn" [(ngModel)]="ordenacao" (change)="handleOrdenacaoChange()">
-                    <option *ngIf="!ordenacao" [ngValue]="null">Ordenar por</option>
-                    <option *ngIf="ordenacao" [ngValue]="null">Limpar filtros</option>
-                    <option [ngValue]="'alfab'">Alfabética</option>
-                    <option [ngValue]="'cadastro'">Data de cadastro</option>
-                    <option [ngValue]="'ativo'">Status Ativo</option>
-                    <option [ngValue]="'inativo'">Status Inativo</option>
-                </select>
-            </div>
-    
-            <select class="filter-dropdown" [(ngModel)]="selectedEmpresa">
-                <option [ngValue]="null">Todas</option>
-                <option *ngFor="let empresa of empresas" [value]="empresa.id">
-                  {{ empresa.nome }}
-                </option>
-            </select>
-            
-            <button class="add-employee-btn" (click)='abrirModalCadastro()'>+ Colaborador</button>
-        </div>       
+  <div class="header-actions">
+    <div class="right-controls">
+      <h1 id="titleFunc">Colaboradores</h1>
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="Buscar" [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchTermChange()" required />
+        <!-- Fechado -->
+        <span class="search-icon">
+          <img src="assets/icons/personsearch.svg" alt="Ícone de busca" />
+          <!-- Fechado (implícito, mas ok) -->
+        </span>
+      </div>
     </div>
 
-    <div class="table-wrapper">
-    <table class="attendance-table">
-        <thead>
-            <tr>
-                <th>CPF</th>
-                <th>Colaborador</th>
-                <th>Cargo</th>
-                <!-- <th>Empresa</th> -->
-                <!-- <th>Data</th> -->
-                <th>Status</th>
-                <th>Entrada</th>
-                <th>Saída</th>
-                <!-- <th>Horas trabalhadas</th> -->
-            </tr>
-        </thead>
-        <tbody>
-            <ng-container *ngFor="let colaborador of colaboradoesFiltrados">
-                <tr *ngIf="selectedEmpresa == null || selectedEmpresa == colaborador.empresas?.[0]?.id" 
-                (click)="clickRow(colaborador)" 
-                style="cursor: pointer;">
-                <td>{{colaborador.cpf}}</td>
-                <td>{{colaborador.nome}}</td>
-                <td>{{colaborador.cargo}}</td>
-                <!-- <td>{{colaborador.empresa.nome}}</td> -->
-                <td [ngClass]="colaborador.statusAtivo ? 'status ativo' : 'status inativo'">
-                    {{ colaborador.statusAtivo ? "Ativo" : "Inativo" }}
-                </td>
-                  
-                <td>{{ colaborador.horarioEntrada}}</td>
-                <td>{{ colaborador.horarioSaida }}</td>
-            </tr>            
-            </ng-container>
-          </tbody>          
+    <div class="left-controls">
+      <input *ngIf="ordenacao == 'cadastro'" type="date" class="date-picker" [(ngModel)]="selectedDate"
+        (ngModelChange)="onDateChange()" />
+      <!-- Fechado -->
+      <div class="ordenar-container">
+        <select class="ordenar-btn" [(ngModel)]="ordenacao" (change)="handleOrdenacaoChange()">
+          <option *ngIf="!ordenacao" [ngValue]="null">Ordenar por</option>
+          <option *ngIf="ordenacao" [ngValue]="null">Limpar filtros</option>
+          <option [ngValue]="'alfab'">Alfabética</option>
+          <option [ngValue]="'cadastro'">Data de cadastro</option>
+          <option [ngValue]="'ativo'">Status Ativo</option>
+          <option [ngValue]="'inativo'">Status Inativo</option>
+        </select>
+      </div>
+
+      <select class="filter-dropdown" [(ngModel)]="selectedEmpresa" (ngModelChange)="onEmpresaChange()">
+        <option [ngValue]="null">Todas as Empresas</option>
+        <option *ngFor="let empresa of empresas" [value]="empresa.id">
+          {{ empresa.nome }}
+        </option>
+      </select>
+
+      <button class="add-employee-btn" (click)="abrirModalCadastro()">
+        + Colaborador
+      </button>
+    </div>
+  </div>
+  <div class="table-wrapper">
+    <div *ngIf="isLoading" class="loading-message">
+      <p>Carregando colaboradores...</p>
+    </div>
+
+    <div *ngIf="" class="no-data-message">
+      <p>
+        Nenhum colaborador encontrado com os filtros aplicados ou nenhum
+        cadastrado ainda.
+      </p>
+    </div>
+
+    <table class="attendance-table" *ngIf="!isLoading">
+      <thead>
+        <tr>
+          <th>Foto</th>
+          <th>Colaborador</th>
+          <th>CPF</th>
+          <th>Cargo</th>
+          <th>Status</th>
+          <th>Entrada</th>
+          <th>Saída</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="
+            let colaborador of colaboradoesFiltrados
+              | paginate
+                : { itemsPerPage: itensPorPagina, currentPage: paginaAtual }
+          " (click)="clickRow(colaborador)" style="cursor: pointer">
+          <td class="colab-photo">
+            <img *ngIf="colaborador.foto; else noPhoto" class="colab-photo"
+              [src]="colaborador.foto | base64Image : 'jpeg'" alt="Foto do colaborador" />
+            <!-- Fechamento corrigido -->
+            <ng-template #noPhoto>
+              <img src="assets/icons/noPicture.svg" alt="Sem foto" class="colab-photo" style="border-color: #ef5350" />
+              <!-- Fechamento corrigido -->
+            </ng-template>
+          </td>
+
+          <td>{{ colaborador.nome }}</td>
+          <td>{{ formatarCPF(colaborador.cpf) }}</td>
+          <td>{{ colaborador.cargo }}</td>
+          <td class="status-colab">
+            <span class="status" [ngClass]="colaborador.statusAtivo ? 'ativo' : 'inativo'">
+              {{ colaborador.statusAtivo ? "Ativo" : "Inativo" }}
+            </span>
+          </td>
+
+          <td>{{ colaborador.horarioEntrada }}</td>
+          <td>{{ colaborador.horarioSaida }}</td>
+        </tr>
+      </tbody>
     </table>
-    </div>
+  </div>
+  <div class="pagination-wrapper" *ngIf="!isLoading && colaboradoesFiltrados.length > itensPorPagina
+    ">
+    <pagination-controls (pageChange)="paginaAtual = $event" [responsive]="true" previousLabel="Anterior"
+      nextLabel="Próxima" [autoHide]="true">
+    </pagination-controls>
+    <!-- Tag única -->
+  </div>
 </div>
-
-<div class="modal-colab-crud">

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { Empresa, EmpresaService } from '../../../empresa/empresa.service';
 import { Colaborador, ColaboradorService } from '../../colaborador.service';
 import { CommonModule } from '@angular/common';
@@ -42,7 +42,7 @@ export class ModalCadastroComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         this.imagemPreview = reader.result as string;
-        this.imagemBase64 = (reader.result as string)?.split(',')[1] || null; // <<< AQUI!
+        this.imagemBase64 = (reader.result as string)?.split(',')[1] || null; 
       };
       reader.readAsDataURL(file);
     }
@@ -64,33 +64,32 @@ export class ModalCadastroComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  async save(): Promise<void> {
+  async save(form:NgForm): Promise<void> {
     // Verifica se algum campo obrigatório está vazio ou inválido
-    if (
-      !this.colaborador.nome.trim() ||
-      !this.colaborador.cargo.trim() ||
-      !this.colaborador.empresas ||
-      !this.colaborador.horarioEntrada ||
-      !this.colaborador.horarioSaida ||
-      this.colaborador.cpf.replace(/\D/g, '').length !== 11
-    ) {
-      await Swal.fire({
-        icon: 'warning',
-        title: 'Preencha todos os campos corretamente!',
-        confirmButtonColor: '#3085d6',
+    if (form.invalid) {
+      Object.values(form.controls).forEach(control => {
+        control.markAsTouched(); 
       });
-      return;
+
+      Swal.fire('Atenção', 'Por favor, preencha todos os campos obrigatórios corretamente.', 'warning');
+      return; 
     }
 
     try {
+      const colaboradorDtoToSend: Colaborador = { ...this.colaborador };
+
       // Limpa o CPF antes de enviar
-      this.colaborador.cpf = this.colaborador.cpf.replace(/\D/g, '');
+      colaboradorDtoToSend.cpf = colaboradorDtoToSend.cpf.replace(/\D/g, '');
 
       // Adiciona a imagem base64 ao colaborador
-      (this.colaborador as any).foto = this.imagemBase64;
+      colaboradorDtoToSend.foto = this.imagemBase64;
+
+      //
+      const empresasIds: number[] = colaboradorDtoToSend.empresas?.map((empresa) => empresa.id) ?? [];
+      delete colaboradorDtoToSend.empresas;
 
       // Chama o serviço para salvar
-      await this.colaboradorService.add(this.colaborador);
+      await this.colaboradorService.add(colaboradorDtoToSend,empresasIds);
 
       // Mensagem de sucesso
       await Swal.fire({
