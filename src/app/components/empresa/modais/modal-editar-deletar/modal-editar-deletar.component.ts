@@ -44,23 +44,23 @@ export class ModalEditarDeletarComponent implements OnInit {
           icon: 'error',
           title: 'Erro ao excluir a empresa! Existem colaboradores relacionados a ela.',
         });
+
+        return;
       }
-      else {
-        const confirmacao = await Swal.fire({
-          title: 'Tem certeza?',
-          text: 'Esta ação não poderá ser desfeita!',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#EF5350',
-          cancelButtonColor: '#0C6834',
-          confirmButtonText: 'Sim, excluir!',
-          cancelButtonText: 'Cancelar'
-        });
-        if (confirmacao.isConfirmed) {
-          await this.empresaService.delete(this.empresaSelecionada.id);
-          await Swal.fire('Removido', 'Empresa excluída com sucesso!', 'success');
-          this.close();
-        }
+      const confirmacao = await Swal.fire({
+        title: 'Tem certeza?',
+        text: 'Esta ação não poderá ser desfeita!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#EF5350',
+        cancelButtonColor: '#0C6834',
+        confirmButtonText: 'Sim, excluir!',
+        cancelButtonText: 'Cancelar'
+      });
+      if (confirmacao.isConfirmed) {
+        await this.empresaService.delete(this.empresaSelecionada.id);
+        await Swal.fire('Removido', 'Empresa excluída com sucesso!', 'success');
+        this.close();
       }
     } catch (error) {
       await Swal.fire({
@@ -71,9 +71,9 @@ export class ModalEditarDeletarComponent implements OnInit {
     }
   }
 
-  async save(form: NgForm): Promise < void> {
+  async save(form: NgForm): Promise<void> {
 
-      if(form.invalid) {
+    if (form.invalid) {
       Object.values(form.controls).forEach(control => {
         control.markAsTouched();
       });

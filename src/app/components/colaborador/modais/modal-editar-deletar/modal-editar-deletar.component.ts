@@ -88,23 +88,23 @@ export class ModalEditarDeletarComponent implements OnInit {
           title: 'Erro ao excluir o colaborador! Existem registros relacionados.',
           confirmButtonColor: '#EF5350',
         });
+
+        return
       }
-      else {
         const confirmacao = await Swal.fire({
-        title: 'Tem certeza?',
-        text: 'Esta ação não poderá ser desfeita!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#EF5350',
-        cancelButtonColor: '#0C6834',
-        confirmButtonText: 'Sim, excluir!',
-        cancelButtonText: 'Cancelar'
-      });
-      if (confirmacao.isConfirmed) {
-            await this.colaboradorService.delete(this.colaborador.id);
-            await Swal.fire('Removido', 'Colaborador deletado com sucesso.', 'success');
-            this.close();
-          }
+          title: 'Tem certeza?',
+          text: 'Esta ação não poderá ser desfeita!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#EF5350',
+          cancelButtonColor: '#0C6834',
+          confirmButtonText: 'Sim, excluir!',
+          cancelButtonText: 'Cancelar'
+        });
+        if (confirmacao.isConfirmed) {
+          await this.colaboradorService.delete(this.colaborador.id);
+          await Swal.fire('Removido', 'Colaborador deletado com sucesso.', 'success');
+          this.close();
       }
     } catch (error) {
       console.error(error);
