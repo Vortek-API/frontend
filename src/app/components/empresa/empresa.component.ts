@@ -122,11 +122,13 @@ export class EmpresaComponent implements OnInit {
       this.selectedDate = null;
       this.searchTerm = '';
     }
+
+    this.aplicarFiltrosEOrdenacao();
   }
 
   onSearchTermChange(): void {
     this.paginaAtual = 1;
-    this.aplicarFiltrosEOrdenacao(); // Aplica filtros ao digitar na busca
+    this.aplicarFiltrosEOrdenacao();
   }
 
   formatarCNPJ(cnpj?: string): string {

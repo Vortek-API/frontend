@@ -8,7 +8,7 @@
           class="search-input"
           placeholder="Buscar empresa..."
           [(ngModel)]="searchTerm"
-          (ngModelChange)="paginaAtual = 1"
+          (ngModelChange)="onSearchTermChange()"
           required
         />
         <span class="search-icon">
@@ -24,7 +24,7 @@
           type="date"
           class="date-picker"
           [(ngModel)]="selectedDate"
-          (ngModelChange)="paginaAtual = 1"
+          (ngModelChange)="aplicarFiltrosEOrdenacao()"
         />
 
         <select
