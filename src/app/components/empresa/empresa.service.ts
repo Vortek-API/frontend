@@ -12,6 +12,7 @@ export interface Empresa {
     cnpj: string;
     dataCadastro?: string;
     colaboradores?: Colaborador[];
+    statusAtivo: boolean;
 }
 
 @Injectable({

@@ -18,6 +18,7 @@ export class ModalEditarDeletarComponent implements OnInit {
     nome: '',
     cnpj: '',
     dataCadastro: '',
+    statusAtivo: true
   }
   empresas: Empresa[] = [];
   empresaSelecionada: Empresa;
@@ -39,14 +40,14 @@ export class ModalEditarDeletarComponent implements OnInit {
 
   async deletar(): Promise<void> {
     try {
-      if (await this.empresaService.hasRegistro(this.empresaSelecionada.id)) {
-        await Swal.fire({
-          icon: 'error',
-          title: 'Erro ao excluir a empresa! Existem colaboradores relacionados a ela.',
-        });
+      // if (await this.empresaService.hasRegistro(this.empresaSelecionada.id)) {
+      //   await Swal.fire({
+      //     icon: 'error',
+      //     title: 'Erro ao excluir a empresa! Existem colaboradores relacionados a ela.',
+      //   });
 
-        return;
-      }
+      //   return;
+      // }
       const confirmacao = await Swal.fire({
         title: 'Tem certeza?',
         text: 'Esta ação não poderá ser desfeita!',
@@ -72,7 +73,6 @@ export class ModalEditarDeletarComponent implements OnInit {
   }
 
   async save(form: NgForm): Promise<void> {
-
     if (form.invalid) {
       Object.values(form.controls).forEach(control => {
         control.markAsTouched();
@@ -84,16 +84,14 @@ export class ModalEditarDeletarComponent implements OnInit {
 
     try {
       const empresaEnviado = {
-        ...this.empresa,
-        empresa: {
-          id: Number(this.empresa.id),
-          nome: this.empresa.nome,
-          cnpj: this.empresa.cnpj,
-        }
+        id: this.empresaSelecionada.id,
+        nome: this.empresaSelecionada.nome,
+        cnpj: this.empresaSelecionada.cnpj,
+        statusAtivo: this.empresaSelecionada.statusAtivo,
+        dataCadastro: this.empresaSelecionada.dataCadastro
       };
 
-      await
-        this.empresaService.update(empresaEnviado.id, empresaEnviado);
+      await this.empresaService.update(empresaEnviado.id, empresaEnviado);
 
       await Swal.fire({
         icon: 'success',

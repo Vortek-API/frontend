@@ -107,6 +107,25 @@
   font-family: 'Inter', sans-serif;
   font-weight: 400;
   color: #666;
+  margin-top: 0.5rem;
+}
+
+.status {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 0.3rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.status.ativo {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status.inativo {
+  background-color: #fee2e2;
+  color: #991b1b;
 }
 
 .search-icon {

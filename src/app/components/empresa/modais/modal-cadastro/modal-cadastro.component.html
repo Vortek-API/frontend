@@ -21,6 +21,14 @@
             </div>
           </div>
       </div>
+
+      <div class="form-group">
+        <label for="statusAtivo">Status</label>
+        <select id="statusAtivo" [(ngModel)]="empresa.statusAtivo" name="statusAtivo" required #statusField="ngModel">
+          <option [ngValue]="true">Ativo</option>
+          <option [ngValue]="false">Inativo</option>
+        </select>
+      </div>
     </form>
     <div class="actions">
       <button class="btn-primary" (click)="save(empresaForm)">Confirmar</button>

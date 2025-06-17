@@ -71,6 +71,9 @@
           <h1>{{ empresa.colaboradores?.length }}</h1>
           <h2>{{ empresa.nome }}</h2>
           <p><span class="icon"></span> {{ formatarCNPJ(empresa.cnpj) }}</p>
+          <p class="status" [ngClass]="empresa.statusAtivo ? 'ativo' : 'inativo'">
+            {{ empresa.statusAtivo ? 'Ativo' : 'Inativo' }}
+          </p>
         </div>
         <div class="icon-container">
           <i class="user-icon"></i>

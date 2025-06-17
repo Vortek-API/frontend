@@ -82,15 +82,15 @@ export class ModalEditarDeletarComponent implements OnInit {
 
   async deletar(): Promise<void> {
     try {
-      if (await this.colaboradorService.hasRegistro(this.colaborador.id)) {
-        await Swal.fire({
-          icon: 'error',
-          title: 'Erro ao excluir o colaborador! Existem registros relacionados.',
-          confirmButtonColor: '#EF5350',
-        });
+      // if (await this.colaboradorService.hasRegistro(this.colaborador.id)) {
+      //   await Swal.fire({
+      //     icon: 'error',
+      //     title: 'Erro ao excluir o colaborador! Existem registros relacionados.',
+      //     confirmButtonColor: '#EF5350',
+      //   });
 
-        return
-      }
+      //   return
+      // }
         const confirmacao = await Swal.fire({
           title: 'Tem certeza?',
           text: 'Esta ação não poderá ser desfeita!',

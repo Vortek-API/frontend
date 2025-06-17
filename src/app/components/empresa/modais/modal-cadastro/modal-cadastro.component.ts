@@ -17,7 +17,7 @@ export class ModalCadastroComponent implements OnInit {
     id: 0,
     nome: '',
     cnpj: '',
-    colaboradores: [],
+    statusAtivo: true
   }
   empresas: Empresa[] = [];
 
@@ -36,14 +36,13 @@ export class ModalCadastroComponent implements OnInit {
   }
 
   async save(form: NgForm): Promise<void> {
-
     if (form.invalid) {
-          Object.values(form.controls).forEach(control => {
-            control.markAsTouched(); 
-          });
-    
-          Swal.fire('Atenção', 'Por favor, preencha todos os campos obrigatórios corretamente.', 'warning');
-          return; 
+      Object.values(form.controls).forEach(control => {
+        control.markAsTouched();
+      });
+
+      Swal.fire('Atenção', 'Por favor, preencha todos os campos obrigatórios corretamente.', 'warning');
+      return;
     }
 
     try {
@@ -53,6 +52,7 @@ export class ModalCadastroComponent implements OnInit {
           id: Number(this.empresa.id),
           nome: this.empresa.nome,
           cnpj: this.empresa.cnpj,
+          statusAtivo: this.empresa.statusAtivo
         }
       };
 
