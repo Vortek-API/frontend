@@ -165,58 +165,39 @@ export class ModalEditarComponent implements OnInit {
     }
   }
 
-  async editarPontos(form: NgForm): Promise<void> {
-    if (form.invalid) {
-      Object.values(form.controls).forEach(control => {
-        control.markAsTouched();
-      });
+  async editarPontos(form: NgForm) {
+    if (form.valid) {
+      try {
+        // Trata os horários negativos antes de enviar
+        this.registro.horaEntrada = this.tratarHorarioNegativo(this.registro.horaEntrada);
+        this.registro.horaSaida = this.tratarHorarioNegativo(this.registro.horaSaida);
 
-      Swal.fire('Atenção', 'Por favor, preencha todos os campos obrigatórios corretamente.', 'warning');
-      return;
-    }
+        console.log(this.registro);
 
-    // Verificar e garantir que empresas é um array
-    if (!this.colaborador.empresas || !Array.isArray(this.colaborador.empresas)) {
-      // Se empresas não existe ou não é um array, inicialize como array vazio
-      this.colaborador.empresas = [];
-    }
-
-    let tempoTotalString: string = '00:00:00'; // Valor padrão caso haja algum problema
-
-    const entradaMs = this.timeToMilliseconds(this.registro.horaEntrada);
-    const saidaMs = this.timeToMilliseconds(this.registro.horaSaida);
-
-    if (entradaMs !== 0 || saidaMs !== 0) {
-      let diffMs = saidaMs - entradaMs;
-
-      if (diffMs < 0) {
-        diffMs += (24 * 60 * 60 * 1000); // Adiciona 24 horas em milissegundos
+        await this.registroPontoService.update(this.registro.id!, this.registro);
+        await Swal.fire({
+          icon: 'success',
+          title: 'Registro atualizado com sucesso!',
+          confirmButtonColor: '#3085d6',
+        });
+        this.dialogRef.close();
+      } catch (error) {
+        console.error('Erro ao atualizar registro:', error);
+        await Swal.fire({
+          icon: 'error',
+          title: 'Erro ao atualizar registro',
+          text: 'Tente novamente mais tarde.',
+          confirmButtonColor: '#d33',
+        });
       }
-      tempoTotalString = this.formatDuration(diffMs);
     }
+  }
 
-    const colaboradorEnviado: PontoDetalhado = {
-      id: this.registro.id,
-      colaboradorId: this.colaborador.id,
-      empresaId: this.registro.empresaId,
-      data: this.registro.data,
-      horaEntrada: this.registro.horaEntrada || '',
-      horaSaida: this.registro.horaSaida || '',
-      tempoTotal: tempoTotalString,
-      justificativa: this.registro.justificativa
-    };
-
-    try {
-      if (!colaboradorEnviado.id) {
-        throw new Error('ID do colaborador é inválido');
-      }
-      await this.registroPontoService.update(colaboradorEnviado.id, colaboradorEnviado);
-      await Swal.fire('Sucesso', 'Colaborador atualizado com sucesso.', 'success');
-      this.close();
-    } catch (error) {
-      console.error(error);
-      await Swal.fire('Erro', 'Erro ao atualizar o colaborador.', 'error');
+  private tratarHorarioNegativo(horario: string): string {
+    if (horario && horario.startsWith('-')) {
+      return horario.substring(1); // Remove o sinal de negativo
     }
+    return horario;
   }
 
   private timeToMilliseconds(timeStr: string): number {

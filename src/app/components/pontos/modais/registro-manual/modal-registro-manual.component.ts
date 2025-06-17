@@ -114,6 +114,12 @@ export class ModalRegistroManualComponent implements OnInit {
 
   async onConfirmar() {
     try {
+      // Trata os horários negativos antes de enviar
+      this.registroData.horaEntrada = this.tratarHorarioNegativo(this.registroData.horaEntrada);
+      this.registroData.horaSaida = this.tratarHorarioNegativo(this.registroData.horaSaida);
+
+      console.log(this.registroData);
+
       await this.pontoService.add(this.registroData);
       
       // Exibe o pop-up de sucesso
@@ -134,6 +140,13 @@ export class ModalRegistroManualComponent implements OnInit {
         confirmButtonColor: '#d33',
       });
     }
+  }
+
+  private tratarHorarioNegativo(horario: string): string {
+    if (horario && horario.startsWith('-')) {
+      return horario.substring(1); // Remove o sinal de negativo
+    }
+    return horario;
   }
 
   onCancelar() {
