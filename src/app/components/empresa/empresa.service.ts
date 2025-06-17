@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Colaborador, ColaboradorService } from '../colaborador/colaborador.service';
 import { AuthService, UserLogado } from '../../services/auth/auth.service';
+import { PontoDetalhado, RegistroPontoService } from '../pontos/registro-ponto/registro-ponto.service';
 
 export interface Empresa {
     id: number;
@@ -25,7 +26,8 @@ export class EmpresaService {
 
     constructor(private http: HttpClient,
         private colaboradorService: ColaboradorService,
-        private authService: AuthService
+        private authService: AuthService,
+        private pontoService: RegistroPontoService
     ) { }
 
     async findAll(): Promise<Empresa[]> {
@@ -75,6 +77,11 @@ export class EmpresaService {
     async delete(id: number): Promise<void> {
         return firstValueFrom(this.http.delete<void>(`${this.apiUrl}/${id}`));
     }
+    async hasRegistro(id: number): Promise<boolean> {
+            const ponto: PontoDetalhado[] = await this.pontoService.findByEmpId(id);
+            return ponto.length > 0 ? true : false;
+        }
+
     setData(empresa: Empresa, empresas: Empresa[]) {
         this.empresaDataTransfer = empresa;
         this.empresasDataTransfer = empresas;

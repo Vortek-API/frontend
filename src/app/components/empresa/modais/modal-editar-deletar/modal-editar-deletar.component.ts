@@ -38,62 +38,42 @@ export class ModalEditarDeletarComponent implements OnInit {
   }
 
   async deletar(): Promise<void> {
-    const confirmacao = await Swal.fire({
-      title: 'Tem certeza?',
-      text: 'Esta ação não poderá ser desfeita!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#EF5350',
-      cancelButtonColor: '#0C6834',
-      confirmButtonText: 'Sim, excluir!',
-      cancelButtonText: 'Cancelar'
-    });
-
-    if (confirmacao.isConfirmed) {
-      try {
-        if (this.empresaSelecionada.colaboradores && this.empresaSelecionada.colaboradores?.length > 0) {
-          const confirmacaoRegistro = await Swal.fire({
-            title: 'Tem certeza?',
-            text: 'Existem colaboradores relacionados a ela.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#EF5350',
-            cancelButtonColor: '#0C6834',
-            confirmButtonText: 'Sim, excluir!',
-            cancelButtonText: 'Cancelar'
-          });
-          if (confirmacaoRegistro.isConfirmed) {
-            await this.empresaService.delete(this.empresaSelecionada.id);
-            await Swal.fire({
-              icon: 'success',
-              title: 'Empresa excluída com sucesso!',
-              confirmButtonColor: '#0C6834',
-            });
-            this.dialogRef.close(true);
-          }
-        }
-        else {
-          await this.empresaService.delete(this.empresaSelecionada.id);
-          await Swal.fire({
-            icon: 'success',
-            title: 'Empresa excluída com sucesso!',
-            confirmButtonColor: '#0C6834',
-          });
-          this.dialogRef.close(true);
-        }
-      } catch (error) {
+    try {
+      if (await this.empresaService.hasRegistro(this.empresaSelecionada.id)) {
         await Swal.fire({
           icon: 'error',
-          title: 'Erro ao excluir a empresa!',
-          confirmButtonColor: '#EF5350',
+          title: 'Erro ao excluir a empresa! Existem colaboradores relacionados a ela.',
         });
       }
+      else {
+        const confirmacao = await Swal.fire({
+          title: 'Tem certeza?',
+          text: 'Esta ação não poderá ser desfeita!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#EF5350',
+          cancelButtonColor: '#0C6834',
+          confirmButtonText: 'Sim, excluir!',
+          cancelButtonText: 'Cancelar'
+        });
+        if (confirmacao.isConfirmed) {
+          await this.empresaService.delete(this.empresaSelecionada.id);
+          await Swal.fire('Removido', 'Empresa excluída com sucesso!', 'success');
+          this.close();
+        }
+      }
+    } catch (error) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Erro ao excluir a empresa!',
+        confirmButtonColor: '#EF5350',
+      });
     }
   }
 
-  async save(form: NgForm): Promise<void> {
+  async save(form: NgForm): Promise < void> {
 
-    if (form.invalid) {
+      if(form.invalid) {
       Object.values(form.controls).forEach(control => {
         control.markAsTouched();
       });
